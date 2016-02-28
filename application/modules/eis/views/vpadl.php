@@ -108,32 +108,39 @@
                   </div>
                 </div>
                 
-              <div class="col-md-7">
-                <div class="panel panel-primary">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Nominal</h3>
-                  </div>
-                  <div class="panel-body"> 
-                    <ul class="list-group">
-                      <li class="list-group-item list-group-item-success">
-                        <h2 align="right"><?=$today_amt?></h2>
-                      </li>
-                      <li class="list-group-item list-group-item-info">
-                        <h2 align="right"><?=$week_amt?></h2>
-                      </li>
-                      <li class="list-group-item list-group-item-warning">
-                        <h2 align="right"><?=$month_amt?></h2>
-                      </li>
-                      <li class="list-group-item list-group-item-danger">
-                        <h2 align="right"><?=$year_amt?></h2>
-                      </li>
-                    </ul>
-                  </div>
-                </div>          
-              </div>
-
-              
-              
+                <div class="col-md-7">
+                  <div class="panel panel-primary">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Nominal</h3>
+                    </div>
+                    <div class="panel-body"> 
+                      <ul class="list-group">
+                        <li class="list-group-item list-group-item-success">
+                          <h2 align="right"><?=$today_amt?></h2>
+                        </li>
+                        <li class="list-group-item list-group-item-info">
+                          <h2 align="right"><?=$week_amt?></h2>
+                        </li>
+                        <li class="list-group-item list-group-item-warning">
+                          <h2 align="right"><?=$month_amt?></h2>
+                        </li>
+                        <li class="list-group-item list-group-item-danger">
+                          <h2 align="right"><?=$year_amt?></h2>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>          
+                </div>
+                <div class="row">
+                  <center>
+                  <!--span class="label label-default">Default</span>
+                  <span class="label label-primary">Primary</span-->
+                  <span class="label label-success">Hari Ini</span>
+                  <span class="label label-info">Minggu Ini</span>
+                  <span class="label label-warning">Bulan Ini</span>
+                  <span class="label label-danger">Tahun Ini</span>
+                  </center>
+                </div>
               </div>
             </div>
           </div>
@@ -242,14 +249,7 @@ var options = {
             </div>
           </div>
         </div>
-        <div class="row">
-          <!--span class="label label-default">Default</span>
-          <span class="label label-primary">Primary</span>
-          <span class="label label-success">Hari Ini</span>
-          <span class="label label-info">Minggu Ini</span>
-          <span class="label label-warning">Bulan Ini</span>
-          <span class="label label-danger">Tahun Ini</span-->
-        </div>
+
   </div>
 </div>
  
