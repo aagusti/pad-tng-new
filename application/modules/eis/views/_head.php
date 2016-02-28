@@ -19,8 +19,11 @@
   <link rel="shortcut icon" href="<?=base_url()?>assets/img/favicon.ico">
   
   <script src="<?=base_url()?>assets/jquery/jquery-1.12.1.min.js" type="text/javascript"></script>
+  <script src="<?=base_url()?>assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+  <script type="text/javascript"  src="<?=base_url()?>/assets/chart/Chart.min.js"> </script>
+  <script type="text/javascript"  src="<?=base_url()?>/assets/chart/legend/legend.js"> </script>
+    
   <!--script src="<?=base_url()?>assets/isotope/isotope.pkgd.min.js" type="text/javascript"></script-->
-  <script src="<?=base_url()?>assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>  
       <!--script src="<?=base_url()?>assets/adminlte/dist/js/jquery-ui.min.js" type="text/javascript"></script>
       <script src="<?=base_url()?>assets/adminlte/plugins/slimScroll/jquery.slimScroll.min.js" type="text/javascript"></script>
       <script src="<?=base_url()?>assets/adminlte/plugins/fastclick/fastclick.min.js" type="text/javascript"></script>
