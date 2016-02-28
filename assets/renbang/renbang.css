@@ -1,0 +1,60 @@
+body {
+    padding-bottom: 15px;
+}
+div.top, div.bottom {
+    padding: 0px;
+    border: none;
+}
+div.top { 
+    margin-top: 5px;
+}
+div.bottom {
+    margin-top: 0px;
+}
+.btn-group .btn {
+    min-width: 70px;
+}
+.dataTables_scrollHeadInner, .dataTables_scrollBody {
+    width: auto !important;
+}
+.dataTables_scrollHeadInner .dataTable, .dataTables_scrollFootInner, .dataTables_scrollFootInner .dataTable {
+    width: 100% !important;
+}
+.dataTables_scrollHeadInner {
+    border: 1px solid #B3B3B3;
+}
+.dataTables_scrollHead table.dataTable {
+    border: none; 
+}
+.dataTables_scrollHead table.dataTable th{
+    border-bottom: none;
+    border-left: none;
+}
+.dataTables_scrollHead table.dataTable th:last-child{
+    border-right: none;
+}
+.dataTables_scrollBody {
+    border-left: 1px solid #B3B3B3;
+    border-right: 1px solid #B3B3B3;
+    border-bottom: 1px solid #B3B3B3;
+}
+.dataTables_scrollBody table.dataTable {
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+.dataTables_scrollFootInner .dataTable {
+    border-top: none;
+}
+table.dataTable tfoot th {
+    border-top: none;
+}
+table.display tfoot th {
+    padding: 1px 3px 1px 3px;
+}
+table.display tfoot th input[type="text"] {
+    margin-top: 2px;
+}
+.control-footer-bottom {
+    padding-top: 10px;
+}
