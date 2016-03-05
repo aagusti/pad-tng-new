@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="laporan_realisasi_pertahun" language="groovy" pageWidth="612" pageHeight="1008" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c3331eba-9472-48e4-a816-74e44b2463ac">
+	<property name="ireport.zoom" value="1.3310000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="DataStyle">
+		<box topPadding="1" bottomPadding="2"/>
+	</style>
+	<parameter name="FTahun" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2013]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FTanggal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2013/10/03]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PDaerah" class="java.lang.String">
+		<defaultValueExpression><![CDATA["KABUPATEN BOGOR"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[with
+-- anggaran
+a4 as (
+  select r.rekeningkd, substring(r.rekeningkd,1,5)||'%' rekeningkd2, sum(a.murni) murni, sum(a.perubahan) perubahan
+  from rka_kegiatan_line a
+  inner join tblrekening r on r.id=a.rekening_id
+  group by r.rekeningkd
+),
+a3 as (
+  select r.rekeningkd, substring(r.rekeningkd,1,3)||'%' rekeningkd2, sum(a.murni) murni, sum(a.perubahan) perubahan
+  from a4 a
+  inner join tblrekening r on r.rekeningkd ilike a.rekeningkd2
+  where r.levelid=3 and r.issummary=1
+  group by r.rekeningkd
+),
+a2 as (
+  select r.rekeningkd, substring(r.rekeningkd,1,2)||'%' rekeningkd2, sum(a.murni) murni, sum(a.perubahan) perubahan
+  from a3 a
+  inner join tblrekening r on r.rekeningkd ilike a.rekeningkd2
+  where r.levelid=2 and r.issummary=1
+  group by r.rekeningkd
+),
+a1 as (
+  select r.rekeningkd, substring(r.rekeningkd,1,1)||'%' rekeningkd2, sum(a.murni) murni, sum(a.perubahan) perubahan
+  from a2 a
+  inner join tblrekening r on r.rekeningkd ilike a.rekeningkd2
+  where r.levelid=1 and r.issummary=1
+  group by r.rekeningkd
+),
+a0 as (
+  select r.rekeningkd,sum(a.murni) murni, sum(a.perubahan) perubahan
+  from a1 a
+  inner join tblrekening r on r.rekeningkd ilike a.rekeningkd2
+  where r.levelid=0 and r.issummary=1
+  group by r.rekeningkd
+),
+
+-- realisasi
+lv4 as (
+  select r.rekeningkd, substring(r.rekeningkd,1,5)||'%' rekeningkd2, sum(amount) realisasi
+  from pad_terima_line tl
+  inner join tblrekening r on r.id=tl.rekening_id
+  where r.levelid=4
+  group by r.rekeningkd
+),
+lv3 as (
+  select r.rekeningkd, substring(r.rekeningkd,1,3)||'%' rekeningkd2, sum(realisasi) realisasi
+  from lv4 tl
+  inner join tblrekening r on r.rekeningkd ilike tl.rekeningkd2
+  where r.levelid=3 and r.issummary=1
+  group by r.rekeningkd
+),
+lv2 as (
+  select r.rekeningkd, substring(r.rekeningkd,1,2)||'%' rekeningkd2, sum(realisasi) realisasi
+  from lv3 tl
+  inner join tblrekening r on r.rekeningkd ilike tl.rekeningkd2
+  where r.levelid=2 and r.issummary=1
+  group by r.rekeningkd
+),
+lv1 as (
+  select r.rekeningkd, substring(r.rekeningkd,1,1)||'%' rekeningkd2, sum(realisasi) realisasi
+  from lv2 tl
+  inner join tblrekening r on r.rekeningkd ilike tl.rekeningkd2
+  where r.levelid=1 and r.issummary=1
+  group by r.rekeningkd
+),
+lv0 as (
+  select r.rekeningkd, sum(realisasi) realisasi
+  from lv1 tl
+  inner join tblrekening r on r.rekeningkd ilike tl.rekeningkd2
+  where r.levelid=0 and r.issummary=1
+  group by r.rekeningkd
+)
+
+
+select r.rekeningkd, r.rekeningnm, r.levelid,
+coalesce(case
+  when r.levelid=0 then a0.murni
+  when r.levelid=1 then a1.murni
+  when r.levelid=2 then a2.murni
+  when r.levelid=3 then a3.murni
+  when r.levelid=4 then a4.murni
+  end, 0
+) murni,
+coalesce(case
+  when r.levelid=0 then a0.perubahan
+  when r.levelid=1 then a1.perubahan
+  when r.levelid=2 then a2.perubahan
+  when r.levelid=3 then a3.perubahan
+  when r.levelid=4 then a4.perubahan
+  end, 0
+) perubahan,
+coalesce(case
+  when r.levelid=0 then lv0.realisasi
+  when r.levelid=1 then lv1.realisasi
+  when r.levelid=2 then lv2.realisasi
+  when r.levelid=3 then lv3.realisasi
+  when r.levelid=4 then lv4.realisasi
+  end, 0
+) realisasi
+from tblrekening r
+left join a0 on a0.rekeningkd=r.rekeningkd
+left join a1 on a1.rekeningkd=r.rekeningkd
+left join a2 on a2.rekeningkd=r.rekeningkd
+left join a3 on a3.rekeningkd=r.rekeningkd
+left join a4 on a4.rekeningkd=r.rekeningkd
+left join lv0 on lv0.rekeningkd=r.rekeningkd
+left join lv1 on lv1.rekeningkd=r.rekeningkd
+left join lv2 on lv2.rekeningkd=r.rekeningkd
+left join lv3 on lv3.rekeningkd=r.rekeningkd
+left join lv4 on lv4.rekeningkd=r.rekeningkd
+
+where r.enabled=1
+order by r.rekeningkd]]>
+	</queryString>
+	<field name="rekeningkd" class="java.lang.String"/>
+	<field name="rekeningnm" class="java.lang.String"/>
+	<field name="levelid" class="java.lang.Integer"/>
+	<field name="murni" class="java.lang.Double"/>
+	<field name="perubahan" class="java.lang.Double"/>
+	<field name="realisasi" class="java.math.BigDecimal"/>
+	<variable name="BulanNum" class="java.lang.String">
+		<variableExpression><![CDATA[]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{FTanggal}.substring( 5, 7 )]]></initialValueExpression>
+	</variable>
+	<variable name="BulanNama" class="java.lang.String">
+		<initialValueExpression><![CDATA[($V{BulanNum}=="01") ? "Januari" :
+($V{BulanNum}=="02") ? "Februari" :
+($V{BulanNum}=="03") ? "Maret" :
+($V{BulanNum}=="04") ? "April" :
+($V{BulanNum}=="05") ? "Mei" :
+($V{BulanNum}=="06") ? "Juni" :
+($V{BulanNum}=="07") ? "Juli" :
+($V{BulanNum}=="08") ? "Agustus" :
+($V{BulanNum}=="09") ? "September" :
+($V{BulanNum}=="10") ? "Oktober" :
+($V{BulanNum}=="11") ? "Nopember" : "Desember"]]></initialValueExpression>
+	</variable>
+	<variable name="Periode" class="java.lang.String">
+		<initialValueExpression><![CDATA[$P{FTanggal}.substring( 8, 10 ) + " " +
+$V{BulanNama}.toString().toUpperCase() + " " +
+$P{FTanggal}.substring( 0, 4 )]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="111" splitType="Stretch">
+			<textField>
+				<reportElement uuid="ffd3a84f-448a-4143-973a-cb5caaf8da62" x="0" y="0" width="572" height="50"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REALISASI PENERIMAAN PENDAPATAN DAERAH" +
+"\nSAMPAI DENGAN TANGGAL " + $V{Periode}.toUpperCase() +
+"\nTAHUN ANGGARAN " + $P{FTahun}.toString()]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="34de4efb-7593-4e40-9eb8-d1373bddcb04" stretchType="RelativeToBandHeight" x="0" y="79" width="59" height="31"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="204af6b2-b4ea-4343-9289-2a16e73bc6da" stretchType="RelativeToBandHeight" x="0" y="79" width="59" height="31"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KODE REKENING]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="1e771cb5-cff2-4eb5-974f-98824f3dcdc0" stretchType="RelativeToBandHeight" x="59" y="79" width="251" height="31"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="29a3a830-48c9-4a77-95ac-d01ca414f29f" stretchType="RelativeToBandHeight" x="59" y="79" width="251" height="31"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[URAIAN PENERIMAAN]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="72682ded-233e-438f-818e-06cc07c4887b" stretchType="RelativeToBandHeight" x="310" y="79" width="131" height="31"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="2f6916b6-d627-4166-8b4c-d1321071cc03" x="310" y="79" width="131" height="31"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TARGET\n" + "TAHUN " + $P{FTahun}.toString()]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="fc4af6af-7e3d-44cd-b293-4593959fe215" stretchType="RelativeToBandHeight" x="441" y="79" width="131" height="31"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="ce9104ad-2874-4256-9930-c0934210d954" stretchType="RelativeToBandHeight" x="441" y="79" width="131" height="31"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REALISASI" +
+"\nS.D "+ $V{Periode}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="14" splitType="Prevent">
+			<textField>
+				<reportElement uuid="e903d0cd-72f4-44b1-8d57-7614ec2fc611" x="59" y="0" width="251" height="14"/>
+				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="4">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rekeningnm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="14ed1e44-66ca-4ba0-8ffc-a94cd2033c11" x="0" y="0" width="59" height="14"/>
+				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="4">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rekeningkd}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="580d8173-5738-4ed7-a35b-38e21fd56869" x="310" y="0" width="131" height="14"/>
+				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="4">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{murni}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="62dba696-cb9e-42dc-89e8-b31c6b323401" x="441" y="0" width="131" height="14"/>
+				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="4">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{realisasi}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement uuid="76fc6e15-5e86-4f13-9406-45f73d66ebe6" x="452" y="0" width="120" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Halaman " + $V{PAGE_NUMBER}.toString()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

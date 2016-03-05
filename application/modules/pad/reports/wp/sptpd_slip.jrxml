@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sptpd_sspd" language="groovy" pageWidth="540" pageHeight="850" columnWidth="500" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f3f72caa-79bc-4d28-8716-710c84a30b71">
+	<property name="ireport.zoom" value="1.2100000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sptpd_id" class="java.lang.Integer"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="logobjb" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select s.id, c.nama as customernm, cu.opnm,
+pad.get_npwpd(c.id,true) npwpd,
+pad.get_nopd(cu.id,true) nopd,
+pad.get_bayarno(s.id, 'pad_spt') as bayarno, s.tahun,
+s.proses,
+
+extract(day from current_timestamp) cetaktgl,
+case
+when extract(dow from current_timestamp)=0 then 'Minggu'
+when extract(dow from current_timestamp)=1 then 'Senin'
+when extract(dow from current_timestamp)=2 then 'Selasa'
+when extract(dow from current_timestamp)=3 then 'Rabu'
+when extract(dow from current_timestamp)=4 then 'Kamis'
+when extract(dow from current_timestamp)=5 then 'Jumat'
+when extract(dow from current_timestamp)=6 then 'Sabtu'
+else 'Hari ###'
+end cetakhari,
+
+case
+when extract(month from current_timestamp)=1 then 'Januari'
+when extract(month from current_timestamp)=2 then 'Pebruari'
+when extract(month from current_timestamp)=3 then 'Maret'
+when extract(month from current_timestamp)=4 then 'April'
+when extract(month from current_timestamp)=5 then 'Mei'
+when extract(month from current_timestamp)=6 then 'Juni'
+when extract(month from current_timestamp)=7 then 'Juli'
+when extract(month from current_timestamp)=8 then 'Agustus'
+when extract(month from current_timestamp)=9 then 'September'
+when extract(month from current_timestamp)=10 then 'Oktober'
+when extract(month from current_timestamp)=11 then 'Nopember'
+when extract(month from current_timestamp)=12 then 'Desember'
+end cetakbulan,
+extract(year from current_timestamp) cetaktahun,
+
+extract(day from s.tanggal_validasi) terimatgl,
+case
+when extract(dow from s.tanggal_validasi)=0 then 'Minggu'
+when extract(dow from s.tanggal_validasi)=1 then 'Senin'
+when extract(dow from s.tanggal_validasi)=2 then 'Selasa'
+when extract(dow from s.tanggal_validasi)=3 then 'Rabu'
+when extract(dow from s.tanggal_validasi)=4 then 'Kamis'
+when extract(dow from s.tanggal_validasi)=5 then 'Jumat'
+when extract(dow from s.tanggal_validasi)=6 then 'Sabtu'
+else 'Hari ###'
+end terimahari,
+
+case
+when extract(month from s.tanggal_validasi)=1 then 'Januari'
+when extract(month from s.tanggal_validasi)=2 then 'Pebruari'
+when extract(month from s.tanggal_validasi)=3 then 'Maret'
+when extract(month from s.tanggal_validasi)=4 then 'April'
+when extract(month from s.tanggal_validasi)=5 then 'Mei'
+when extract(month from s.tanggal_validasi)=6 then 'Juni'
+when extract(month from s.tanggal_validasi)=7 then 'Juli'
+when extract(month from s.tanggal_validasi)=8 then 'Agustus'
+when extract(month from s.tanggal_validasi)=9 then 'September'
+when extract(month from s.tanggal_validasi)=10 then 'Oktober'
+when extract(month from s.tanggal_validasi)=11 then 'Nopember'
+when extract(month from s.tanggal_validasi)=12 then 'Desember'
+end terimabulan,
+extract(year from s.tanggal_validasi) terimatahun,
+
+to_char(s.masadari,'dd-mm-yyyy') masadari,
+
+case
+when extract(month from s.masadari)=1 then 'JANUARI'
+when extract(month from s.masadari)=2 then 'PEBRUARI'
+when extract(month from s.masadari)=3 then 'MARET'
+when extract(month from s.masadari)=4 then 'APRIL'
+when extract(month from s.masadari)=5 then 'MEI'
+when extract(month from s.masadari)=6 then 'JUNI'
+when extract(month from s.masadari)=7 then 'JULI'
+when extract(month from s.masadari)=8 then 'AGUSTUS'
+when extract(month from s.masadari)=9 then 'SEPTEMBER'
+when extract(month from s.masadari)=10 then 'OKTOBER'
+when extract(month from s.masadari)=11 then 'NOPEMBER'
+when extract(month from s.masadari)=12 then 'DESEMBER'
+end masabulan,
+
+extract(year from s.masadari) masatahun,
+to_char(current_timestamp, 'HH24:MI:SS') pukul,
+
+
+extract(day from s.jatuhtempotgl) jtempotgl,
+case
+when extract(dow from s.jatuhtempotgl)=0 then 'Minggu'
+when extract(dow from s.jatuhtempotgl)=1 then 'Senin'
+when extract(dow from s.jatuhtempotgl)=2 then 'Selasa'
+when extract(dow from s.jatuhtempotgl)=3 then 'Rabu'
+when extract(dow from s.jatuhtempotgl)=4 then 'Kamis'
+when extract(dow from s.jatuhtempotgl)=5 then 'Jumat'
+when extract(dow from s.jatuhtempotgl)=6 then 'Sabtu'
+else 'Hari ###'
+end jtempohari,
+
+case
+when extract(month from s.jatuhtempotgl)=1 then 'Januari'
+when extract(month from s.jatuhtempotgl)=2 then 'Pebruari'
+when extract(month from s.jatuhtempotgl)=3 then 'Maret'
+when extract(month from s.jatuhtempotgl)=4 then 'April'
+when extract(month from s.jatuhtempotgl)=5 then 'Mei'
+when extract(month from s.jatuhtempotgl)=6 then 'Juni'
+when extract(month from s.jatuhtempotgl)=7 then 'Juli'
+when extract(month from s.jatuhtempotgl)=8 then 'Agustus'
+when extract(month from s.jatuhtempotgl)=9 then 'September'
+when extract(month from s.jatuhtempotgl)=10 then 'Oktober'
+when extract(month from s.jatuhtempotgl)=11 then 'Nopember'
+when extract(month from s.jatuhtempotgl)=12 then 'Desember'
+end jtempobulan,
+
+extract(year from s.jatuhtempotgl) jtempotahun,
+
+
+
+s.dasar, s.tarif, s.kenaikan ,s.denda, s.bunga, s.kompensasi, s.lain2, s.setoran,
+s.pajak_terhutang as pajak,
+u.nama as usahanm, p.nama as pajaknm, pad.get_rekening(r.kode) as rekeningkd, r.nama as rekeningnm
+
+from pad.pad_spt s
+inner join pad.pad_customer_usaha cu on cu.id=s.customer_usaha_id
+inner join pad.pad_customer c on c.id=cu.customer_id
+inner join pad.pad_kecamatan kec on kec.id=c.kecamatan_id
+inner join pad.pad_kelurahan kel on kel.id=c.kelurahan_id and kel.kecamatan_id=c.kecamatan_id
+inner join pad.pad_usaha u on u.id=cu.usaha_id
+inner join pad.pad_jenis_pajak p on p.id=s.pajak_id
+inner join pad.pad_rekening r on p.rekening_id=r.id
+
+where s.id=$P{sptpd_id}]]>
+	</queryString>
+	<field name="customernm" class="java.lang.String"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="bayarno" class="java.lang.String"/>
+	<field name="tahun" class="java.lang.Integer"/>
+	<field name="terimatgl" class="java.lang.Integer"/>
+	<field name="terimahari" class="java.lang.String"/>
+	<field name="terimabulan" class="java.lang.String"/>
+	<field name="terimatahun" class="java.lang.Integer"/>
+	<field name="masadari" class="java.lang.String"/>
+	<field name="masabulan" class="java.lang.String"/>
+	<field name="masatahun" class="java.lang.Integer"/>
+	<field name="pukul" class="java.lang.String"/>
+	<field name="dasar" class="java.lang.Double"/>
+	<field name="tarif" class="java.lang.Double"/>
+	<field name="kenaikan" class="java.lang.Double"/>
+	<field name="denda" class="java.lang.Double"/>
+	<field name="bunga" class="java.lang.Double"/>
+	<field name="kompensasi" class="java.lang.Double"/>
+	<field name="lain2" class="java.lang.Double"/>
+	<field name="setoran" class="java.lang.Double"/>
+	<field name="pajak" class="java.lang.Double"/>
+	<field name="usahanm" class="java.lang.String"/>
+	<field name="pajaknm" class="java.lang.String"/>
+	<field name="rekeningkd" class="java.lang.String"/>
+	<field name="rekeningnm" class="java.lang.String"/>
+	<field name="jtempotgl" class="java.lang.Integer"/>
+	<field name="jtempohari" class="java.lang.String"/>
+	<field name="jtempobulan" class="java.lang.String"/>
+	<field name="jtempotahun" class="java.lang.Integer"/>
+	<field name="cetakhari" class="java.lang.String"/>
+	<field name="cetaktgl" class="java.lang.String"/>
+	<field name="cetakbulan" class="java.lang.String"/>
+	<field name="cetaktahun" class="java.lang.String"/>
+	<field name="opnm" class="java.lang.String"/>
+	<field name="nopd" class="java.lang.String"/>
+	<field name="proses" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="100" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="4a9d4951-0cf4-4068-b8ba-e72739095c9c" x="69" y="0" width="337" height="32"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="13" isBold="true"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="10.0"/>
+				</textElement>
+				<text><![CDATA[PEMERINTAH KOTA TANGERANG
+DINAS PENGELOLAAN KEUANGAN DAERAH]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="496bde8c-2381-4d79-b60c-5841a2cbc490" x="92" y="32" width="292" height="44"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="11"/>
+					<paragraph lineSpacing="Fixed" lineSpacingSize="12.0"/>
+				</textElement>
+				<text><![CDATA[Jl. Satria Sudirman No. 1 Telp: (021) 557-64955
+http://e-sptpd.tangerangkota.go.id]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="f7e889de-2890-4620-897c-5973eea713b6" x="0" y="86" width="500" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.25" lineStyle="Double"/>
+				</graphicElement>
+			</line>
+			<image>
+				<reportElement uuid="3c11ae50-cb8c-403d-a82d-71fe6b7f7567" x="0" y="0" width="92" height="86"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement uuid="151114bc-3f58-4508-9d79-ab2a7bc90c54" x="384" y="0" width="116" height="86"/>
+				<imageExpression><![CDATA[$P{logobjb}]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="279" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="79cc4ce5-df62-469d-a61e-844be33957a3" x="0" y="0" width="96" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[WAJIB PAJAK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ccb750db-4a85-4c18-a39e-69ea1c118a76" x="0" y="40" width="96" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[NOPD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ab63ae27-8cee-40dc-8309-8e50999c42b8" x="0" y="80" width="96" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[MASA PAJAK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cfc07563-87f9-4522-9af1-0b6ddd20af93" x="96" y="0" width="12" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e077ce46-be15-42ee-a876-f5f48af9604e" x="96" y="40" width="12" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="41c9ec6e-e66b-4438-bf61-a2e287e834ef" x="96" y="120" width="12" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="89c6e7b3-e5b3-4499-b185-2e3ab9a86e19" x="96" y="80" width="12" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="9974f6d1-4e9e-4df5-8f77-a793c88bb2cb" x="108" y="0" width="392" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customernm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cbb9af02-13a8-42d3-9669-599c37012f4b" x="108" y="40" width="222" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nopd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eed04512-2a08-478c-a4e2-d0395d492ec0" x="108" y="60" width="222" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PAJAK "+$F{usahanm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2f3d0eb6-4fdb-41e1-933a-b5b072af0e87" x="336" y="49" width="160" height="30"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMOR BAYAR]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="dd33d9df-441d-4519-9e55-d12d48f09003" x="336" y="79" width="160" height="58"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="24" isBold="true"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bayarno}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="45e157db-bab0-44cb-a90a-838c343d71e0" x="0" y="198" width="500" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA["Pajak Anda Membangun Kota Tangerang"
+]]></text>
+			</staticText>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="7c8685e2-691c-4665-83fb-289cc46f97fc" x="131" y="120" width="199" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pajak}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b05ca600-b3f5-4613-8f99-448a72570d2c" x="0" y="120" width="96" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[POKOK PAJAK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2302197e-bc5d-447f-970f-080cafaecd53" x="0" y="235" width="500" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[-- Terimakasih --]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="fd39a415-7156-40c7-a332-67ce87aaa284" x="0" y="176" width="500" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{proses}.equals(1) ? "Tanggal Validasi : Belum di validasi" : "Tanggal Validasi : "+$F{terimahari}+", "+$F{terimatgl}+" "+$F{terimabulan}+" "+$F{terimatahun})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b1aa4dd2-b46c-45e8-89e8-b8122b92cdd7" x="108" y="120" width="23" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Rp.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d4cbf345-189f-4f7c-a350-f58bbb26d361" x="0" y="60" width="96" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[JENIS PAJAK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5fb758fa-61c7-4761-8334-5d1749a247f8" x="96" y="60" width="12" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="82d396c1-e041-4530-bf89-4c92372d1f7f" x="108" y="80" width="222" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{masabulan}+" "+$F{masatahun}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a5e3a6dc-6c01-4e54-a7b8-f4f48f5211a3" x="0" y="144" width="500" height="31"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[** Keterlambatan pembayaran melewati tanggal jatuh tempo akan dikenakan sanksi administrasi berupa denda sebesar 2% (dua persen) setiap bulannya.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c2046758-18ae-46e5-b85c-4fecfc59150d" x="0" y="100" width="96" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[JATUH TEMPO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fb516b9c-52e9-4bb2-b7f6-eab152670a7c" x="96" y="100" width="12" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="7463192a-398c-49b6-9a48-2ace70f208a4" x="108" y="100" width="222" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jtempohari}+", "+$F{jtempotgl}+" "+$F{jtempobulan}+" "+$F{jtempotahun}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a011588e-e4bd-4089-a5e7-de1d77b41901" x="0" y="217" width="500" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA["Lakukan Pembayaran Pajak dengan selalu mencantumkan Nomor Bayar"]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a1ad4fe2-4fc7-40f2-a7d1-fc8f156e628e" x="0" y="257" width="500" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tanggal Cetak : "+$F{cetakhari}+", "+$F{cetaktgl}+" "+$F{cetakbulan}+" "+$F{cetaktahun}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a577a809-337b-4a16-84ba-7fce1d4b9391" x="108" y="20" width="392" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{opnm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c345750b-072d-4e33-acad-69548dd619d5" x="96" y="20" width="12" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7ae38505-525c-4b76-abb0-1b219ac182c5" x="0" y="20" width="96" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[NAMA USAHA]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

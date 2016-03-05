@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="kartudt" language="groovy" pageWidth="612" pageHeight="1008" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ae01b6fc-c451-4742-bc09-37ffd23e8e64">
+	<property name="ireport.zoom" value="1.2100000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="184"/>
+	<parameter name="tahun" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cuid" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select tglcetak, bulan_tahun, bulan, nomor, cid, cuid, konterid, npwpd, customernm, alamat,
+	kecamatannm, kelurahannm, wpnama, wpalamat, tmt, usaha_id, usahanm, so, tgl, masadari,
+	sum(omset) omset, sum(setoran) setoran, sum(bunga) bunga, sum(setoran_bunga) setoran_bunga,
+	sum(piutang) piutang
+FROM
+(select format_tgl(date(now()),false,false) tglcetak,
+hd.*, to_char(s.terimatgl, 'DD-MM-YYYY') tgl, s.masadari,
+coalesce(s.dasar,0) omset, coalesce(ss.jml_bayar,0) setoran,
+coalesce(case when ss.id is null then hit_denda(coalesce(s.pajak_terhutang,0),2,date(s.jatuhtempotgl)) else coalesce(ss.bunga,0) end,0) as bunga,
+coalesce(ss.jml_bayar-s.pajak_terhutang,0) setoran_bunga,
+case when ss.id is null then coalesce(coalesce(s.pajak_terhutang,0)+hit_denda(coalesce(s.pajak_terhutang,0),2,date(s.jatuhtempotgl)),0) else 0 end piutang
+from (
+   select date ($P!{tahun}||'-01-01') + (interval '1' month * generate_series(0, 11)) as bulan_tahun,
+     get_bulan(generate_series(1, 12), false) as bulan,
+     generate_series(1, 12) as nomor,
+     c.id cid, cu.id cuid, cu.konterid, get_npwpd(c.id, true) as npwpd, c.nama customernm,
+     c.alamat, kec.nama kecamatannm, kel.nama kelurahannm, c.wpnama, c.wpalamat,
+     cu.tmt, cu.usaha_id, initcap(u.nama) as usahanm, u.so
+   from pad_customer c
+   inner join pad_customer_usaha cu on c.id=cu.customer_id
+   inner join pad_usaha u on cu.usaha_id=u.id
+   inner join pad_kecamatan kec on c.kecamatan_id=kec.id
+   inner join pad_kelurahan kel on c.kelurahan_id=kel.id
+  where cu.id=$P!{cuid}
+) as hd
+left join pad_spt s on s.customer_usaha_id = hd.cuid
+  and extract(month from s.masadari)=extract(month from hd.bulan_tahun) and extract(year from s.masadari)=extract(year from hd.bulan_tahun)
+left join pad_invoice inv on inv.source_nama = 'pad_spt' and inv.source_id = s.id
+left join pad_sspd ss on ss.invoice_id=inv.id and ss.is_valid=1
+) A
+group by tglcetak, bulan_tahun, bulan, nomor, cid, cuid, konterid, npwpd, customernm, alamat,
+	kecamatannm, kelurahannm, wpnama, wpalamat, tmt, usaha_id, usahanm, so, tgl, masadari
+order by bulan_tahun]]>
+	</queryString>
+	<field name="tglcetak" class="java.lang.String"/>
+	<field name="bulan_tahun" class="java.sql.Timestamp"/>
+	<field name="bulan" class="java.lang.String"/>
+	<field name="nomor" class="java.lang.Integer"/>
+	<field name="cid" class="java.lang.Long"/>
+	<field name="cuid" class="java.lang.Long"/>
+	<field name="konterid" class="java.lang.Integer"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="customernm" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="kecamatannm" class="java.lang.String"/>
+	<field name="kelurahannm" class="java.lang.String"/>
+	<field name="wpnama" class="java.lang.String"/>
+	<field name="wpalamat" class="java.lang.String"/>
+	<field name="tmt" class="java.sql.Timestamp"/>
+	<field name="usaha_id" class="java.lang.Integer"/>
+	<field name="usahanm" class="java.lang.String"/>
+	<field name="so" class="java.lang.String"/>
+	<field name="tgl" class="java.lang.String"/>
+	<field name="masadari" class="java.sql.Timestamp"/>
+	<field name="omset" class="java.lang.Double"/>
+	<field name="setoran" class="java.lang.Long"/>
+	<field name="bunga" class="java.lang.Double"/>
+	<field name="setoran_bunga" class="java.lang.Long"/>
+	<field name="piutang" class="java.lang.Long"/>
+	<variable name="omset_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{omset}]]></variableExpression>
+	</variable>
+	<variable name="setoran_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{setoran}]]></variableExpression>
+	</variable>
+	<variable name="bunga_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{bunga}]]></variableExpression>
+	</variable>
+	<variable name="setoran_bunga_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{setoran_bunga}]]></variableExpression>
+	</variable>
+	<variable name="piutang_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{piutang}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="258" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="1b9ac7a6-5fab-4eb1-a491-cef124fd3c6a" x="0" y="0" width="572" height="15"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[KARTU DATA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="291ea5e3-880e-437b-9a6a-f3d701fbce04" x="0" y="15" width="572" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PAJAK "+$F{usahanm}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="409d88e6-2f4a-456c-9509-294b1c4889b8" x="0" y="30" width="572" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TAHUN PAJAK : "+$P{tahun}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0716e5bc-0ae4-4718-a3fd-e996bb69cc86" x="0" y="62" width="198" height="15"/>
+				<textElement markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{so}.equals( "S" ) ? "*** WP SELF ASSESMENT ***" : "*** OFFICE ASSESMENT ***"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f7f2a7fd-e2ef-4370-8cf4-72c01c75b7d1" x="364" y="62" width="180" height="15"/>
+				<textElement textAlignment="Right" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NPWPD : "+$F{npwpd}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bd30b81c-b8eb-448d-b596-2706c31f1654" x="0" y="88" width="114" height="15"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1. Nama Badan Usaha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b2579040-d99b-48a8-b4a9-addeb2ca71e4" x="0" y="103" width="114" height="15"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[2. A l a m a t]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="22f2954d-5465-46a8-b0c8-7ea0c43162d5" x="0" y="118" width="114" height="15"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[3. Nama Pemilik]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="935cb34c-c53c-4c2b-a9fa-22ddb94dfa06" x="0" y="133" width="114" height="15"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[4. A l a m a t]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d7affa36-59a4-4c28-ae16-e3b4a3234388" x="114" y="88" width="10" height="15"/>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dc3a40dd-aa04-4b7a-b31d-1bb938903d68" x="114" y="103" width="10" height="15"/>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a33fb104-743e-419e-a469-26d1bcfc0223" x="114" y="118" width="10" height="15"/>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e4f5a0f1-d0de-408b-9f4c-f30e576bab8b" x="114" y="133" width="10" height="15"/>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="aca140a5-94de-4169-aeb9-9ab23888963a" x="0" y="164" width="300" height="15"/>
+				<textElement markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["A. Diisi untuk Objek Pajak "+$F{usahanm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c2cbc46f-fcdd-440f-92df-954255858bf5" x="14" y="179" width="221" height="15"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1. Menggunakan Kas Register ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f6a89a3e-d855-495d-b991-7c18dd9fc638" x="14" y="194" width="221" height="15"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[2. Menggunakan Pembukuan / Pencatatan ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8831b5ad-c6b6-4d8d-95ff-356e1f146c64" x="14" y="209" width="273" height="15"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[3. Jumlah pembayaran dan setoran yang dilakukan ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="59522b9f-b491-4580-8201-491875d92523" x="235" y="179" width="19" height="13"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e405656a-40c7-4f6f-b2ef-9953a2321087" x="264" y="179" width="178" height="15"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1. Ya  2. Tidak]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b95ef69d-c538-4416-a8e6-96e359b3fa34" x="264" y="194" width="178" height="15"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1. Ya  2. Tidak]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="500a8ff6-158c-4541-b2b1-10b87de7f3e3" x="235" y="194" width="19" height="13"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="06d8250c-e67a-4438-96fe-fe35cf7b6a9c" x="0" y="232" width="28" height="26"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1c8742a0-aa17-4935-b785-0f919fad4234" x="28" y="232" width="71" height="26"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Tanggal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="407d706d-39f8-4828-8099-0b7cd40a5eb9" x="99" y="232" width="73" height="26"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Masa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8260ded0-2619-4707-aead-763312333f17" x="172" y="232" width="97" height="26"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Jumlah
+Omset (Rp.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c3dc8114-5883-4775-b80b-b00d10e9a59d" x="269" y="232" width="84" height="26"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Setoran (Rp.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6454ac37-901e-4712-8583-9d54a2a550f9" x="353" y="232" width="67" height="26"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Jumlah
+Denda (Rp.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73b6c6c3-869e-45bc-b7fd-6b458967651f" x="420" y="232" width="67" height="26"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Setoran
+Denda (Rp.)]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="39876bc8-e737-4293-b6ca-1b0c059cddc9" x="124" y="88" width="420" height="16"/>
+				<textElement markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customernm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3d651503-9476-4ee0-93a8-009c21b22c34" x="124" y="103" width="420" height="16"/>
+				<textElement markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{alamat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f5335fbd-fddb-4bb2-b9ba-4968ca6d920d" x="124" y="118" width="420" height="16"/>
+				<textElement markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wpnama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8215929d-1a89-4f96-9863-9c3e2ecd3aeb" x="124" y="133" width="420" height="16"/>
+				<textElement markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wpalamat}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="1f085c85-628a-444d-90bc-74a02fb931c7" x="487" y="232" width="85" height="26"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Piutang (Rp.)]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="77af7f35-1fbf-4fa8-b1e5-8f7835702da1" x="99" y="0" width="73" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bulan}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ce20c1d2-af45-4c27-aeb9-200798d63a02" x="420" y="0" width="67" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="none">
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($F{setoran_bunga}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7b5e273a-0e6e-4114-b11a-4adcced0b3dc" x="28" y="0" width="71" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tgl}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c841e12a-df8c-4eb3-afb5-116a28c4ef79" x="353" y="0" width="67" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="none">
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($F{bunga}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="29b06659-51fe-4119-8701-e65e54e3d602" x="172" y="0" width="97" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="none">
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($F{omset}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2267904f-cf35-4753-b294-437e57806acb" x="0" y="0" width="28" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomor}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="23bb9316-7c06-432d-8d96-076321c255ed" x="269" y="0" width="84" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="none">
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($F{setoran}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4cf23e62-b95b-4640-87d8-892aeb37a4a4" x="487" y="0" width="85" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" markup="none">
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($F{piutang}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="153" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="34544d8f-bd59-40bd-a1ba-23a62c8a342e" x="0" y="0" width="172" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[JUMLAH TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="84cb6ba5-4c2a-485e-9355-d68f588e4bb4" x="364" y="42" width="178" height="14"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[KASIE PENETAPAN]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="4ba03df4-42a3-4828-a7e6-4f18177b9fe3" x="57" y="120" width="178" height="16"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true" isUnderline="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MUH. THAKHIR, SH"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c81d98c4-150f-4b61-97c4-e2ab5e954672" x="57" y="136" width="178" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NIP. 198011092009011005"]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="bf2023af-3f30-45ea-8204-e96ea8bf1b89" x="172" y="0" width="97" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($V{omset_1}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c146e488-c8c0-44b9-93ac-9a4acf4c4b54" x="269" y="0" width="84" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($V{setoran_1}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d96d7de6-7e5b-4b70-9a4c-568eab253144" x="353" y="0" width="67" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($V{bunga_1}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f62d5108-f2f8-4b41-b538-217aa100e473" x="420" y="0" width="67" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($V{setoran_bunga_1}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="69163b5e-f3ee-4916-be91-6ee316d408eb" x="487" y="0" width="85" height="16"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($V{piutang_1}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b4bc8fa2-f2e4-437f-9c9c-d3d4f29a140e" x="364" y="26" width="178" height="16"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="false" isUnderline="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tanggal Cetak : "+$F{tglcetak}.toString()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="547537b7-6cc3-4350-a19f-255f260412ed" x="364" y="136" width="178" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NIP. 195907161993122001"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="71fa1187-104a-4dae-8cf8-067ae65f3791" x="364" y="120" width="178" height="16"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true" isUnderline="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dra. Hj. YANI SURYANI"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="051a00c5-afc7-458c-a103-47cf47c7a853" x="57" y="42" width="178" height="14"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[KASIE PENDATAAN]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sptpd_rincian_omset" language="groovy" pageWidth="595" pageHeight="985" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" uuid="c8fe7dea-93df-49cf-bd6d-543663032785">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sptpd_id" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select c.wpnama as pemiliknm, c.nama as customernm, c.alamat as customeralamat, get_sptpdno(s.id), get_nopd(cu.id,true) nopd, cu.opnm,
+get_npwpd(c.id,true) npwpd, u.nama as usahanm, p.nama as pajaknm, get_rekening(r.kode) as rekeningkd, r.nama as rekeningnm,
+get_bayarno(s.id,'pad_spt') as bayarno, s.tahun, s.id, s.customer_id, s.customer_usaha_id, s.pajak_id, ROW_NUMBER() OVER (ORDER BY urut) as nomor, urut, omset, keterangan,
+case
+when urut = 32 then 'Lainnya'
+when urut <> 32 then urut::text end no_urut,
+
+case
+when extract(month from s.masadari)=1 then 'JANUARI'
+when extract(month from s.masadari)=2 then 'PEBRUARI'
+when extract(month from s.masadari)=3 then 'MARET'
+when extract(month from s.masadari)=4 then 'APRIL'
+when extract(month from s.masadari)=5 then 'MEI'
+when extract(month from s.masadari)=6 then 'JUNI'
+when extract(month from s.masadari)=7 then 'JULI'
+when extract(month from s.masadari)=8 then 'AGUSTUS'
+when extract(month from s.masadari)=9 then 'SEPTEMBER'
+when extract(month from s.masadari)=10 then 'OKTOBER'
+when extract(month from s.masadari)=11 then 'NOPEMBER'
+when extract(month from s.masadari)=12 then 'DESEMBER'
+end masabulan,
+
+extract(year from s.masadari) masatahun,
+
+extract(day from current_timestamp) terimatgl,
+case
+when extract(dow from current_timestamp)=0 then 'Minggu'
+when extract(dow from current_timestamp)=1 then 'Senin'
+when extract(dow from current_timestamp)=2 then 'Selasa'
+when extract(dow from current_timestamp)=3 then 'Rabu'
+when extract(dow from current_timestamp)=4 then 'Kamis'
+when extract(dow from current_timestamp)=5 then 'Jumat'
+when extract(dow from current_timestamp)=6 then 'Sabtu'
+else 'Hari ###'
+end terimahari,
+
+case
+when extract(month from current_timestamp)=1 then 'Januari'
+when extract(month from current_timestamp)=2 then 'Pebruari'
+when extract(month from current_timestamp)=3 then 'Maret'
+when extract(month from current_timestamp)=4 then 'April'
+when extract(month from current_timestamp)=5 then 'Mei'
+when extract(month from current_timestamp)=6 then 'Juni'
+when extract(month from current_timestamp)=7 then 'Juli'
+when extract(month from current_timestamp)=8 then 'Agustus'
+when extract(month from current_timestamp)=9 then 'September'
+when extract(month from current_timestamp)=10 then 'Oktober'
+when extract(month from current_timestamp)=11 then 'Nopember'
+when extract(month from current_timestamp)=12 then 'Desember'
+end terimabulan,
+extract(year from current_timestamp) terimatahun
+
+
+from
+(
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 1 as urut, omset1 as omset, keterangan1 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari,  tahun, 2 as urut, omset2 as omset, keterangan2 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 3 as urut, omset3 as omset, keterangan3 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 4 as urut, omset4 as omset, keterangan4 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 5 as urut, omset5 as omset, keterangan5 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 6 as urut, omset6 as omset, keterangan6 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 7 as urut, omset7 as omset, keterangan7 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 8 as urut, omset8 as omset, keterangan8 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 9 as urut, omset9 as omset, keterangan9 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 10 as urut, omset10 as omset, keterangan10 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 11 as urut, omset11 as omset, keterangan11 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 12 as urut, omset12 as omset, keterangan12 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 13 as urut, omset13 as omset, keterangan13 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 14 as urut, omset14 as omset, keterangan14 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 15 as urut, omset15 as omset, keterangan15 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 16 as urut, omset16 as omset, keterangan16 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 17 as urut, omset17 as omset, keterangan17 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 18 as urut, omset18 as omset, keterangan18 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 19 as urut, omset19 as omset, keterangan19 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 20 as urut, omset20 as omset, keterangan20 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 21 as urut, omset21 as omset, keterangan21 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 22 as urut, omset22 as omset, keterangan22 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 23 as urut, omset23 as omset, keterangan23 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 24 as urut, omset24 as omset, keterangan24 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 25 as urut, omset25 as omset, keterangan25 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 26 as urut, omset26 as omset, keterangan26 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 27 as urut, omset27 as omset, keterangan27 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 28 as urut, omset28 as omset, keterangan28 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 29 as urut, omset29 as omset, keterangan29 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 30 as urut, omset30 as omset, keterangan30 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 31 as urut, omset31 as omset, keterangan31 as keterangan from pad_spt
+union
+select id, customer_id, customer_usaha_id, pajak_id, masadari, tahun, 32 as urut, omset_lain as omset, keterangan_lain as keterangan from pad_spt
+) s
+inner join pad_customer_usaha cu on cu.id=s.customer_usaha_id
+inner join pad_customer c on c.id=cu.customer_id
+inner join pad_kecamatan kec on kec.id=c.kecamatan_id
+inner join pad_kelurahan kel on kel.id=c.kelurahan_id and kel.kecamatan_id=c.kecamatan_id
+inner join pad_usaha u on u.id=cu.usaha_id
+inner join pad_jenis_pajak p on p.id=s.pajak_id
+inner join pad_rekening r on p.rekening_id=r.id
+where s.id=$P{sptpd_id}
+order by s.id, s.urut]]>
+	</queryString>
+	<field name="customernm" class="java.lang.String"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="usahanm" class="java.lang.String"/>
+	<field name="masabulan" class="java.lang.String"/>
+	<field name="masatahun" class="java.lang.Integer"/>
+	<field name="urut" class="java.lang.Integer"/>
+	<field name="omset" class="java.lang.Float"/>
+	<field name="keterangan" class="java.lang.String"/>
+	<field name="terimatgl" class="java.lang.String"/>
+	<field name="terimahari" class="java.lang.String"/>
+	<field name="terimabulan" class="java.lang.String"/>
+	<field name="terimatahun" class="java.lang.String"/>
+	<field name="nopd" class="java.lang.String"/>
+	<field name="customeralamat" class="java.lang.String"/>
+	<field name="pajaknm" class="java.lang.String"/>
+	<field name="nomor" class="java.lang.String"/>
+	<field name="pemiliknm" class="java.lang.String"/>
+	<field name="opnm" class="java.lang.String"/>
+	<field name="no_urut" class="java.lang.String"/>
+	<variable name="total" class="java.lang.Float" calculation="Sum">
+		<variableExpression><![CDATA[$F{omset}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="199" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="1994c8ed-615d-457a-9589-2e93982b7369" x="80" y="24" width="12" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="afd7bc2a-347b-4640-b96f-0ce1bfbeb020" x="0" y="58" width="80" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Tahun]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="af95cd6c-d6e7-4ad4-82c4-da287209986a" x="80" y="58" width="12" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3d14fc0e-9941-4b4f-beaf-127862e5c7c6" x="80" y="41" width="12" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="d1c8dd51-396b-4243-8f91-40e6c9b2ddc6" x="92" y="41" width="239" height="17"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{masabulan}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f8edf684-0b1d-4245-b395-0e904c617255" x="0" y="41" width="80" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Bulan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="344acd95-c267-410a-a675-47a21cc81e07" x="0" y="24" width="80" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Perihal]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="514af79d-2058-4e78-b9af-d349f601a8e4" x="349" y="0" width="190" height="20"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA['Tangerang, '+$F{terimatgl}+' '+$F{terimabulan}+' '+$F{terimatahun}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="55886a59-2cc4-4d49-a9fb-f3dcdbee64e4" x="349" y="29" width="190" height="95"/>
+				<textElement verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kepada Yth.
+Kepala Dinas Pengelolaan Keuangan Daerah
+cq. Kepala Bidang Pajak Daerah dan Pendapatan Lainnya
+di
+        T A N G E R A N G]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2ecd1167-386b-4703-be5f-9ab829479f36" x="92" y="24" width="239" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Laporan Omset Bulanan]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="288d9438-80c4-472b-a6eb-f0c94fc19c68" x="92" y="58" width="239" height="17"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{masatahun}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="897eb089-718a-4b96-b95f-cf02c1f2bf57" x="80" y="109" width="12" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a5b90e8a-1342-4106-8164-e161157ff2a5" x="0" y="109" width="80" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Perusahaan]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5e72058f-320b-4190-bcac-63577b7ebff3" x="92" y="109" width="239" height="17"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customernm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5c356086-39e7-4933-bba6-cc771a7004d0" x="80" y="126" width="12" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7d18e24b-b48a-414a-81d0-4d50e3459f1a" x="0" y="126" width="80" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Alamat]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="52240630-a77f-4dc3-874e-9d9b32a73362" x="92" y="126" width="239" height="31"/>
+				<textElement verticalAlignment="Top" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customeralamat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7fd74bd9-17c9-4b97-8dd5-6be7631b0f85" x="0" y="164" width="539" height="30"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA['           Disampaikan dengan hormat, laporan omset bulanan untuk dijadikan dasar penetapan pajak '+$F{usahanm}+' dengan rincian jumlah omset sebagai berikut :']]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="075f6e88-a6d2-4dc9-b6c7-cac93221a73b" x="80" y="75" width="12" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="bf0baace-b7d4-4fd7-bda0-863afc978e21" x="92" y="75" width="239" height="17"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nopd}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="79d3eff0-6051-4677-84fd-e276386ad4df" x="0" y="75" width="80" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[NOPD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6d2fdf1f-127b-48f3-b9b1-4762634a0928" x="80" y="92" width="12" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="92489eff-f857-478b-bf41-26bc759a87ce" x="92" y="92" width="239" height="17"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{opnm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="861d2c15-adb2-4474-b06d-9b47fd05c9ae" x="0" y="92" width="80" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Usaha]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="ac8a6ee4-77eb-43ee-8034-40031f7048b3" x="28" y="0" width="69" height="36" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Tanggal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a83cf199-00d6-4e36-9ff3-c45949f851e8" x="97" y="0" width="127" height="36" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Jumlah Omset
+(Rp)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0b6b36fc-7fdc-438e-a45f-1ca617cc2c59" x="224" y="0" width="315" height="36" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Keterangan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0ecb92d8-ca34-437b-aacc-fdaae8764a6f" x="0" y="0" width="28" height="36" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[No]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement uuid="df812325-7774-452d-9571-2906835e027b" x="28" y="0" width="69" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{no_urut}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.- ;(#,##0.- )">
+				<reportElement uuid="86d5e627-ec01-4a50-b4d6-c3f84dd21a4d" x="97" y="0" width="127" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{omset}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="16c50deb-763f-4474-8127-b6fe1e6023d9" x="224" y="0" width="315" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{keterangan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d9f1d85f-ef0b-4815-9a1c-9ef32fac4ad6" x="0" y="0" width="28" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="212" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="671d4924-7b6d-4813-bb3c-4210c758d3a4" x="0" y="0" width="97" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jumlah Seluruhnya]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="612f1c1e-f468-4251-a38a-1a19fc5e2a62" x="224" y="0" width="315" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="83fb0439-494a-4952-903c-5fe3e0ca7fd3" x="0" y="23" width="539" height="69"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA['           Demikian disampaikan, jumlah omset yang kami laporkan/sampaikan tersebut adalah BENAR sesuai dengan jumlah transaksi yang terjadi yang didukung, dengan bukti-bukti transaksi yang sah berupa bon dan / atau bukti lain yang sejenis (tersimpan di perusahaan) yang sewaktu-waktu bila diperlukan kami siap menunjukkan/memberikan dan apabila terdapat perbedaan (salah) antara laporan omset dengan bukti transaksi tersebut, kami siap mempertanggungjawabkannya / menyelesaikan sesua ketentuan berlaku.']]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ea54d49e-24cc-4d0f-bfc2-990a32fd7de5" x="349" y="101" width="190" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HORMAT KAMI,
+
+
+
+
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="71946081-9f55-439a-8d27-0190829727d3" x="349" y="174" width="190" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pemiliknm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="13ba69da-3c1a-447a-a230-77a05479ea1e" x="349" y="193" width="190" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[WAJIB PAJAK]]></text>
+			</staticText>
+			<textField pattern="#,##0.- ;(#,##0.- )">
+				<reportElement uuid="08c2a35b-1929-420a-8257-603dfe9c4368" x="97" y="0" width="127" height="15"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

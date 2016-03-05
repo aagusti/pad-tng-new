@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="wpkartu" language="groovy" pageWidth="240" pageHeight="304" columnWidth="240" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="66b35b95-ec47-4804-adc7-846cb3698f5a">
+	<property name="ireport.zoom" value="1.8150000000000022"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="40"/>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="parametercode" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1234"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="daerah" class="java.lang.String"/>
+	<parameter name="dinas" class="java.lang.String"/>
+	<parameter name="img" class="java.lang.String">
+		<defaultValueExpression><![CDATA["kartuwp.jpg"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT a.id, get_npwpd(a.id, true) as npwpd, a.customernm as nama, a.alamat, b.kecamatannm, c.kelurahannm, a.telphone, a.wpnama, a.wpalamat, a.kukuhno, a.kukuhtgl, reg_date,
+      b.kecamatankd, c.kelurahankd, a.formno, a.kabupaten,  a.pb, j.nip, j.pejabatnm, j.jabatan, j.pangkat , a.kukuhprinted
+      FROM pad_customer a
+      INNER JOIN tblkelurahan c ON a.kelurahan_id=c.id
+      INNER JOIN tblkecamatan b ON c.kecamatan_id=b.id
+      LEFT JOIN tblpejabat j ON a.kukuh_jabat_id=j.id
+WHERE (a.id='$P!{id}')]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="nama" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="kecamatannm" class="java.lang.String"/>
+	<field name="kelurahannm" class="java.lang.String"/>
+	<field name="telphone" class="java.lang.String"/>
+	<field name="wpnama" class="java.lang.String"/>
+	<field name="wpalamat" class="java.lang.String"/>
+	<field name="kukuhno" class="java.lang.String"/>
+	<field name="kukuhtgl" class="java.sql.Timestamp"/>
+	<field name="reg_date" class="java.sql.Timestamp"/>
+	<field name="kecamatankd" class="java.lang.String"/>
+	<field name="kelurahankd" class="java.lang.String"/>
+	<field name="formno" class="java.lang.Integer"/>
+	<field name="kabupaten" class="java.lang.String"/>
+	<field name="pb" class="java.lang.Integer"/>
+	<field name="nip" class="java.lang.String"/>
+	<field name="pejabatnm" class="java.lang.String"/>
+	<field name="jabatan" class="java.lang.String"/>
+	<field name="pangkat" class="java.lang.String"/>
+	<field name="kukuhprinted" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="304" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="f34230bf-3db4-4a37-b244-3c83938771ff" x="0" y="152" width="240" height="151"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="1d0b015e-58cd-47d8-8a38-2381f69536f0" x="0" y="0" width="240" height="151"/>
+			</rectangle>
+			<image scaleImage="RetainShape" isUsingCache="false">
+				<reportElement uuid="c0c9e238-afbc-4aac-86d2-a3569bbbb6d5" x="0" y="0" width="240" height="151"/>
+				<imageExpression><![CDATA[$P{img}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="52086f8f-305a-4496-b133-c5e3f6590908" x="10" y="56" width="33" height="12" forecolor="#FFFFFF"/>
+				<textElement>
+					<font size="7" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[NPWPD :]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="1ad9f94b-3c1a-45bc-bfd6-a6d73b34643b" x="43" y="56" width="184" height="12" forecolor="#FFFFFF"/>
+				<textElement markup="none">
+					<font size="7" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{npwpd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3e5f8be8-2f0c-4abd-8e82-80bb962e1742" x="10" y="72" width="217" height="12" forecolor="#FFFFFF"/>
+				<textElement markup="none">
+					<font size="7" isBold="true" isItalic="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="83682ef8-2ff6-4cc2-bcda-88865644228b" x="24" y="87" width="203" height="11" forecolor="#FFFFFF"/>
+				<textElement markup="none">
+					<font size="7" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{alamat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0b6af152-4d7e-46ef-96e4-62402439ad29" x="24" y="97" width="203" height="11" forecolor="#FFFFFF"/>
+				<textElement markup="none">
+					<font size="7" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kelurahannm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="577bae5d-a5ca-4357-aaaa-b844d688bf20" x="24" y="108" width="203" height="11" forecolor="#FFFFFF"/>
+				<textElement markup="none">
+					<font size="7" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kecamatannm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fa30cf6b-eb04-44a5-a2bd-6223ae6447b7" x="24" y="118" width="203" height="11" forecolor="#FFFFFF"/>
+				<textElement markup="none">
+					<font size="7" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kabupaten}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0662a793-c63d-4178-b4cd-317f98f08516" x="9" y="135" width="73" height="12" forecolor="#FFFFFF"/>
+				<textElement>
+					<font size="7" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[TGL TERDAFTAR :]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="9febb002-7ae5-4e3b-929b-15d9eecc63c3" x="76" y="135" width="68" height="12" forecolor="#FFFFFF"/>
+				<textElement markup="none">
+					<font size="7" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reg_date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6ebaff67-e0a7-43b0-9b3a-7f6f6c8adf4c" x="10" y="161" width="217" height="13"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERHATIAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2c8e8564-f969-477c-bd05-9faaef99059b" stretchType="RelativeToTallestObject" x="17" y="174" width="210" height="30"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Kartu ini harap disimpan baik-baik dan apabila hilang, agar segera melapor ke Dinas Pendapatan, Pengelolaan Keuangan dan Aset Daerah Kab Bogor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="acc99664-1517-4496-a795-5f14bdc8019a" x="11" y="174" width="6" height="14"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5a754df5-0ad1-4c01-8117-2627509ea9a3" stretchType="RelativeToTallestObject" x="17" y="205" width="210" height="18"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[NPWPD agar dicantumkan dalam hal berhubungan dengan dokumen perpajakan daerah.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eb7ef741-b2c8-4c50-8317-0829b17e451e" x="11" y="205" width="6" height="14"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d28fdc78-d8eb-4045-b218-c22fbcb79fec" x="11" y="226" width="6" height="14"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="abe3e5a4-d0c3-4b3b-8415-93ce6b7838f7" stretchType="RelativeToTallestObject" x="17" y="226" width="210" height="18"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Dalam hal Wajib Pajak pindah domisili atau lokasi usaha, supaya Melaporkan diri ke DPPKAD.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="8f2b2175-97d2-4e81-811e-90a823c2079a" x="11" y="247" width="216" height="22"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["BERSAMA ANDA MEMBANGUN\n"+
+$P{daerah}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement uuid="d6adb331-0312-4bf1-b360-3b0e4091d832" stretchType="RelativeToBandHeight" mode="Transparent" x="9" y="269" width="218" height="22"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$P{parametercode}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

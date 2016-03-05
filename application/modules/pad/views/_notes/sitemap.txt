@@ -1,0 +1,6 @@
+SITE-MAP PADL
+              Controller    Function      view   depends       url_get
+ Home         Padl          index         vpadl  Chart.min.js  get realisasi today 
+                            get_dashboard 
+ Login        Login         
+ 

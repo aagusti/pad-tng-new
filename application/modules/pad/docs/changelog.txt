@@ -1,0 +1,3 @@
+alter table pad.pad_customer add posted smallint not null default 0;
+alter table pad.pad_invoice add posted smallint not null default 0;
+alter table pad.pad_sspd add posted smallint not null default 0;

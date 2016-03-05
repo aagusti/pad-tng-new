@@ -1,0 +1,75 @@
+/* Jquery 1.8.4 --------------------- */
+.ui-corner-all { 
+	border-radius: 0px; 
+	-moz-border-radius-bottomright: 0px; 
+	-moz-border-radius-bottomleft: 0px; 
+	-moz-border-radius-topright: 0px; 
+	-moz-border-radius-topleft: 0px;
+}
+.ui-widget {
+    font-family: Arial,sans-serif,Verdana;
+    font-size: 11px;
+}
+--.ui-helper-hidden-accessible { top: -99999999px; } 
+--.ui-helper-clearfix { display:none; }
+#ui-datepicker-div { display:none; }
+.ui-corner-bl { border-bottom-left-radius: 0px; }
+.ui-corner-tl { border-top-left-radius: 0px; }
+.ui-corner-br { border-bottom-right-radius: 0px; }
+.ui-corner-tr { border-top-right-radius: 0px; }
+.ui-buttonset { margin-right: 1px; }  /* mentogin pagination ke kanan */
+
+
+
+/* dataTables Customize */
+table.dataTable tr.even.row_selected td {
+	background-color: #B0BED9;
+}
+table.dataTable tr.odd.row_selected td {
+	background-color: #9FAFD1;
+}
+td.right  { text-align: right }
+td.center { text-align: center }
+
+table.dataTable {
+	border: 1px #B3B3B3 solid;	
+}
+table.dataTable thead th {
+    border-bottom: 1px #B3B3B3 solid;
+}
+
+.dataTables_length {
+	width: 120px;
+}
+
+.dataTables_length select{
+	width: 60px !important;
+}
+.dataTables_filter {
+	width: 280px;
+	height:50px ;
+}
+.dataTables_processing {
+    top: 50%;
+    border: 0;
+	background: none;
+}
+.dataTable {
+	margin-bottom: 8px;
+	font-size: 12px;
+}
+
+
+
+
+/* Flatten das boostrap */
+.well, .navbar-inner, .popover, .btn, .tooltip, input, select, textarea, pre, .progress, .modal, .add-on, .alert, .table-bordered, .nav>.active>a, .dropdown-menu, .tooltip-inner, .badge, .label, .img-polaroid {
+	-moz-box-shadow: none !important;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	-webkit-border-radius: 0px !important;
+	-moz-border-radius: 0px !important;
+	border-radius: 0px !important;
+	border-collapse: collapse !important;
+	background-image: none !important;
+}
