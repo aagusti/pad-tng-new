@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tap_catat_vol_airtanah" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="12" uuid="a156c92c-7326-4bf6-85f7-c26e125f17a2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="tglcetak" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2013-01-01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tahun" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2013]]></defaultValueExpression>
+	</parameter>
+	<parameter name="daerah" class="java.lang.String"/>
+	<parameter name="dinas" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT X.*, pjb.nama pejabatnm, pjb.nip, pjb.jabatan
+FROM
+(SELECT npwpd, nama, alamat, usahakd, konterid, ket,
+SUM(jan) as jan, SUM(feb) as feb, SUM(mar) as mar, SUM(apr) as apr,
+SUM(mei) as mei, SUM(jun) as jun, SUM(jul) as jul, SUM(agt) as agt,
+SUM(sep) as sep, SUM(okt) as okt, SUM(nov) as nov, SUM(des) as des
+FROM (
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, 0 as apr, 0 as mei, 0 as jun,
+0 as jul, 0 as agt, 0 as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7'
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+round(s.volume) as jan, 0 as feb, 0 as mar, 0 as apr, 0 as mei, 0 as jun,
+0 as jul, 0 as agt, 0 as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=1
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, round(s.volume) as feb, 0 as mar, 0 as apr, 0 as mei, 0 as jun,
+0 as jul, 0 as agt, 0 as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=2
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, round(s.volume)  as mar, 0 as apr, 0 as mei, 0 as jun,
+0 as jul, 0 as agt, 0 as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id
+AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=3
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, round(s.volume) as apr, 0 as mei, 0 as jun,
+0 as jul, 0 as agt, 0 as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=4
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, 0 as apr, round(s.volume) as mei, 0 as jun,
+0 as jul, 0 as agt, 0 as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=5
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, 0 as apr, 0 as mei, round(s.volume) as jun,
+0 as jul, 0 as agt, 0 as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=6
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, 0 as apr, 0 as mei, 0 as jun,
+round(s.volume) as jul, 0 as agt, 0 as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=7
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, 0 as apr, 0 as mei, 0 as jun,
+0 as jul, round(s.volume) as agt, 0 as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=8
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, 0 as apr, 0 as mei, 0 as jun,
+0 as jul, 0 as agt, round(s.volume)  as sep, 0 as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=9
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, 0 as apr, 0 as mei, 0 as jun,
+0 as jul, 0 as agt, 0 as sep, round(s.volume)  as okt, 0 as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=10
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, 0 as apr, 0 as mei, 0 as jun,
+0 as jul, 0 as agt, 0 as sep, 0 as okt, round(s.volume)  as nov, 0 as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=11
+AND extract(year FROM s.masadari)=$P!{tahun}
+UNION
+SELECT get_npwpd(c.id, true) npwpd, c.nama, c.alamat,d.usaha_id as usahakd, d.konterid, d.notes as ket,
+0 as jan, 0 as feb, 0 as mar, 0 as apr, 0 as mei, 0 as jun,
+0 as jul, 0 as agt, 0 as sep, 0 as okt, 0 as nov, round(s.volume)   as des
+FROM pad.pad_customer c
+INNER JOIN pad.pad_customer_usaha d ON c.id = d.customer_id
+INNER JOIN pad.pad_spt s ON s.customer_id = c.id AND s.customer_usaha_id = d.id
+WHERE d.usaha_id = '7' AND extract(month FROM s.masadari)=12
+AND extract(year FROM s.masadari)=$P!{tahun}
+) as q
+group by npwpd, nama, alamat, usahakd, konterid, ket
+) AS X
+left join pad.pad_pegawai pjb on pjb.id=2
+order by npwpd, konterid]]>
+	</queryString>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="nama" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="usahakd" class="java.lang.Integer"/>
+	<field name="konterid" class="java.lang.Integer"/>
+	<field name="ket" class="java.lang.String"/>
+	<field name="jan" class="java.lang.Double"/>
+	<field name="feb" class="java.lang.Double"/>
+	<field name="mar" class="java.lang.Double"/>
+	<field name="apr" class="java.lang.Double"/>
+	<field name="mei" class="java.lang.Double"/>
+	<field name="jun" class="java.lang.Double"/>
+	<field name="jul" class="java.lang.Double"/>
+	<field name="agt" class="java.lang.Double"/>
+	<field name="sep" class="java.lang.Double"/>
+	<field name="okt" class="java.lang.Double"/>
+	<field name="nov" class="java.lang.Double"/>
+	<field name="des" class="java.lang.Double"/>
+	<field name="pejabatnm" class="java.lang.String"/>
+	<field name="nip" class="java.lang.String"/>
+	<field name="jabatan" class="java.lang.String"/>
+	<variable name="nmbulan_cetak" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[($P{tglcetak} != null ) ? (Integer.valueOf($P{tglcetak}.substring(5,7))==1 ? "Januari" : Integer.valueOf($P{tglcetak}.substring(5,7))==2 ? "Februari" : Integer.valueOf($P{tglcetak}.substring(5,7))==3 ? "Maret" : Integer.valueOf($P{tglcetak}.substring(5,7))==4 ? "April" : Integer.valueOf($P{tglcetak}.substring(5,7))==5 ? "Mei" : Integer.valueOf($P{tglcetak}.substring(5,7))==6 ? "Juni" : Integer.valueOf($P{tglcetak}.substring(5,7))==7 ? "Juli" : Integer.valueOf($P{tglcetak}.substring(5,7))==8 ? "Agustus" : Integer.valueOf($P{tglcetak}.substring(5,7))==9 ? "September" : Integer.valueOf($P{tglcetak}.substring(5,7))==10 ? "Oktober" : Integer.valueOf($P{tglcetak}.substring(5,7))==11 ? "November" : Integer.valueOf($P{tglcetak}.substring(5,7))==12 ? "Desember" : "Nothing") : ""]]></variableExpression>
+	</variable>
+	<variable name="tanggal_cetak" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(($P{tglcetak} != null ) ? $P{tglcetak}.substring(8,10)+" "+$V{nmbulan_cetak}+" "+$P{tglcetak}.substring(0,4) : "")]]></variableExpression>
+	</variable>
+	<variable name="grup" class="java.lang.Integer" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{npwpd}]]></variableExpression>
+	</variable>
+	<group name="npwpd">
+		<groupExpression><![CDATA[$F{npwpd}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement uuid="26744bab-7089-4105-8afc-8cbbad08a1f1" x="222" y="0" width="82" height="15"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{npwpd}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
+					<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="0" y="0" width="24" height="15"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{grup} == null ? 1 : $V{grup}+1]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="e186509e-fd16-43a9-bf13-37c2382d1a6d" x="24" y="0" width="198" height="15"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="9"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="304" y="0" width="498" height="15"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="74" splitType="Stretch">
+			<textField>
+				<reportElement uuid="c8e16a18-9212-4a30-b4cb-8ebb8096f5e6" x="0" y="0" width="802" height="56"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression><![CDATA["PEMERINTAH "+$P{daerah}+"\n"+
+$P{dinas}+"\n"+
+"LAPORAN KENDALI\n"+
+"VOLUME PEMAKAIAN AIR BAWAH TANAH"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="cefbaffa-6a91-4dca-b9cc-5b975e4eebb9" x="0" y="0" width="24" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="24" y="0" width="198" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NAMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="222" y="0" width="82" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NPWPD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="304" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="342" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FEB]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="380" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="418" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[APR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="456" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MEI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="532" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="570" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="494" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="608" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="722" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="684" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOV]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="646" y="0" width="38" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OKT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="760" y="0" width="42" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="0" y="0" width="24" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+			</textField>
+			<textField>
+				<reportElement uuid="e186509e-fd16-43a9-bf13-37c2382d1a6d" x="24" y="0" width="198" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SUMUR KE "+$F{konterid}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="26744bab-7089-4105-8afc-8cbbad08a1f1" x="222" y="0" width="82" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="304" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{jan})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="342" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{feb})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="380" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{mar})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="418" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{apr})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="532" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{jul})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="570" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{agt})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="456" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{mei})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="494" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{jun})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="684" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{nov})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="722" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{des})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="608" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{sep})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="646" y="0" width="38" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{okt})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1e492d7f-6c49-4760-a92b-6bdface6e9e8" x="760" y="0" width="42" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{jan}+$F{feb}+$F{mar}+$F{apr}+$F{mei}+$F{jun}+$F{jul}+$F{agt}+$F{sep}+$F{okt}+$F{nov}+$F{des})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="13" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement uuid="f76ba2fc-56dd-4a79-a5d4-17c67eebbe9f" x="778" y="0" width="24" height="11"/>
+				<textElement>
+					<font fontName="Verdana" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="81bcfff3-09fa-4dcf-984d-4a8d3d1daa31" stretchType="RelativeToTallestObject" x="694" y="0" width="84" height="11"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Verdana" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{PAGE_NUMBER})+" dari "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="151">
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="0" y="0" width="802" height="17"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2ad33866-450e-4c90-a3d2-363a0a75ada2" x="509" y="38" width="227" height="113"/>
+				<textElement textAlignment="Center" markup="html"/>
+				<text><![CDATA[KEPALA SEKSI PENDATAAN
+<br>
+<br>
+<br>
+<br>
+<br>
+<u>MUH. THAKHIR, SH</u><br>
+NIP. 19801109 200901 100 5]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="13b18dcb-8613-48e8-b5cd-fa96782de71b" x="509" y="22" width="227" height="15"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression><![CDATA["Kota Tangerang, "+$V{tanggal_cetak}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b5dd0c17-4e40-4ed0-a14e-9835df8034aa" x="67" y="38" width="205" height="113"/>
+				<textElement textAlignment="Center" markup="html"/>
+				<text><![CDATA[KEPALA BIDANG PAJAK DAERAH DAN PENDAPATAN LAINNYA
+<br>
+<br>
+<br>
+<br>
+<u>H. MOHAMMAD ARFAN, SH, MM</u> <br>
+NIP. 19650315 199109 1 001]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,878 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lra_harian" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40" uuid="c3331eba-9472-48e4-a816-74e44b2463ac">
+	<property name="ireport.zoom" value="1.1289478601075553"/>
+	<property name="ireport.x" value="230"/>
+	<property name="ireport.y" value="118"/>
+	<style name="DataStyle">
+		<box topPadding="1" bottomPadding="2"/>
+	</style>
+	<parameter name="daerah" class="java.lang.String">
+		<defaultValueExpression><![CDATA[A]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dinas" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tglcetak" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2014-01-01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tanggal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2014-01-01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tahun" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="kondisi" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="type_rpt" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[perobjek]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[with
+-- anggaran
+a4 as (
+  select r.kode rekeningkd, substring(r.kode,1,5)||'%' rekeningkd2, sum(a.target) murni, sum(a.target) perubahan
+  from pad_anggaran a
+  inner join pad_rekening r on r.id=a.rekening_id
+  where a.tahun::text=$P{tahun}
+  group by r.kode
+),
+a3 as (
+  select r.kode rekeningkd, substring(r.kode,1,3)||'%' rekeningkd2, sum(a.murni) murni, sum(a.perubahan) perubahan
+  from a4 a
+  inner join pad_rekening r on r.kode ilike a.rekeningkd2
+  where r.levelid=3 and r.issummary=1
+  group by r.kode
+),
+a2 as (
+  select r.kode rekeningkd, substring(r.kode,1,2)||'%' rekeningkd2, sum(a.murni) murni, sum(a.perubahan) perubahan
+  from a3 a
+  inner join pad_rekening r on r.kode ilike a.rekeningkd2
+  where r.levelid=2 and r.issummary=1
+  group by r.kode
+),
+a1 as (
+  select r.kode rekeningkd, substring(r.kode,1,1)||'%' rekeningkd2, sum(a.murni) murni, sum(a.perubahan) perubahan
+  from a2 a
+  inner join pad_rekening r on r.kode ilike a.rekeningkd2
+  where r.levelid=1 and r.issummary=1
+  group by r.kode
+),
+a0 as (
+  select r.kode rekeningkd,sum(a.murni) murni, sum(a.perubahan) perubahan
+  from a1 a
+  inner join pad_rekening r on r.kode ilike a.rekeningkd2
+  where r.levelid=0 and r.issummary=1
+  group by r.kode
+),
+
+-- realisasi kini
+lv4 as (
+    select r.kode rekeningkd, substring(r.kode,1,5)||'%' rekeningkd2, sum(s.pajak_terhutang) realisasi
+    from pad_spt s
+    inner join pad_jenis_pajak p on p.id=s.pajak_id
+    inner join pad_rekening r on r.id=p.rekening_id
+		inner join pad_invoice inv on inv.source_nama = 'pad_spt' and inv.source_id = s.id
+		inner join pad_sspd ss on ss.invoice_id = inv.id and ss.is_valid=1
+    where r.levelid=4 and ss.is_valid=1
+    and date(ss.sspdtgl) >= date($P{tanggal}) and date(ss.sspdtgl) < date($P{tanggal})+1
+    group by r.kode
+
+    union
+
+    select r.kode rekeningkd, substring(r.kode,1,5)||'%' rekeningkd2, sum(ss.bunga) realisasi
+    from pad_spt s
+    inner join pad_jenis_pajak p on p.id=s.pajak_id
+    inner join pad_rekening r on r.id=p.rekening_id
+		inner join pad_invoice inv on inv.source_nama = 'pad_spt' and inv.source_id = s.id
+		inner join pad_sspd ss on ss.invoice_id = inv.id and ss.is_valid=1
+    where r.levelid=4 and ss.is_valid=1
+    and date(ss.sspdtgl) >= date($P{tanggal}) and date(ss.sspdtgl) < date($P{tanggal})+1
+    group by r.kode
+),
+lv3 as (
+  select r.kode rekeningkd, substring(r.kode,1,3)||'%' rekeningkd2, sum(realisasi) realisasi
+  from lv4 tl
+  inner join pad_rekening r on r.kode ilike tl.rekeningkd2
+  where r.levelid=3 and r.issummary=1
+  group by r.kode
+),
+lv2 as (
+  select r.kode rekeningkd, substring(r.kode,1,2)||'%' rekeningkd2, sum(realisasi) realisasi
+  from lv3 tl
+  inner join pad_rekening r on r.kode ilike tl.rekeningkd2
+  where r.levelid=2 and r.issummary=1
+  group by r.kode
+),
+lv1 as (
+  select r.kode rekeningkd, substring(r.kode,1,1)||'%' rekeningkd2, sum(realisasi) realisasi
+  from lv2 tl
+  inner join pad_rekening r on r.kode ilike tl.rekeningkd2
+  where r.levelid=1 and r.issummary=1
+  group by r.kode
+),
+lv0 as (
+  select r.kode rekeningkd, sum(realisasi) realisasi
+  from lv1 tl
+  inner join pad_rekening r on r.kode ilike tl.rekeningkd2
+  where r.levelid=0 and r.issummary=1
+  group by r.kode
+),
+
+
+-- realisasi lalu
+lu4 as (
+
+	select r.kode rekeningkd, substring(r.kode,1,5)||'%' rekeningkd2, sum(s.pajak_terhutang) realisasi
+	from pad_spt s
+	inner join pad_jenis_pajak p on p.id=s.pajak_id
+	inner join pad_rekening r on r.id=p.rekening_id
+	inner join pad_invoice inv on inv.source_nama = 'pad_spt' and inv.source_id = s.id
+	inner join pad_sspd ss on ss.invoice_id = inv.id and ss.is_valid=1
+	where r.levelid=4 and ss.is_valid=1
+	and date(ss.sspdtgl) < date($P{tanggal})
+	and extract(year FROM ss.sspdtgl) = $P!{tahun}
+	group by r.kode
+
+	union
+
+	select r.kode rekeningkd, substring(r.kode,1,5)||'%' rekeningkd2, sum(ss.bunga) realisasi
+	from pad_spt s
+	inner join pad_jenis_pajak p on p.id=s.pajak_id
+	inner join pad_rekening r on r.id=p.rekening_id
+	inner join pad_invoice inv on inv.source_nama = 'pad_spt' and inv.source_id = s.id
+	inner join pad_sspd ss on ss.invoice_id = inv.id and ss.is_valid=1
+	where r.levelid=4 and ss.is_valid=1
+	and date(ss.sspdtgl) < date($P{tanggal})
+	and extract(year FROM ss.sspdtgl) = $P!{tahun}
+	group by r.kode
+),
+
+lu3 as (
+  select r.kode rekeningkd, substring(r.kode,1,3)||'%' rekeningkd2, sum(realisasi) realisasi
+  from lu4 tl
+  inner join pad_rekening r on r.kode ilike tl.rekeningkd2
+  where r.levelid=3 and r.issummary=1
+  group by r.kode
+),
+lu2 as (
+  select r.kode rekeningkd, substring(r.kode,1,2)||'%' rekeningkd2, sum(realisasi) realisasi
+  from lu3 tl
+  inner join pad_rekening r on r.kode ilike tl.rekeningkd2
+  where r.levelid=2 and r.issummary=1
+  group by r.kode
+),
+lu1 as (
+  select r.kode rekeningkd, substring(r.kode,1,1)||'%' rekeningkd2, sum(realisasi) realisasi
+  from lu2 tl
+  inner join pad_rekening r on r.kode ilike tl.rekeningkd2
+  where r.levelid=1 and r.issummary=1
+  group by r.kode
+),
+lu0 as (
+  select r.kode rekeningkd, sum(realisasi) realisasi
+  from lu1 tl
+  inner join pad_rekening r on r.kode ilike tl.rekeningkd2
+  where r.levelid=0 and r.issummary=1
+  group by r.kode
+)
+
+-- query
+select format_tgl(date($P{tglcetak}), false, false) tglcetak, upper(format_tgl(date($P{tanggal}), false, false)) as tgl, get_rekening(r.kode) rekeningkd, r.nama rekeningnm, r.levelid,
+coalesce(case
+  when r.levelid=0 then a0.murni
+  when r.levelid=1 then a1.murni
+  when r.levelid=2 then a2.murni
+  when r.levelid=3 then a3.murni
+  when r.levelid=4 then a4.murni
+  end, 0
+) murni,
+coalesce(case
+  when r.levelid=0 then a0.perubahan
+  when r.levelid=1 then a1.perubahan
+  when r.levelid=2 then a2.perubahan
+  when r.levelid=3 then a3.perubahan
+  when r.levelid=4 then a4.perubahan
+  end, 0
+) perubahan,
+coalesce(case
+  when r.levelid=0 then lu0.realisasi
+  when r.levelid=1 then lu1.realisasi
+  when r.levelid=2 then lu2.realisasi
+  when r.levelid=3 then lu3.realisasi
+  when r.levelid=4 then lu4.realisasi
+  end, 0
+) realisasi_lalu,
+coalesce(case
+  when r.levelid=0 then lv0.realisasi
+  when r.levelid=1 then lv1.realisasi
+  when r.levelid=2 then lv2.realisasi
+  when r.levelid=3 then lv3.realisasi
+  when r.levelid=4 then lv4.realisasi
+  end, 0
+) realisasi
+from pad_rekening r
+left join a0 on a0.rekeningkd=r.kode
+left join a1 on a1.rekeningkd=r.kode
+left join a2 on a2.rekeningkd=r.kode
+left join a3 on a3.rekeningkd=r.kode
+left join a4 on a4.rekeningkd=r.kode
+left join lv0 on lv0.rekeningkd=r.kode
+left join lv1 on lv1.rekeningkd=r.kode
+left join lv2 on lv2.rekeningkd=r.kode
+left join lv3 on lv3.rekeningkd=r.kode
+left join lv4 on lv4.rekeningkd=r.kode
+left join lu0 on lu0.rekeningkd=r.kode
+left join lu1 on lu1.rekeningkd=r.kode
+left join lu2 on lu2.rekeningkd=r.kode
+left join lu3 on lu3.rekeningkd=r.kode
+left join lu4 on lu4.rekeningkd=r.kode
+
+where r.enabled=1 and substring(r.kode,8,2)::int=0
+--and case when $P!{type_rpt}='perobjek' then substring(r.kode,8,2)::int=0 else 1=1 end
+and (coalesce(case
+  when r.levelid=0 then a0.murni
+  when r.levelid=1 then a1.murni
+  when r.levelid=2 then a2.murni
+  when r.levelid=3 then a3.murni
+  when r.levelid=4 then a4.murni
+  end, 0
+) > 0
+or coalesce(case
+  when r.levelid=0 then lu0.realisasi
+  when r.levelid=1 then lu1.realisasi
+  when r.levelid=2 then lu2.realisasi
+  when r.levelid=3 then lu3.realisasi
+  when r.levelid=4 then lu4.realisasi
+  end, 0
+) > 0
+or coalesce(case
+  when r.levelid=0 then lv0.realisasi
+  when r.levelid=1 then lv1.realisasi
+  when r.levelid=2 then lv2.realisasi
+  when r.levelid=3 then lv3.realisasi
+  when r.levelid=4 then lv4.realisasi
+  end, 0
+) > 0)
+$P!{kondisi}
+--and r.levelid=3
+order by r.kode]]>
+	</queryString>
+	<field name="rekeningkd" class="java.lang.String"/>
+	<field name="rekeningnm" class="java.lang.String"/>
+	<field name="levelid" class="java.lang.Integer"/>
+	<field name="murni" class="java.lang.Double"/>
+	<field name="perubahan" class="java.lang.Double"/>
+	<field name="realisasi" class="java.math.BigDecimal"/>
+	<field name="realisasi_lalu" class="java.math.BigDecimal"/>
+	<field name="tgl" class="java.lang.String"/>
+	<variable name="sum_target" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{levelid}.equals(3) ? $F{murni} : 0]]></variableExpression>
+	</variable>
+	<variable name="sum_lalu" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{levelid}.equals(3) ? $F{realisasi_lalu} : 0]]></variableExpression>
+	</variable>
+	<variable name="sum_kini" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{levelid}.equals(3) ? $F{realisasi} : 0]]></variableExpression>
+	</variable>
+	<variable name="sum_jml" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{levelid}.equals(3) ? ($F{realisasi}+$F{realisasi_lalu}) : 0]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="110" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="204af6b2-b4ea-4343-9289-2a16e73bc6da" stretchType="RelativeToBandHeight" x="0" y="79" width="76" height="31"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="29a3a830-48c9-4a77-95ac-d01ca414f29f" stretchType="RelativeToBandHeight" x="76" y="79" width="320" height="31"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REKENING]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="3d9ed03a-b9a3-4d03-8d41-229ad2468af9" x="396" y="79" width="100" height="31"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TARGET\nANGGARAN"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a54be872-a100-4e25-8b24-cf1fc8efaacf" stretchType="RelativeToBandHeight" x="496" y="95" width="100" height="15"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[S/D HARI  LALU]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f8921630-e9a5-4744-a54c-372926d3e2d2" stretchType="RelativeToBandHeight" x="596" y="95" width="100" height="15"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HARI INI]]></text>
+			</staticText>
+			<textField pattern="dd-mm-yyyy">
+				<reportElement uuid="166de593-734a-406e-9e30-ade40a3e07d3" x="0" y="50" width="968" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SAMPAI DENGAN TANGGAL "+$F{tgl}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2857f63a-d6df-4879-8c5f-1da0fbe1ad46" stretchType="RelativeToBandHeight" x="696" y="95" width="100" height="15"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[S/D HARI INI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d2d797f6-d51d-48b9-b34a-4de52664f4b3" stretchType="RelativeToBandHeight" x="796" y="79" width="34" height="31"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5249be9b-b9fd-4160-8caf-b233cdf05629" x="0" y="0" width="968" height="50"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dinas}+"\n"+
+$P{daerah}+"\n"+
+"LAPORAN TARGET DAN REALISASI PENERIMAAN HARIAN"+"\n"+
+"TAHUN ANGGARAN "+$P{tahun}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d84bfb23-0bb1-4025-beaf-d660905a155a" stretchType="RelativeToBandHeight" x="830" y="95" width="104" height="15"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SISA TARGET]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ac9257f0-c6eb-433b-9648-68e94797adbc" stretchType="RelativeToBandHeight" x="934" y="95" width="34" height="15"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b1780322-176b-428f-a4ea-219e2075306e" stretchType="RelativeToBandHeight" x="496" y="79" width="300" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REALISASI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="23b7ecfe-8b0b-4b23-9f93-6d158e3732a1" stretchType="RelativeToBandHeight" x="830" y="79" width="138" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SELISIH]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="18" splitType="Prevent">
+			<printWhenExpression><![CDATA[!$P{type_rpt}.equals('perobjek') && $F{levelid}.equals(3)]]></printWhenExpression>
+			<textField>
+				<reportElement uuid="e903d0cd-72f4-44b1-8d57-7614ec2fc611" x="76" y="0" width="320" height="18"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rekeningnm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="14ed1e44-66ca-4ba0-8ffc-a94cd2033c11" x="0" y="0" width="76" height="18"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rekeningkd}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="580d8173-5738-4ed7-a35b-38e21fd56869" x="396" y="0" width="100" height="18"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{murni}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="62dba696-cb9e-42dc-89e8-b31c6b323401" x="496" y="0" width="100" height="18"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{realisasi_lalu}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="5cded51b-2198-4064-bd61-9d2ce7a3ef57" x="596" y="0" width="100" height="18"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{realisasi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="14eb6bce-d9c0-47a3-a287-621cfaa15ced" x="696" y="0" width="100" height="18"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{realisasi_lalu}+$F{realisasi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement uuid="06f277c1-8017-469f-861b-29978f218a8e" x="796" y="0" width="34" height="18"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{realisasi_lalu}+$F{realisasi})/$F{murni}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement uuid="b8128383-0f86-461d-822b-4f7e62ad55b0" x="934" y="0" width="34" height="18"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{murni}-($F{realisasi_lalu}+$F{realisasi}))/$F{murni}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement uuid="0e35f577-a8b5-41b4-b8bc-1074bf6b81dd" x="830" y="0" width="104" height="18"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{murni}-($F{realisasi_lalu}+$F{realisasi})]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="14">
+			<printWhenExpression><![CDATA[$P{type_rpt}.equals('perobjek') || $F{levelid}.intValue()>3]]></printWhenExpression>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement uuid="2ed8a4e4-9f91-474e-b4bb-4a1488ea3d15" x="796" y="0" width="34" height="14"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{realisasi_lalu}+$F{realisasi})/$F{murni}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="e24275f0-2217-49a2-b746-1ca9482733be" x="496" y="0" width="100" height="14"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{realisasi_lalu}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8829d9f7-7d49-4ccf-9c5b-039785726530" x="0" y="0" width="76" height="14"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rekeningkd}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="c348a670-56a8-47a9-8b79-6bda5e1d6306" x="596" y="0" width="100" height="14"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{realisasi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="b10d623b-fb97-450f-8548-33a221fef5ab" x="396" y="0" width="100" height="14"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{murni}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="33f4e377-dd47-49d3-a82e-f405a8eaab66" x="76" y="0" width="320" height="14"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rekeningnm}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="cf944ba4-675e-4aec-85f9-f9f3176075da" x="696" y="0" width="100" height="14"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{realisasi_lalu}+$F{realisasi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement uuid="1f908279-6d4c-4ef0-b91a-14c2287607a0" x="934" y="0" width="34" height="14"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{murni}-($F{realisasi_lalu}+$F{realisasi}))/$F{murni}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement uuid="2b0a453c-d215-4096-9bce-25cd19299945" x="830" y="0" width="104" height="14"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{murni}-($F{realisasi_lalu}+$F{realisasi})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement uuid="76fc6e15-5e86-4f13-9406-45f73d66ebe6" x="848" y="0" width="120" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Halaman " + $V{PAGE_NUMBER}.toString()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="150">
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="172fd76b-72ec-4071-b01b-923d743c0968" x="496" y="0" width="100" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_lalu}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="d9151550-659f-4631-a816-e4d75b7a59d9" x="396" y="0" width="100" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_target}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="68f16835-c125-463d-9aff-ff3daf489c7a" x="596" y="0" width="100" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_kini}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement uuid="9a7d5170-952b-47c3-be67-b57a8797183e" x="796" y="0" width="34" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_jml}/$V{sum_target}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="9a9577e5-7338-41e2-b456-b8e6ef6640d0" x="696" y="0" width="100" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_jml}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b8e0cd01-aea1-459d-803a-d02b4ea26e0a" x="0" y="0" width="396" height="16"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUMLAH]]></text>
+			</staticText>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement uuid="43d77dd7-d1b6-4fc5-a442-2af3bc22c03b" x="934" y="0" width="34" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($V{sum_target}-$V{sum_jml})/$V{sum_target}*100]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement uuid="be8f2fa5-827d-44d6-acc1-f6a1c92e08ab" x="830" y="0" width="104" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_target}-$V{sum_jml}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0d5bb908-b7af-425e-8713-e83a9fdaa24a" x="673" y="38" width="216" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Kepala Dinas Pengelolaan Keuangan Daerah,]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="03fef4cb-48e2-4e72-967b-72e164c550dc" x="673" y="23" width="216" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Kota Tangerang, "+$P{tglcetak}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="46ae1b81-727b-490b-8ad0-f015ad99b61a" x="673" y="129" width="216" height="18"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[NIP. 19611214 198903 1 003]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a768012e-7a5e-4e4f-9b50-05b3b7bdd415" x="673" y="114" width="216" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Dr. H. AGUS SUGIONO, SE, MM, Ak, CA]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SPTPD" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e053d3b8-c2fe-4985-ac1f-7c67eb6927fc">
+	<property name="ireport.zoom" value="1.2100000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="spt_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="daerah" class="java.lang.String"/>
+	<parameter name="dinas" class="java.lang.String"/>
+	<parameter name="alamat" class="java.lang.String"/>
+	<parameter name="telp" class="java.lang.String"/>
+	<parameter name="fax" class="java.lang.String"/>
+	<parameter name="website" class="java.lang.String"/>
+	<parameter name="email" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT get_sptpdno(s.id) sptno, get_bulan(extract(month from masadari)::int,false)||extract(year from masadari) masa_pajak, cu.opnm, p.nama as jenis_pajak,
+get_npwpd(c.id, true) npwpd, c.nama as customernm, c.wpnama, c.wpalamat,u.nama as usahanm, to_char(s.masadari, 'DD-MM-YYYY')||' s/d '||to_char(s.masasd, 'DD-MM-YYYY') masa,
+s.dasar,  (100 * s.tarif) as tarif, s.pajak_terhutang, to_char(s.terimatgl, 'DD-MM-YYYY') terimatgl
+
+FROM pad_spt s
+inner join pad_customer c on c.id=s.customer_id
+inner join pad_customer_usaha cu on cu.id=s.customer_usaha_id
+inner join pad_usaha u on u.id=cu.usaha_id
+inner join pad_jenis_pajak p on cu.def_pajak_id = p.id
+WHERE s.id=$P{spt_id}]]>
+	</queryString>
+	<field name="sptno" class="java.lang.String"/>
+	<field name="masa_pajak" class="java.lang.String"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="customernm" class="java.lang.String"/>
+	<field name="wpnama" class="java.lang.String"/>
+	<field name="wpalamat" class="java.lang.String"/>
+	<field name="usahanm" class="java.lang.String"/>
+	<field name="masa" class="java.lang.String"/>
+	<field name="dasar" class="java.lang.Double"/>
+	<field name="tarif" class="java.lang.Double"/>
+	<field name="pajak_terhutang" class="java.lang.Double"/>
+	<field name="terimatgl" class="java.lang.String"/>
+	<field name="opnm" class="java.lang.String"/>
+	<field name="jenis_pajak" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="770" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7cbb8921-d9d0-4dbe-a37c-4021ad5ce1f0" x="0" y="411" width="555" height="79"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5dc386a2-4240-4db9-b230-1add29659b76" x="0" y="508" width="555" height="152"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="703a23c7-58d7-4929-8826-29a6fd842258" x="0" y="678" width="555" height="80"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="007cfa0e-4163-412b-b0de-7ba41b112b98" x="0" y="196" width="555" height="89"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eee8312e-1019-44c1-b33e-d817f224dac2" x="0" y="99" width="555" height="79"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="db2ba9b1-b23d-4aa3-8d18-afb2db8b6dd1" x="0" y="0" width="227" height="30"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{daerah}+"\n"+
+$P{dinas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d8b7c3f2-da34-4b12-aae8-f7201c9437ba" x="227" y="0" width="217" height="15"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[SURAT PEMBERITAHUAN PAJAK DAERAH]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="3b9ab959-3ab1-4744-8f5d-2ff19a8b2729" x="227" y="15" width="217" height="15"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PAJAK "+$F{usahanm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d5c9c778-8dd6-488e-800b-fc58790d9f41" x="444" y="0" width="111" height="30"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[NOMOR SPTPD]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a4c71b6e-52c4-4e6a-90d3-b047bb392c13" x="0" y="30" width="227" height="69"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{alamat}+"\n"+
+"Telp. "+$P{telp}+"\n"+
+"Fax : "+$P{fax}+"\n"+
+"Website : "+$P{website}+"\n"+
+"Email : "+$P{email}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5a74eeb5-35fd-4d66-8e79-b7a9a41e4af1" x="227" y="30" width="217" height="69"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MASA PAJAK : "+$F{masa_pajak}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b88495c1-6d10-49ab-b523-1821772b6757" x="444" y="30" width="111" height="69"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sptno}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="079c5c14-2dde-40f2-8705-f6109e1e4f61" x="14" y="109" width="74" height="59"/>
+				<textElement>
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[PERHATIAN :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2c2953c6-163b-4852-81af-19f09727c7d4" x="88" y="109" width="467" height="69"/>
+				<textElement>
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1) Harap diisi dalam rangkap 2 (dua) ditulis dengan huruf CETAK
+2) Beri nomor pada kotak yang tersedia untuk jawaban yang diberikan
+3) Setelah diisi dan ditandatangani, harap diserahkan kembali kepada Dinas Pengelolaan Keungan Daerah
+    paling lambat tanggal 20 setelah berakhirnya masa pajak
+4) Keterlambatan penyerahan SPTPD melebihi tanggal tersebut diatas akan dikenakan denda]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f44e6378-0b53-4de5-842f-7d28d06d1a80" x="0" y="178" width="555" height="18"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[A. IDENTITAS WAJIB PAJAK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="86ec9da1-9be1-4920-bc31-91c7eadbf892" x="14" y="200" width="126" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1. NPWPD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8b142bc5-de2e-42fc-becb-4b3fdac6cafc" x="14" y="215" width="126" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[2. NAMA PEMILIK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e7cc1945-f40c-4b49-81dd-4d9181857d90" x="14" y="231" width="126" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[3. ALAMAT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4e931966-c818-4530-a67c-f483a1e6d58c" x="14" y="247" width="126" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[4. NAMA / MERK USAHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="33e24533-e0e9-4dbe-b99b-4f30da9bd7b2" x="140" y="200" width="10" height="15"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="931bbf79-641c-4ba0-b9c2-bd6fec34d7ad" x="140" y="215" width="10" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bdb1e337-fd39-4ccd-b27b-8563def45bb7" x="140" y="231" width="10" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2255b3ea-5b51-41c1-bd16-6c4b0df3adad" x="140" y="247" width="10" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5911746f-fd1f-4681-9b23-63a5468c32e5" x="0" y="285" width="555" height="18"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[B. OMZET DAN PAJAK TERUTANG]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="db2034a6-bce7-4159-9d85-2af9651e8787" x="150" y="215" width="394" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wpnama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9460cf87-525b-432e-b565-9ed8f87ec0e2" x="150" y="231" width="394" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wpalamat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3defa81d-f421-4568-b1e8-276fb6d0516e" x="150" y="247" width="394" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customernm}+' / '+$F{opnm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="51e77194-9034-4984-8165-55901ba6cf7a" x="0" y="303" width="213" height="18"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[    Omset dan Pajak Terutang]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="853fe4d6-d203-4431-86d0-a8921109bdbd" x="213" y="303" width="342" height="18"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Jumlah Omset Pajak dan Pajak Terutang]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c46c3a1b-692f-4235-8805-c6ed30349487" x="0" y="321" width="213" height="18"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[    1. Masa Pajak]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0264d8bd-87e9-4f3e-b816-ab6757d2a9c0" x="0" y="339" width="213" height="18"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[    2. Omset]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f78908a6-9c20-4279-8dbf-5ea16daf571c" x="0" y="357" width="213" height="18"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[    3. Tarif Pajak]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3f9baa9d-77be-4c96-ad9a-c972b0db2c74" x="0" y="375" width="213" height="18"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[    4. Pajak Terutang : (2 x 3)]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="dd5429f1-958f-44fa-ab4d-f0c6053f2ced" x="212" y="321" width="343" height="18"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{masa_pajak}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="266016ee-3993-4f0e-89b7-3d0c73dccbd2" x="212" y="339" width="343" height="18"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Rp. "+new DecimalFormat("#,##0").format($F{dasar})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="85e53f98-02b7-4949-812a-90f0d9896e97" x="212" y="357" width="343" height="18"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0").format($F{tarif})+" %"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0d164b9e-a236-4755-b8a4-4a5eab87c28a" x="212" y="375" width="343" height="18"/>
+				<box leftPadding="4">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Rp. "+new DecimalFormat("#,##0").format($F{pajak_terhutang})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e80c47fd-ca85-47f1-a4be-4afdd26e58ce" x="0" y="393" width="555" height="18"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[C. LAMPIRAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c0dedfb9-11b6-4e34-91d9-e13dd98b6867" x="0" y="417" width="555" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[    1.            Rekapitulasi pendapatan/omset harian]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0aa7a33f-9260-476c-b63c-3ead53901cc5" x="0" y="442" width="555" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[    2.            Surat Kuasa Khusus Pengurus]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dfc681ba-187e-4f3f-8567-dd536a5ea998" x="0" y="466" width="555" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[    3.            Lainnya :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7bae7fa0-d8b4-46cd-a78f-e1a014083a06" x="28" y="414" width="22" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e9786bc9-c869-4358-9fe3-4e69166b1896" x="28" y="439" width="22" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a1fa0273-8e2c-4f28-9351-e9b7e81176e0" x="28" y="464" width="22" height="22"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="efee6096-fbf0-4bb5-ab72-46710d10a583" x="0" y="490" width="555" height="18"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[D. PERNYATAAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="80cbd445-7023-407e-a228-5d4ec4e37c9e" x="12" y="513" width="530" height="55"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Dengan menyadari sepenuhnya segala akibat termasuk sanksi-sanksi sesuai dengan ketentuan perundang-undangan yang berlaku, saya atau yang saya beri kuasa menyatakan bahwa data yang disajikan diatas beserta lampiran-lapirannya adalah benar, lengkap, jelas dan saya bertanggung jawab sepenuhnya atas segala akibat yang ditimbulkan dari ketidak benaran penyajian/pengisian data-data tersebut diatas.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="66ece01d-ffcd-435d-b1f6-0a735da6f990" x="0" y="508" width="555" height="60"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement uuid="92fff4d7-81fe-4c21-bc99-1c181e60c08c" x="299" y="568" width="243" height="28"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{daerah}+", "+$F{terimatgl}+"\n"+
+"Wajib Pajak / Kuasa Pajak"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3700a042-d25e-413e-8915-73e2473b9af6" x="299" y="641" width="243" height="16"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wpnama}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f086c192-a163-41be-a458-04310471d672" x="0" y="660" width="555" height="18"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[E. DIISI OLEH DINAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="96b7809e-47e3-45e6-abb8-4470a3f704d2" x="11" y="688" width="170" height="16"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Diterima]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d3426bff-5b4c-457f-b223-b61a4e1b2cd7" x="9" y="720" width="126" height="16"/>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Petugas]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="6cd886d6-28f3-460d-9b7b-17631c47b35d" x="9" y="736" width="126" height="16"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tanggal: "+$F{terimatgl}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="88856160-7319-4cab-a79f-f10a370a0f17" x="119" y="704" width="62" height="48"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ttd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="606f2bb1-7b18-41ea-b313-fbe718b92322" x="191" y="688" width="170" height="16"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Dicatat/direkam]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d815af4e-e59c-476f-a02d-16009f07ce3e" x="299" y="704" width="62" height="48"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ttd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0befdcf9-c4f3-4f8f-9f2e-4914d6acca3c" x="191" y="720" width="126" height="16"/>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Petugas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d29e029d-26ab-4a02-9e3c-0cf3ff484d1e" x="372" y="688" width="170" height="16"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Diterima oleh Bank]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d5c043d0-48f6-4ff3-90eb-61c9e0e5b580" x="480" y="704" width="62" height="48"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ttd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6087d18d-e154-4672-8d61-e40b9a8442a0" x="372" y="720" width="126" height="16"/>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Petugas]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="7f8fe55e-f9ac-41ee-bb57-2be4720b0344" x="150" y="200" width="394" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{npwpd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="987b026a-fba5-41c3-bb19-cc62f20a7d05" x="191" y="736" width="126" height="16"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tanggal: "+$F{terimatgl}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="800e287b-1151-4548-afa2-a06239d2d7dd" x="372" y="736" width="126" height="16"/>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tanggal: "+$F{terimatgl}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="87b7ac94-8fa0-471f-9d97-e7e408019882" x="140" y="263" width="10" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b5124518-296c-4625-b9a8-1c023c54e0d3" x="14" y="263" width="126" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[5. JENIS USAHA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="7f154c9c-25e2-4624-aec3-0243945d6858" x="150" y="263" width="394" height="16"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement markup="none">
+					<font isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jenis_pajak}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -27,7 +27,7 @@ define('MY_ENV', 'development'); //development testing production
 // -- System & Application
 //define('MY_SYS', 'sys213');
 define('MY_APP', 'application');
-define('MY_DEFAULT_CONTROLLER', 'root');
+define('MY_DEFAULT_CONTROLLER', 'Padl');
 define('MY_MODULES_LOCATIONS' , '../modules/');
 
 // -- Database
@@ -62,6 +62,7 @@ define('RPC_API_KEY', '');
 define('RPC_API_NAME', '');
 define('RPC_SSL_VERIFY_PEER', '');
 define('RPC_SSL_CAINFO', '');
+
 //'api_key'         => 'Setec_Astronomy'
 //'api_name'        => 'X-API-KEY'
 //'http_user'       => 'username',
@@ -69,6 +70,10 @@ define('RPC_SSL_CAINFO', '');
 //'http_auth'       => 'basic',
 //'ssl_verify_peer' => TRUE,
 //'ssl_cainfo'      => '/certs/cert.pem'
+
+define('SPEKTRA_SERVER','http://ws1.sp3ktra.com:8080/EgovService/webresources/WajibPajakRestService');
+define('SPEKTRA_USER', 'admin');
+define('SPEKTRA_PASS', 'admin');
 
 // -- Url
 $PROTOCOL = "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "s" : "") . "://";

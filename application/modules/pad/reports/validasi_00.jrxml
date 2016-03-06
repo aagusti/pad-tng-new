@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="validasi_00" language="groovy" pageWidth="220" pageHeight="120" columnWidth="200" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" uuid="1f9cd65c-71bc-4581-abb8-bf825f576fa1">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="spt_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+to_char(ss.sspdtgl, 'DD-MM-YYYY') sspdtgl,
+to_char(ss.sspdjam, 'HH24:MI:SS') sspdjam,
+get_sspdno(s.id) sspdno,
+get_npwpd(c.id, true) npwpd, tl.amount bayar
+
+FROM pad_spt s
+inner join pad_sspd ss on ss.spt_id=s.id
+inner join pad_terima_line tl on tl.spt_id=s.id
+inner join pad_customer c on c.id=s.customer_id
+inner join pad_customer_usaha cu on cu.id=s.customer_usaha_id
+where s.id=$P!{spt_id}]]>
+	</queryString>
+	<field name="sspdtgl" class="java.lang.String"/>
+	<field name="sspdjam" class="java.lang.String"/>
+	<field name="sspdno" class="java.lang.String"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="bayar" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="100" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="0b125aae-73d6-459f-ae6c-f0104f580cfd" x="0" y="0" width="53" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NPWPD]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a7542c50-08d3-4d88-bde6-254e69d1963e" x="65" y="0" width="135" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{npwpd}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="fcf97c78-bd0c-447d-9d98-2195b1818388" x="0" y="16" width="53" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO.REG]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="37a2d188-1686-4aa8-9737-bfa0d4d61a8c" x="65" y="16" width="135" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sspdno}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2952f62c-bb86-4aa6-b87d-a01d5728a788" x="0" y="32" width="53" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TGL.SET]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="91a43e60-da2c-4ef9-b82c-4d7cba1c1ce8" x="65" y="32" width="135" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sspdtgl}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2f27b512-1ab9-42e0-a77a-e3037e8839c5" x="0" y="48" width="53" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JAM]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5f689811-8be3-466c-804f-4f69c463adf8" x="65" y="48" width="135" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sspdjam}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7562c4e0-587e-4982-b806-d1df36e844b0" x="0" y="64" width="53" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUMLAH]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5bfdb4f5-0a61-422d-8538-a0a9307003d5" x="65" y="64" width="135" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Rp. "+new DecimalFormat("#,##0").format($F{bayar}).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="346f3ff4-69c9-4f07-824c-7b104684e507" x="53" y="0" width="12" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b19ba520-38f2-4931-8ad4-9c5bb2089984" x="53" y="64" width="12" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="249bd9fc-3d76-454e-8638-c675b47147a3" x="53" y="48" width="12" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e5e5f70e-0ed2-4c6b-8d97-b9fd9ab7110f" x="53" y="16" width="12" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0c56fdca-b586-4c11-af95-f5108043aafb" x="53" y="32" width="12" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

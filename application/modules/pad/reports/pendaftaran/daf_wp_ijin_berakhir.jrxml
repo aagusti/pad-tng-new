@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="daf_wp_ijin_berakhir" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="24" uuid="a156c92c-7326-4bf6-85f7-c26e125f17a2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="80"/>
+	<parameter name="tglcetak" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2013-01-01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tglawal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2013-01-01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tglakhir" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2013-03-03]]></defaultValueExpression>
+	</parameter>
+	<parameter name="daerah" class="java.lang.String"/>
+	<parameter name="dinas" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select get_npwpd(c.id, true) as npwpd,c.nama as customernm,c.alamat, c.telphone,c.kodepos,
+cd.reg_date as createdatecd, cd.notes as ket, kec.kode as kecamatankd,kec.nama as kecamatannm,
+kel.kode as kelurahankd, kel. nama as kelurahannm, c.ijin1, c.ijin1no, c.ijin1tgl, c.ijin1tglakhir,
+c.ijin2, c.ijin2no, c.ijin2tgl, c.ijin2tglakhir, c.ijin3, c.ijin3no, c.ijin3tgl, c.ijin3tglakhir,
+c.ijin4, c.ijin4no, c.ijin4tgl, c.ijin4tglakhir,
+cd.usaha_id, cd.konterid, cd.notes, kel2.kode as kel2kd, kel2.nama as kel2nm,
+kec2.kode as kec2kd, kec2.nama as kec2nm,
+c.kukuhtgl, c.kukuhno, cd.reg_date as reg_datecd,
+
+(select count(*)
+	FROM pad_customer_usaha cd2
+     	WHERE cd2.customer_id=c.id and usaha_id=cd.usaha_id) as jml
+
+from pad_customer c
+	inner join pad_customer_usaha cd on c.id=cd.customer_id
+	inner join pad_kelurahan kel on c.kelurahan_id=kel.id
+	inner join pad_kecamatan kec on kel.kecamatan_id=kec.id
+	inner join pad_usaha u on cd.usaha_id=u.id
+	inner join pad_kelurahan kel2 on cd.kelurahan_id=kel2.id
+	inner join pad_kecamatan kec2 on kel2.kecamatan_id=kec2.id
+
+where c.rp='P' and
+(c.ijin1tglakhir>=date($P{tglawal}) and c.ijin1tglakhir<=date($P{tglakhir}) or
+c.ijin2tglakhir>=date($P{tglawal}) and c.ijin2tglakhir<=date($P{tglakhir}) or
+c.ijin3tglakhir>=date($P{tglawal}) and c.ijin3tglakhir<=date($P{tglakhir}) or
+c.ijin4tglakhir>=date($P{tglawal}) and c.ijin4tglakhir<=date($P{tglakhir}))
+
+order by c.npwpd]]>
+	</queryString>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="customernm" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="telphone" class="java.lang.String"/>
+	<field name="kodepos" class="java.lang.String"/>
+	<field name="createdatecd" class="java.sql.Timestamp"/>
+	<field name="ket" class="java.lang.String"/>
+	<field name="kecamatankd" class="java.lang.String"/>
+	<field name="kecamatannm" class="java.lang.String"/>
+	<field name="kelurahankd" class="java.lang.String"/>
+	<field name="kelurahannm" class="java.lang.String"/>
+	<field name="ijin1" class="java.lang.String"/>
+	<field name="ijin1no" class="java.lang.String"/>
+	<field name="ijin1tgl" class="java.sql.Timestamp"/>
+	<field name="ijin1tglakhir" class="java.sql.Timestamp"/>
+	<field name="ijin2" class="java.lang.String"/>
+	<field name="ijin2no" class="java.lang.String"/>
+	<field name="ijin2tgl" class="java.sql.Timestamp"/>
+	<field name="ijin2tglakhir" class="java.sql.Timestamp"/>
+	<field name="ijin3" class="java.lang.String"/>
+	<field name="ijin3no" class="java.lang.String"/>
+	<field name="ijin3tgl" class="java.sql.Timestamp"/>
+	<field name="ijin3tglakhir" class="java.sql.Timestamp"/>
+	<field name="ijin4" class="java.lang.String"/>
+	<field name="ijin4no" class="java.lang.String"/>
+	<field name="ijin4tgl" class="java.sql.Timestamp"/>
+	<field name="ijin4tglakhir" class="java.sql.Timestamp"/>
+	<field name="usaha_id" class="java.lang.Integer"/>
+	<field name="konterid" class="java.lang.Integer"/>
+	<field name="notes" class="java.lang.String"/>
+	<field name="kel2kd" class="java.lang.String"/>
+	<field name="kel2nm" class="java.lang.String"/>
+	<field name="kec2kd" class="java.lang.String"/>
+	<field name="kec2nm" class="java.lang.String"/>
+	<field name="kukuhtgl" class="java.sql.Timestamp"/>
+	<field name="kukuhno" class="java.lang.String"/>
+	<field name="reg_datecd" class="java.sql.Timestamp"/>
+	<field name="jml" class="java.lang.Long"/>
+	<variable name="nmbulan_cetak" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[($P{tglcetak} != null ) ? (Integer.valueOf($P{tglcetak}.substring(5,7))==1 ? "Januari" : Integer.valueOf($P{tglcetak}.substring(5,7))==2 ? "Februari" : Integer.valueOf($P{tglcetak}.substring(5,7))==3 ? "Maret" : Integer.valueOf($P{tglcetak}.substring(5,7))==4 ? "April" : Integer.valueOf($P{tglcetak}.substring(5,7))==5 ? "Mei" : Integer.valueOf($P{tglcetak}.substring(5,7))==6 ? "Juni" : Integer.valueOf($P{tglcetak}.substring(5,7))==7 ? "Juli" : Integer.valueOf($P{tglcetak}.substring(5,7))==8 ? "Agustus" : Integer.valueOf($P{tglcetak}.substring(5,7))==9 ? "September" : Integer.valueOf($P{tglcetak}.substring(5,7))==10 ? "Oktober" : Integer.valueOf($P{tglcetak}.substring(5,7))==11 ? "November" : Integer.valueOf($P{tglcetak}.substring(5,7))==12 ? "Desember" : "Nothing") : ""]]></variableExpression>
+	</variable>
+	<variable name="tanggal_cetak" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(($P{tglcetak} != null ) ? $P{tglcetak}.substring(8,10)+" "+$V{nmbulan_cetak}+" "+$P{tglcetak}.substring(0,4) : "")]]></variableExpression>
+	</variable>
+	<variable name="tglawal_1" class="java.lang.String">
+		<initialValueExpression><![CDATA[$P{tglawal}.substring( 8, 10 )+"-"+$P{tglawal}.substring( 5, 8 )+$P{tglawal}.substring( 0, 4 )]]></initialValueExpression>
+	</variable>
+	<variable name="tglakhir_1" class="java.lang.String">
+		<initialValueExpression><![CDATA[$P{tglakhir}.substring( 8, 10 )+"-"+$P{tglakhir}.substring( 5, 8 )+$P{tglakhir}.substring( 0, 4 )]]></initialValueExpression>
+	</variable>
+	<variable name="npwpd" class="java.lang.Integer" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{npwpd}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="npwpd">
+		<groupExpression><![CDATA[$F{npwpd}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<printWhenExpression><![CDATA[$F{ijin1}.toString()!=""]]></printWhenExpression>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="36" y="0" width="103" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{npwpd}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="235c92e7-c8cd-4e68-9ec2-98e5f4032176" stretchType="RelativeToBandHeight" x="139" y="0" width="179" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{customernm}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="1509a705-3355-484d-b50d-5f03585abffa" stretchType="RelativeToBandHeight" x="318" y="0" width="290" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{alamat}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="8e4a58ca-b78d-46e7-95c9-9e10cf1976a7" stretchType="RelativeToBandHeight" x="608" y="0" width="64" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{ijin1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="672" y="0" width="80" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ijin1tglakhir}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0">
+					<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="0" y="0" width="36" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$V{npwpd}==null ? 1 : $V{npwpd}+1]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+				</textField>
+			</band>
+			<band height="15">
+				<printWhenExpression><![CDATA[$F{ijin2}.toString()!=""]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="8e4a58ca-b78d-46e7-95c9-9e10cf1976a7" stretchType="RelativeToBandHeight" x="608" y="0" width="64" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{ijin2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="672" y="0" width="80" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ijin2tglakhir}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="1509a705-3355-484d-b50d-5f03585abffa" stretchType="RelativeToBandHeight" x="318" y="0" width="290" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="36" y="0" width="103" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="0" y="0" width="36" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="235c92e7-c8cd-4e68-9ec2-98e5f4032176" stretchType="RelativeToBandHeight" x="139" y="0" width="179" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" leftIndent="2"/>
+					</textElement>
+				</textField>
+			</band>
+			<band height="15">
+				<printWhenExpression><![CDATA[$F{ijin3}.toString()!=""]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="8e4a58ca-b78d-46e7-95c9-9e10cf1976a7" stretchType="RelativeToBandHeight" x="608" y="0" width="64" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{ijin3}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="672" y="0" width="80" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ijin3tglakhir}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="1509a705-3355-484d-b50d-5f03585abffa" stretchType="RelativeToBandHeight" x="318" y="0" width="290" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="0" y="0" width="36" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="235c92e7-c8cd-4e68-9ec2-98e5f4032176" stretchType="RelativeToBandHeight" x="139" y="0" width="179" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="36" y="0" width="103" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+				</textField>
+			</band>
+			<band height="15">
+				<printWhenExpression><![CDATA[$F{ijin4}.toString()!=""]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="8e4a58ca-b78d-46e7-95c9-9e10cf1976a7" stretchType="RelativeToBandHeight" x="608" y="0" width="64" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{ijin4}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="672" y="0" width="80" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ijin4tglakhir}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="752" y="0" width="50" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="1509a705-3355-484d-b50d-5f03585abffa" stretchType="RelativeToBandHeight" x="318" y="0" width="290" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="0" y="0" width="36" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="235c92e7-c8cd-4e68-9ec2-98e5f4032176" stretchType="RelativeToBandHeight" x="139" y="0" width="179" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="36" y="0" width="103" height="15"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="69" splitType="Stretch">
+			<textField>
+				<reportElement uuid="ebf15c2d-99ee-469e-88c8-9d4d69a3a36c" x="0" y="0" width="802" height="40"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression><![CDATA[$P{daerah}+"\n"+
+$P{dinas}+"\n"+
+"DAFTAR INDUK WAJIB IJIN BERAKHIR"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a9e738f3-b651-4e9e-a82e-ba77ab106dbf" x="0" y="40" width="802" height="15"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression><![CDATA["PERIODE "+$V{tglawal_1}+" s.d "+$V{tglakhir_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="cefbaffa-6a91-4dca-b9cc-5b975e4eebb9" x="36" y="0" width="103" height="40"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NPWPD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="139" y="0" width="179" height="40"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NAMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3316201c-442b-4249-83e2-9610cea94a02" x="318" y="0" width="290" height="40"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ALAMAT LENGKAP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="36731559-c6a5-4bd9-93e2-eab27b7bac30" x="608" y="0" width="64" height="40"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JENIS PERIJINAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="672" y="0" width="80" height="40"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[BERAKHIR TANGGAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="752" y="0" width="50" height="40"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[KET]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cefbaffa-6a91-4dca-b9cc-5b975e4eebb9" x="0" y="0" width="36" height="40"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<pageFooter>
+		<band height="13" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement uuid="f76ba2fc-56dd-4a79-a5d4-17c67eebbe9f" x="778" y="0" width="24" height="11"/>
+				<textElement>
+					<font fontName="Verdana" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="81bcfff3-09fa-4dcf-984d-4a8d3d1daa31" stretchType="RelativeToTallestObject" x="694" y="0" width="84" height="11"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Verdana" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{PAGE_NUMBER})+" dari "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="143">
+			<line>
+				<reportElement uuid="1c737c32-8654-4135-b7ab-724d0bfee489" x="0" y="0" width="802" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="d7d3d129-4f1a-4b67-be83-c623c2815ea4" x="507" y="14" width="227" height="15"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression><![CDATA["Kota Tangerang, "+$V{tanggal_cetak}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="29f38733-0d62-4cf8-8aa0-6a3b6bb277b9" x="507" y="30" width="227" height="113"/>
+				<textElement textAlignment="Center" markup="html"/>
+				<text><![CDATA[KEPALA SEKSI PENDATAAN
+<br>
+<br>
+<br>
+<br>
+<br>
+<u>MUH. THAKHIR, SH</u><br>
+NIP. 19801109 200901 100 5]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ec7e49ea-57c1-4e94-872d-c36aa17dd85d" x="66" y="29" width="205" height="113"/>
+				<textElement textAlignment="Center" markup="html"/>
+				<text><![CDATA[KEPALA BIDANG PAJAK DAERAH DAN PENDAPATAN LAINNYA
+<br>
+<br>
+<br>
+<br>
+<u>H. MOHAMMAD ARFAN, SH, MM</u> <br>
+NIP. 19650315 199109 1 001]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

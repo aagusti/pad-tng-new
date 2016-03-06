@@ -1,0 +1,1075 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="daf_rekap_kec" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="24" uuid="a156c92c-7326-4bf6-85f7-c26e125f17a2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="80"/>
+	<parameter name="tglcetak" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2013-01-01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="daerah" class="java.lang.String"/>
+	<parameter name="dinas" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select k.kode as kecamatankd, nama as kecamatannm,(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=1 and customer_status_id=1 and kec.id=k.id) as hotel_aktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=1 and customer_status_id<>1 and kec.id=k.id) as hotel_nonaktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=2 and customer_status_id=1 and kec.id=k.id) as restoran_aktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=2 and customer_status_id<>1 and kec.id=k.id) as restoran_nonaktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=3 and customer_status_id=1 and kec.id=k.id) as hiburan_aktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=3 and customer_status_id<>1 and kec.id=k.id) as hiburan_nonaktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=4 and customer_status_id=1 and kec.id=k.id) as reklame_aktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=4 and customer_status_id<>1 and kec.id=k.id) as reklame_nonaktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=7 and customer_status_id=1 and kec.id=k.id) as parkir_aktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=7 and customer_status_id<>1 and kec.id=k.id) as parkir_nonaktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=8 and customer_status_id=1 and kec.id=k.id) as air_tanah_aktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=8 and customer_status_id<>1 and kec.id=k.id) as air_tanah_nonaktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=9 and customer_status_id=1 and kec.id=k.id) as sarang_walet_aktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=9 and customer_status_id<>1 and kec.id=k.id) as sarang_walet_nonaktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=97 and customer_status_id=1 and kec.id=k.id) as bahan_galian_aktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=97 and customer_status_id<>1 and kec.id=k.id) as bahan_galian_nonaktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=99 and customer_status_id=1 and kec.id=k.id) as gedung_pertokoan_aktif,
+(select count(*) as jml
+from pad_customer_usaha
+inner join pad_kelurahan kel on kel.id=kelurahan_id
+inner join pad_kecamatan kec on kec.id=kel.kecamatan_id
+where usaha_id=99 and customer_status_id<>1 and kec.id=k.id) as gedung_pertokoan_nonaktif
+from pad_kecamatan k
+order  by k.kode]]>
+	</queryString>
+	<field name="kecamatankd" class="java.lang.String"/>
+	<field name="kecamatannm" class="java.lang.String"/>
+	<field name="hotel_aktif" class="java.lang.Long"/>
+	<field name="hotel_nonaktif" class="java.lang.Long"/>
+	<field name="restoran_aktif" class="java.lang.Long"/>
+	<field name="restoran_nonaktif" class="java.lang.Long"/>
+	<field name="hiburan_aktif" class="java.lang.Long"/>
+	<field name="hiburan_nonaktif" class="java.lang.Long"/>
+	<field name="reklame_aktif" class="java.lang.Long"/>
+	<field name="reklame_nonaktif" class="java.lang.Long"/>
+	<field name="parkir_aktif" class="java.lang.Long"/>
+	<field name="parkir_nonaktif" class="java.lang.Long"/>
+	<field name="air_tanah_aktif" class="java.lang.Long"/>
+	<field name="air_tanah_nonaktif" class="java.lang.Long"/>
+	<field name="bahan_galian_aktif" class="java.lang.Long"/>
+	<field name="bahan_galian_nonaktif" class="java.lang.Long"/>
+	<field name="gedung_pertokoan_aktif" class="java.lang.Long"/>
+	<field name="gedung_pertokoan_nonaktif" class="java.lang.Long"/>
+	<variable name="hotel_aktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{hotel_aktif}]]></variableExpression>
+	</variable>
+	<variable name="hotel_nonaktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{hotel_nonaktif}]]></variableExpression>
+	</variable>
+	<variable name="restoran_aktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{restoran_aktif}]]></variableExpression>
+	</variable>
+	<variable name="restoran_nonaktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{restoran_nonaktif}]]></variableExpression>
+	</variable>
+	<variable name="hiburan_aktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{hiburan_aktif}]]></variableExpression>
+	</variable>
+	<variable name="hiburan_nonaktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{hiburan_nonaktif}]]></variableExpression>
+	</variable>
+	<variable name="reklame_aktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{reklame_aktif}]]></variableExpression>
+	</variable>
+	<variable name="reklame_nonaktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{reklame_nonaktif}]]></variableExpression>
+	</variable>
+	<variable name="parkir_aktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{parkir_aktif}]]></variableExpression>
+	</variable>
+	<variable name="parkir_nonaktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{parkir_nonaktif}]]></variableExpression>
+	</variable>
+	<variable name="air_tanah_aktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{air_tanah_aktif}]]></variableExpression>
+	</variable>
+	<variable name="air_tanah_nonaktif_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{air_tanah_nonaktif}]]></variableExpression>
+	</variable>
+	<variable name="nmbulan_cetak" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[($P{tglcetak} != null ) ? (Integer.valueOf($P{tglcetak}.substring(5,7))==1 ? "Januari" : Integer.valueOf($P{tglcetak}.substring(5,7))==2 ? "Februari" : Integer.valueOf($P{tglcetak}.substring(5,7))==3 ? "Maret" : Integer.valueOf($P{tglcetak}.substring(5,7))==4 ? "April" : Integer.valueOf($P{tglcetak}.substring(5,7))==5 ? "Mei" : Integer.valueOf($P{tglcetak}.substring(5,7))==6 ? "Juni" : Integer.valueOf($P{tglcetak}.substring(5,7))==7 ? "Juli" : Integer.valueOf($P{tglcetak}.substring(5,7))==8 ? "Agustus" : Integer.valueOf($P{tglcetak}.substring(5,7))==9 ? "September" : Integer.valueOf($P{tglcetak}.substring(5,7))==10 ? "Oktober" : Integer.valueOf($P{tglcetak}.substring(5,7))==11 ? "November" : Integer.valueOf($P{tglcetak}.substring(5,7))==12 ? "Desember" : "Nothing") : ""]]></variableExpression>
+	</variable>
+	<variable name="tanggal_cetak" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[(($P{tglcetak} != null ) ? $P{tglcetak}.substring(8,10)+" "+$V{nmbulan_cetak}+" "+$P{tglcetak}.substring(0,4) : "")]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="62" splitType="Stretch">
+			<textField>
+				<reportElement uuid="69956267-fd0b-4e98-b5a5-9ad7c5da06ea" x="0" y="0" width="802" height="40"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression><![CDATA["PEMERINTAH "+$P{daerah}+"\n"+
+$P{dinas}+"\n"+
+"REKAP WAJIB PAJAK PER KECAMATAN"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="cefbaffa-6a91-4dca-b9cc-5b975e4eebb9" x="33" y="0" width="223" height="53"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[KECAMATAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="256" y="0" width="90" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[HOTEL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3316201c-442b-4249-83e2-9610cea94a02" x="346" y="0" width="90" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESTORAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="36731559-c6a5-4bd9-93e2-eab27b7bac30" x="436" y="0" width="90" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[HIBURAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="526" y="0" width="90" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[REKLAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="553222a4-2b6d-4b35-af67-815e4a3c17b9" x="706" y="0" width="90" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AIR TANAH]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="36731559-c6a5-4bd9-93e2-eab27b7bac30" x="616" y="0" width="90" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PARKIR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cefbaffa-6a91-4dca-b9cc-5b975e4eebb9" x="0" y="0" width="33" height="53"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[KODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="256" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="285" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Non Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="314" y="20" width="32" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jml]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="375" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Non Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="346" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="404" y="20" width="32" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jml]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="584" y="20" width="32" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jml]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="465" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Non Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="436" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="494" y="20" width="32" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jml]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="526" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="555" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Non Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="674" y="20" width="32" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jml]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="764" y="20" width="32" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jml]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="706" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="616" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="645" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Non Aktif]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c528431-e5d7-4127-a0a6-fddee62edf10" x="735" y="20" width="29" height="33"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Non Aktif]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="33" y="0" width="223" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kecamatannm}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0">
+				<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="0" y="0" width="33" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{kecamatankd}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="706" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{air_tanah_aktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="616" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{parkir_aktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="526" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{reklame_aktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="256" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{hotel_aktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="436" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{hiburan_aktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="346" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{restoran_aktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="285" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{hotel_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="314" y="0" width="32" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{hotel_aktif}+$F{hotel_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="555" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{reklame_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="645" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{parkir_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="375" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{restoran_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="735" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{air_tanah_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="465" y="0" width="29" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{hiburan_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="494" y="0" width="32" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{hiburan_aktif}+$F{hiburan_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="674" y="0" width="32" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{parkir_aktif}+$F{parkir_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="584" y="0" width="32" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{reklame_aktif}+$F{reklame_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="764" y="0" width="32" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{air_tanah_aktif}+$F{air_tanah_nonaktif})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="404" y="0" width="32" height="18"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($F{restoran_aktif}+$F{restoran_nonaktif})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="1"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="13" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement uuid="f76ba2fc-56dd-4a79-a5d4-17c67eebbe9f" x="778" y="0" width="24" height="11"/>
+				<textElement>
+					<font fontName="Verdana" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="81bcfff3-09fa-4dcf-984d-4a8d3d1daa31" stretchType="RelativeToTallestObject" x="694" y="0" width="84" height="11"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font fontName="Verdana" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{PAGE_NUMBER})+" dari "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="177">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="33" y="0" width="223" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA["JUMLAH"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="88bee0e8-6172-4074-a306-6c5a7795074d" stretchType="RelativeToBandHeight" x="0" y="0" width="33" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="706" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{air_tanah_aktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="616" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{parkir_aktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="526" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{reklame_aktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="256" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{hotel_aktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="436" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{hiburan_aktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="346" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{restoran_aktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="465" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{hiburan_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="555" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{reklame_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="735" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{air_tanah_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="645" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{parkir_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="285" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{hotel_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="375" y="0" width="29" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{restoran_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="494" y="0" width="32" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{hiburan_aktif_1}+$V{hiburan_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="584" y="0" width="32" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{reklame_aktif_1}+$V{reklame_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="764" y="0" width="32" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{air_tanah_aktif_1}+$V{air_tanah_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="674" y="0" width="32" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{parkir_aktif_1}+$V{parkir_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="314" y="0" width="32" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{hotel_aktif_1}+$V{hotel_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="af67bf70-44ff-4dcd-8cdb-c315dd00d2a3" stretchType="RelativeToBandHeight" x="404" y="0" width="32" height="18"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{restoran_aktif_1}+$V{restoran_nonaktif_1})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bc83dadb-f483-49e9-b76c-4f6161fac0fe" x="508" y="37" width="227" height="15"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression><![CDATA["Kota Tangerang, "+$V{tanggal_cetak}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a65cb62e-4574-4ea6-ae35-37a93003ea8d" x="508" y="53" width="227" height="113"/>
+				<textElement textAlignment="Center" markup="html"/>
+				<text><![CDATA[KEPALA SEKSI PENDATAAN
+<br>
+<br>
+<br>
+<br>
+<br>
+<u>MUH. THAKHIR, SH</u><br>
+NIP. 19801109 200901 100 5]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ce85da36-993d-4274-9d10-dbfd7837eb22" x="80" y="53" width="205" height="113"/>
+				<textElement textAlignment="Center" markup="html"/>
+				<text><![CDATA[KEPALA BIDANG PAJAK DAERAH DAN PENDAPATAN LAINNYA
+<br>
+<br>
+<br>
+<br>
+<u>H. MOHAMMAD ARFAN, SH, MM</u> <br>
+NIP. 19650315 199109 1 001]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,19 @@
+STANDARD APLIKASI PHP
+
+FrameWork : CodeIgniter
+ThirdParty : 
+1. MX
+2. REST_Controller  https://github.com/chriskacerguis/codeigniter-restserver
+3. Rest_Client https://github.com/philsturgeon/codeigniter-restclient -->diubah jadi Rest_Client awalnya Rest
+4. curl https://github.com/philsturgeon/codeigniter-curl
+5. sparks
+
+Tools
+bootstrap
+datatable
+jquery
+Chart.js
+
+CSS
+dashboard.css
+ 

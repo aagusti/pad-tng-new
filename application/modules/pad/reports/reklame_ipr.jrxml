@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reklame_ipr" language="groovy" pageWidth="612" pageHeight="1008" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="12" uuid="a156c92c-7326-4bf6-85f7-c26e125f17a2">
+	<property name="ireport.zoom" value="1.2396694214876054"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="286"/>
+	<parameter name="spt_id" class="java.lang.Number" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="daerah" class="java.lang.String"/>
+	<parameter name="dinas" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT extract(year from k.kohirtgl)::text tahun,
+k.kohirno,
+get_sptno(s.id) sptno,
+get_npwpd(c.id, true) npwpd, case when s.r_nama is not null then s.r_nama else c.nama end as customernm, c.wpnama, c.alamat, kel.nama as kelurahannm, kec.nama as kecamatannm,
+get_rekening(r.kode) rekeningkd, r.nama as rekeningnm, u.nama as usahanm, p.nama as pajaknm, s.r_status, coalesce(jl.nama,'') jalannm, jk.nama as kelasnm, nsr.nama as nsrnm, sp.nama as sudutnm, s.r_panjang, s.r_lebar, s.r_tinggi,s.r_njop,
+case when lower(p.nama) ilike '%bando%' then 150000 else 100000 end tinggi_val,
+r_njop, r_nsr, r_lokasi_pasang_val+r_jalanklas_val+r_sudut_pandang_val skor, s.r_panjang*s.r_lebar luas,
+r_njop*(s.r_panjang*s.r_lebar) njop_tot, s.r_tinggi*case when lower(p.nama) ilike '%bando%' then 150000 else 100000 end tinggi_tot, r_nsr*(r_lokasi_pasang_val+r_jalanklas_val+r_sudut_pandang_val) nsr_tot, s.kenaikan, s.kompensasi, case when s.kenaikan>0 then 'Produk Rokok (+25%)' when s.kompensasi>0 then 'Reklame Pendidikan (-25%)' else '' end tarif_produk_ket, case when s.kenaikan>0 then s.kenaikan when s.kompensasi>0 then s.kompensasi else 0 end tarif_produk,
+
+(r_njop*(s.r_panjang*s.r_lebar))+(s.r_tinggi*case when lower(p.nama) ilike '%bando%' then 150000 else 100000 end)+
+(r_nsr*(r_lokasi_pasang_val+r_jalanklas_val+r_sudut_pandang_val)) jml_tot,
+s.r_muka, s.r_banyak,
+case when r_bayarid=1 then 'Tahun' when r_bayarid=2 then 'Semester' when r_bayarid=3 then 'Triwulan' when r_bayarid=4 then 'Bulan' when r_bayarid=5 then 'Minggu' else 'Hari' end jangka_waktu, s.r_lama,
+
+s.r_judul, lp.nama lokasi_pasang,
+
+to_char(s.jatuhtempotgl, 'DD-MM-YYYY') jatuhtempo,
+to_char(s.masadari, 'DD-MM-YYYY')||' s/d '||to_char(s.masasd, 'DD-MM-YYYY') masa,
+s.dasar,  s.tarif, s.pajak_terhutang, to_char(k.kohirtgl, 'DD-MM-YYYY') kohirtgl
+
+FROM pad_spt s
+inner join pad_kohir k on k.spt_id=s.id
+inner join pad_reklame_lokasi_pasang lp on lp.id=s.r_lokasi_pasang_id
+left join pad_reklame_jalan jl on jl.id=s.r_jalan_id
+inner join pad_reklame_kelas_jalan jk on jk.id=s.r_jalanklas_id
+inner join pad_reklame_sudut_pandang sp on sp.id=s.r_sudut_pandang_id
+inner join pad_reklame_nilai_strategis nsr on nsr.id=s.r_nsr_id
+inner join pad_customer c on c.id=s.customer_id
+inner join pad_customer_usaha cu on cu.id=s.customer_usaha_id
+inner join pad_kecamatan kec on kec.id=c.kecamatan_id
+inner join pad_kelurahan kel on kel.id=c.kelurahan_id and kel.kecamatan_id=kec.id
+inner join pad_usaha u on u.id=cu.usaha_id
+inner join pad_jenis_pajak p on p.id=s.pajak_id
+inner join pad_rekening r on r.id=p.rekening_id
+where s.id=$P!{spt_id}]]>
+	</queryString>
+	<field name="tahun" class="java.lang.String"/>
+	<field name="kohirno" class="java.lang.Integer"/>
+	<field name="sptno" class="java.lang.String"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="customernm" class="java.lang.String"/>
+	<field name="wpnama" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="kelurahannm" class="java.lang.String"/>
+	<field name="kecamatannm" class="java.lang.String"/>
+	<field name="rekeningkd" class="java.lang.String"/>
+	<field name="rekeningnm" class="java.lang.String"/>
+	<field name="usahanm" class="java.lang.String"/>
+	<field name="pajaknm" class="java.lang.String"/>
+	<field name="r_status" class="java.lang.String"/>
+	<field name="jalannm" class="java.lang.String"/>
+	<field name="kelasnm" class="java.lang.String"/>
+	<field name="nsrnm" class="java.lang.String"/>
+	<field name="sudutnm" class="java.lang.String"/>
+	<field name="r_panjang" class="java.lang.Double"/>
+	<field name="r_lebar" class="java.lang.Double"/>
+	<field name="r_tinggi" class="java.math.BigDecimal"/>
+	<field name="r_njop" class="java.math.BigDecimal"/>
+	<field name="tinggi_val" class="java.lang.Integer"/>
+	<field name="r_nsr" class="java.math.BigDecimal"/>
+	<field name="skor" class="java.math.BigDecimal"/>
+	<field name="luas" class="java.lang.Double"/>
+	<field name="njop_tot" class="java.lang.Double"/>
+	<field name="tinggi_tot" class="java.math.BigDecimal"/>
+	<field name="nsr_tot" class="java.math.BigDecimal"/>
+	<field name="kenaikan" class="java.lang.Double"/>
+	<field name="kompensasi" class="java.lang.Double"/>
+	<field name="tarif_produk_ket" class="java.lang.String"/>
+	<field name="tarif_produk" class="java.lang.Double"/>
+	<field name="jml_tot" class="java.lang.Double"/>
+	<field name="r_muka" class="java.lang.Double"/>
+	<field name="r_banyak" class="java.lang.Double"/>
+	<field name="jangka_waktu" class="java.lang.String"/>
+	<field name="r_lama" class="java.lang.Integer"/>
+	<field name="r_judul" class="java.lang.String"/>
+	<field name="lokasi_pasang" class="java.lang.String"/>
+	<field name="jatuhtempo" class="java.lang.String"/>
+	<field name="masa" class="java.lang.String"/>
+	<field name="dasar" class="java.lang.Double"/>
+	<field name="tarif" class="java.lang.Double"/>
+	<field name="pajak_terhutang" class="java.lang.Double"/>
+	<field name="kohirtgl" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="106" splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="870" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7a0a21da-7388-4576-a539-814d80cf575d" x="0" y="0" width="572" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[IZIN PENYELENGGARAAN REKLAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c347202d-15c2-49c1-af7c-ff7aff136b84" x="0" y="53" width="572" height="115"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Berdasarkan Peraturan Daerah Nomor 4 Tahun 2005 tentang Penyelenggaraan Reklame (Lembar Daerah Kota Tangerang Tahun 2005 Nomor 2 Seri E), dan Peraturan Walikota Tangerang Nomor 46 Tahun 2005 tentang Petunjuk Pelaksanaan Peraturan Daerah Kota Tangerang Nomor 4 Tahun 2005 tentang Penyelenggaraan Reklame serta Keputusan Walikota Tangerang Nomor <b>503.4-3 Tahun 2008</b> tanggal 13 Januari 2009 tentang Jenis Perizinan dan Perlimpahan Kewenangan Penandatanganan Perizinan Izin Penyelengaraan Reklame Jenis Baliho, Umbul-umbul/banner/spanduk, poster atau tempelan/stiker, selebaran atau brosur, dan jenis serta bentuk reklame lainnya dengan jangka waktu paling lama 1 (satu) bulan, maka dengan ini diberikan izin Penyelenggaraan Reklame di Dalam / Luar Sarana dan Prasarana Kota Tangerang.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1a6b7945-688b-4e6d-b10a-3cf5735053a1" x="0" y="427" width="572" height="16"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Dengan mewajibkan kepada Pemegang Izin untuk memenuhi ketentuan dan syarat-syarat sbb :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c78760dc-1b89-4b27-811d-da6a604e3472" x="309" y="712" width="220" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[H. DENNY MULYADI, SE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ac768370-de2a-42a3-9f78-877ae888eb21" x="0" y="771" width="143" height="17"/>
+				<textElement markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[<b>Catatan :</b>]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dfa151a9-8b37-4cd5-9bd5-340326a5cd92" x="309" y="727" width="220" height="14"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" size="10" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[NIP. 19670709 199703 1 006]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3befc9eb-19df-4247-b9ac-de63ffc19050" x="0" y="17" width="572" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Nomor:               503/              /DISPENDA-VI/2014]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="bfc440e6-68d2-4cec-a99b-8ddf56f02c51" x="160" y="168" width="356" height="18"/>
+				<textElement markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[": "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9560e834-cf98-4341-accc-af80b2f9a151" x="0" y="168" width="160" height="18"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Kepada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f548494a-f4bd-4a90-8449-acebb4027f7d" x="0" y="186" width="160" height="18"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Nama]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="9eb5e89f-73d4-4969-8c98-c50e0cac5155" x="160" y="186" width="356" height="18"/>
+				<textElement markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[": "+$F{customernm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b496ae8f-1eae-447a-b031-6e2a92d38e1e" x="0" y="204" width="160" height="18"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Alamat]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="de672008-a153-4d44-a8aa-9644f679b513" x="160" y="204" width="356" height="18"/>
+				<textElement markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[": "+$F{alamat}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="48d2c54f-c0d4-40b5-9e85-625dec2f05a6" x="0" y="222" width="160" height="18"/>
+				<textElement markup="none"/>
+				<text><![CDATA[NPWPD]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="697f5ffc-1c7e-4646-9c20-dffd2b7182f5" x="160" y="222" width="356" height="18"/>
+				<textElement markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[": "+$F{npwpd}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="fc048027-c7f9-42eb-9f59-802be4ef26b5" x="0" y="240" width="160" height="18"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Sebanyak]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="6da03f7d-74c0-448c-8771-9a4f2696cb60" x="160" y="240" width="356" height="18"/>
+				<textElement markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[": "+
+new DecimalFormat("#,##0").format($F{r_banyak}).replace(",", "x").replace(".", ",").replace("x", ".")
++" buah, Selama : "+
+new DecimalFormat("#,##0").format($F{r_lama}).replace(",", "x").replace(".", ",").replace("x", ".")
++" "+$F{jangka_waktu}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a37683f8-0c4c-4db8-a046-39dbc322938f" x="0" y="258" width="160" height="18"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Terhitung Mulai Tanggal]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="7c56bd89-e5b0-441c-a699-829279352418" x="160" y="258" width="356" height="18"/>
+				<textElement markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[": "+$F{masa}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7a6920e7-6f50-4a7e-ba6b-5729c200fac0" x="0" y="276" width="160" height="18"/>
+				<textElement markup="none"/>
+				<text><![CDATA[Dengan Uraian Sebagai Berikut]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="61a779ba-8f2b-418b-aa71-8c491441b1e5" x="160" y="276" width="356" height="18"/>
+				<textElement markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[": No. Kohir SKPD : "+$F{kohirno}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a3c1b1d4-85f5-4f48-9086-f6f0cfb24aa3" x="0" y="304" width="25" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="287d6453-e5a3-486a-9bf3-d91080e85ae2" x="25" y="304" width="159" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Naskah Reklame]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e3d671f0-192f-4377-83c9-a9bbcd3c73f5" x="184" y="304" width="113" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jenis Reklame]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff9ee20e-f7d3-44c4-beee-2120fc715ffb" x="297" y="304" width="116" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ukuran]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b3ebca99-1d70-4fe8-ac34-b322dfe170da" x="414" y="304" width="158" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lokasi Pemasangan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="300c3abf-5dd1-4ef4-81f4-71e30279e5a9" x="0" y="319" width="25" height="94"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<paragraph spacingBefore="8"/>
+				</textElement>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="82313ac8-36e3-4f23-bbf2-a3b0d6329bc8" x="414" y="319" width="158" height="94"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<paragraph leftIndent="2" rightIndent="2" spacingBefore="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jalannm}+" / "+$F{lokasi_pasang}+"\n\n( "+
+$F{r_status}+" / "+$F{kelasnm}+" )"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b1c173dd-b095-44dc-b791-b4f88298dfe5" x="297" y="319" width="117" height="94"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<paragraph leftIndent="2" rightIndent="2" spacingBefore="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Panjang : "+
+new DecimalFormat("#,#.00").format($F{r_panjang}).replace(",", "x").replace(".", ",").replace("x", ".")
++" M \n"+
+"Lebar : "+
+new DecimalFormat("#,#.00").format($F{r_lebar}).replace(",", "x").replace(".", ",").replace("x", ".")
++" M \n"+
+"Jml. Muka : "+
+new DecimalFormat("#,##0").format($F{r_muka}).replace(",", "x").replace(".", ",").replace("x", ".")
++" Muka"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="efe5d3ad-5917-489b-bd2a-f970d6d95304" x="25" y="319" width="159" height="94"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<paragraph leftIndent="2" rightIndent="2" spacingBefore="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{r_judul}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ab84907a-f140-4133-89d0-7e18467ba7a6" x="184" y="319" width="113" height="94"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none">
+					<paragraph leftIndent="2" rightIndent="2" spacingBefore="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pajaknm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5b4a3fde-4bda-4b23-bb83-79d6ee1b7351" x="0" y="443" width="25" height="149"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[1.
+2.
+
+3.
+
+4.
+
+5.
+
+6.
+7.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="85511223-9583-4026-b1fe-81ec179a9e00" x="25" y="443" width="547" height="149"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Memelihara konstruksi dannaskah reklame yang bersangkutan dengan sebaik-baiknya;
+Selama masa izin berjalan dilarang merubah bentuk, naskah, ukuran, jenis atau lokasi penyelenggaraan reklame tanpa izin tertulis dari Walikota Tangerang C.q. Kepala Dinas Pendapatan Daerah Kota Tangerang;
+Bagi Reklame yang akan diperpanjang harus mengajukan permohonan izin baru untuk penyelenggaraan reklame sebelum berakhirnya masa izin yang akan diberikan;
+Membayar Pajak dan atau Retribusi sesuai dengan ketentuan yang berlaku, jika pembayaran tidak dilaksanakan maka izin dinyatakan batal;
+Dilarang memindahtangankan izin kepada pihak lain tanpa sepengetahuan dari Walikota C.q. Kepala Dinas Pendapatan Daerah Kota Tangerang;
+Setelah masa berlakunya habis dan tidak diperpanjang, maka reklame akan dicabut dan menjadi aset Pemda Kota Tangerang;
+Reklame rusak/hilang bukan menjadi tanggung jawab Dinas Pendapatan Daerah Kota Tangerang.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f432058b-161e-4a3c-87cf-afb67214b80a" x="309" y="611" width="220" height="15"/>
+				<textElement markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tangerang, "+$F{kohirtgl}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f8583330-8448-43d2-a931-a04df1b10f15" x="0" y="788" width="25" height="82"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[1.
+2.
+3.
+4.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="be9212ff-8b6d-4e2f-b126-4ac884f5cd05" x="25" y="788" width="118" height="82"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Lembar pertama untuk
+Lembar kedua untuk
+Lembar ketiga untuk
+Lembar keempat untuk]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c8f51bd5-7a92-4833-a0ab-47cda6110f2a" x="143" y="788" width="429" height="82"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[: Wajib Pajak Reklame;
+: Badan Pelayanan Perizinan Terpadu Kota Tangerang
+: Kepala Bidang Perencanaan dan Pengembangan Pendapatan;
+: Kepala Bidang Pendapatan Asli Daerah.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0f1b43f6-c36e-4762-a71f-a97977487724" x="309" y="638" width="220" height="42"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[A.n. Walikota Tangerang
+Kepala Dinas Pendapatan Daerah Kota Tangerang]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

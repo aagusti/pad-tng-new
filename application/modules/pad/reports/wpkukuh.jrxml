@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="wpkukuh" language="groovy" pageWidth="612" pageHeight="935" columnWidth="492" leftMargin="60" rightMargin="60" topMargin="20" bottomMargin="20" uuid="adfca43f-c851-44f8-a82d-e971e58a530a">
+	<property name="ireport.zoom" value="1.610510000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="daerah" class="java.lang.String"/>
+	<parameter name="dinas" class="java.lang.String">
+		<defaultValueExpression><![CDATA['DINAS PENGELOLAAN KEUANGAN DAERAH']]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT a.id, get_npwpd(a.id, true) npwpd, a.nama as nama, a.alamat, b.nama as kecamatannm,
+      c.nama as kelurahannm, a.telphone, a.wpnama, a.wpalamat, get_kukuhno(a.id) kukuhno, date(a.kukuhtgl) as kukuhtgl,
+      date(a.reg_date) as reg_date, kukuhno no_kukuh,
+      b.kode as kecamatankd, c.kode as kelurahankd, a.formno, a.kabupaten,  a.pb, j.nip,
+      j.nama as pejabatnm, j.jabatan, j.pangkat , a.kukuhprinted,
+      lpad(extract(day from a.kukuhtgl)::text, 2,'0') kukuh_tgl,
+      get_bulan(extract(month from a.kukuhtgl)::int, false) kukuh_bulan,
+      extract( year from a.kukuhtgl)::int as kukuh_tahun,
+      (select array_to_string(array(select nama::text
+      from (
+      (select u.nama
+      from pad_usaha u inner join pad_customer_usaha cu on cu.usaha_id = u.id
+      where cu.customer_id = a.id
+      group by u.nama
+      order by u.nama
+      )) x), ', ')) as jenis_pajak
+
+FROM pad_customer a
+      INNER JOIN pad_kelurahan c ON a.kelurahan_id=c.id
+      INNER JOIN pad_kecamatan b ON c.kecamatan_id=b.id
+      LEFT JOIN pad_pegawai j ON a.kukuh_jabat_id=j.id
+WHERE (a.id='$P!{id}')
+ORDER BY c.id]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="nama" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="kecamatannm" class="java.lang.String"/>
+	<field name="kelurahannm" class="java.lang.String"/>
+	<field name="telphone" class="java.lang.String"/>
+	<field name="wpnama" class="java.lang.String"/>
+	<field name="wpalamat" class="java.lang.String"/>
+	<field name="kukuhno" class="java.lang.String"/>
+	<field name="kukuhtgl" class="java.sql.Date"/>
+	<field name="reg_date" class="java.sql.Date"/>
+	<field name="kecamatankd" class="java.lang.String"/>
+	<field name="kelurahankd" class="java.lang.String"/>
+	<field name="formno" class="java.lang.Integer"/>
+	<field name="kabupaten" class="java.lang.String"/>
+	<field name="pb" class="java.lang.Integer"/>
+	<field name="nip" class="java.lang.String"/>
+	<field name="pejabatnm" class="java.lang.String"/>
+	<field name="jabatan" class="java.lang.String"/>
+	<field name="pangkat" class="java.lang.String"/>
+	<field name="kukuhprinted" class="java.lang.Integer"/>
+	<field name="kukuh_tgl" class="java.lang.String"/>
+	<field name="kukuh_bulan" class="java.lang.String"/>
+	<field name="kukuh_tahun" class="java.lang.String"/>
+	<field name="jenis_pajak" class="java.lang.String"/>
+	<field name="no_kukuh" class="java.lang.String"/>
+	<variable name="reg_date" class="java.lang.String">
+		<variableExpression><![CDATA[String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(0,2)+" "+
+(String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="01" ? "Januari" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="02" ? "Februari" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="03" ? "Maret" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="04" ? "April" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="05" ? "Mei" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="06" ? "Juni" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="07" ? "Juli" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="08" ? "Agustus" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="09" ? "September" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="10" ? "Oktober" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="11" ? "November" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(3,5)=="12" ? "Desember" : "")
++" "+
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{reg_date})).substring(6,10)]]></variableExpression>
+	</variable>
+	<variable name="kukuh_tgl" class="java.lang.String">
+		<variableExpression><![CDATA[String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(0,2)+" "+
+(String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="01" ? "Januari" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="02" ? "Februari" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="03" ? "Maret" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="04" ? "April" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="05" ? "Mei" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="06" ? "Juni" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="07" ? "Juli" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="08" ? "Agustus" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="09" ? "September" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="10" ? "Oktober" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="11" ? "November" :
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(3,5)=="12" ? "Desember" : "")
++" "+
+String.valueOf(new SimpleDateFormat("dd-MM-yyyy").format($F{kukuhtgl})).substring(6,10)]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="69" splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="826" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="4f970590-f745-4dd3-a0cb-1d1602c986d4" x="-1" y="91" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Membaca]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="34bf6138-a4dd-4344-b73d-b06ce70eb671" x="53" y="91" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="fb1d201f-4df8-4117-8ce4-3d6819d9df88" x="68" y="132" width="424" height="14"/>
+				<textElement verticalAlignment="Top" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["bahwa yang bersangkutan telah memenuhi persyaratan sebagai Subjek maupun Objek Pajak Daerah"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6b04cf23-e6c0-4136-a514-f285d78b19b9" x="59" y="132" width="9" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[a.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dc04198f-e661-415c-9a22-9de338414a98" x="53" y="172" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="db474a48-c33d-458c-a290-1b6879241ce7" x="-1" y="172" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Mengingat]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="56051a46-c53d-4c81-b230-5ff728781950" x="68" y="172" width="424" height="28"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Undang-Undang Nomor 2 Tahun 1993 tentang Pembentukan Kotamadya Daerah Tingkat II Tangerang;"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3de99605-357c-4f48-93d3-856301304892" x="0" y="280" width="492" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["M E M U T U S K A N : "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d88d1329-2797-45e6-ace1-14f2b8fd30ba" x="0" y="293" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Menetapkan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e7dc69f8-a5ca-46ed-aa27-144b96451f39" x="53" y="293" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8bbecde0-1aed-43b7-81ac-5b6f4ae92834" x="53" y="319" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="0cc0479f-80c3-4884-af09-4a43dd370220" x="59" y="320" width="433" height="14"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Menunjuk :"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7093542d-84ed-4839-9523-9e0120c7f3c5" x="0" y="319" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[KESATU]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5d111a3d-9aec-4766-af17-c28fbc79262a" x="59" y="333" width="170" height="14"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1. Nama Perusahaan"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fbbfc2b3-97ba-4d4e-8696-3e73a0a05a73" x="59" y="349" width="170" height="14"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["2. Alamat Perusahaan"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9054fa33-40c5-44d9-9bbd-01cd5598460f" x="229" y="333" width="8" height="14"/>
+				<textElement>
+					<font size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2d8e7330-e86d-42a6-9354-f578f6af22f2" x="229" y="349" width="8" height="14"/>
+				<textElement>
+					<font size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="c7b03e76-a7e7-4f34-8c9e-6c1f57025508" x="237" y="333" width="255" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="934ba465-2788-411b-95aa-9a2fe503cbc6" x="237" y="349" width="255" height="29"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{alamat}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0cb719ca-0f60-4c3b-9c81-3abd499f3e7a" x="0" y="469" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[KEDUA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="4836598f-9c69-4df8-9b9b-2222b1314b84" x="59" y="469" width="434" height="42"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Wajib Pajak sebagaimana dimaksud pada diktum KESATU <b> wajib mengenakan dan memungut Pajak Daerah </b> dengan tarif sesuai ketentuan dari setiap jumlah pembayaran oleh konsumen dengan menambahkannya dalam nota/bill pembayaran"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8aeaad0c-c91a-4fd1-9821-a6f120e57759" x="53" y="469" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="86c3e79e-24c7-416e-92a0-76bb7d02ba53" x="227" y="654" width="108" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DITETAPKAN DI"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1f6d6c86-99f8-4023-bb11-1962b0ad1eae" x="227" y="668" width="108" height="14"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PADA TANGGAL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9ff901ef-45e9-4469-b72f-4ac625b9b18c" x="227" y="685" width="265" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["KEPALA DINAS PENGELOLAAN KEUANGAN DAERAH"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b59793f6-6795-4728-a589-ec6d0b18f5ba" x="226" y="753" width="266" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NIP. 19611214 198903 1 003"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5266b991-0611-49a0-8a52-177e00737665" x="226" y="730" width="266" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isUnderline="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dr. H. AGUS SUGIONO, SE, MM, Ak. CA."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f7864e05-d2d0-448c-bcb8-cf3bdb3adb38" x="0" y="0" width="492" height="35"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["KEPUTUSAN " + "<br>" +
+"KEPALA " + $P{dinas} + "<br>" +
+"KOTA TANGERANG"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="241a1af9-9c76-4f25-8a08-e8262af7ec3b" x="0" y="35" width="492" height="14"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NOMOR : "+$F{kukuhno}.trim()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4efe887d-f240-4fbf-8fca-da42b4fce04f" x="0" y="49" width="492" height="14"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["T E N T A N G"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="577e736a-86ec-44b5-ab49-6f034ce03495" x="0" y="63" width="492" height="14"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PENGUKUHAN SEBAGAI WAJIB PAJAK"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b3e05197-cdbe-45e1-9fd7-4335ce472211" x="68" y="186" width="424" height="38"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Undang-undang Nomor 19 Tahun 1997 tentang penagihan dengan Surat Paksa sebagaimana telah diubah dengan Undang-undang Nomor 19 Tahun 2000 tentang Perubahan atas Undang-undang Nomor 19 Tahun 1997 tentang Penagihan dengan Surat Paksa;"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cc3f6825-c829-420e-a518-e739e535c9a6" x="68" y="224" width="424" height="14"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Undang-undang Nomor 28 Tahun 2009 tentang Pajak Daerah dan Retribusi Daerah;"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c946a402-8c48-407d-a80d-2d036a406945" x="59" y="172" width="9" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0db6580f-6a0d-40bf-945f-38ae35c7966a" x="59" y="186" width="9" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[2.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="37aeceb6-9c8e-4cfa-8d87-b7e93be1358c" x="59" y="224" width="9" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[3.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a24deacf-549b-4744-97c1-a0321877c0d8" x="59" y="378" width="170" height="26"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" size="10" isItalic="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["3. Nomor Pokok Wajib Pajak Daerah <br> (<i>NPWPD</i>)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="045ff099-dbf5-4ccc-a8be-daace6dc81b2" x="59" y="404" width="170" height="14"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["4. Wajib Pajak/Penanggung Pajak"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="da320213-d4e3-43fb-933f-b0f3005fee2d" x="59" y="420" width="170" height="14"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["5. Alamat"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c201fd5a-f890-41fc-acd4-347595a88ccb" x="229" y="378" width="8" height="14"/>
+				<textElement>
+					<font size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1d5aa7be-2afc-4a1f-8d5a-9017549d2c4e" x="229" y="404" width="8" height="14"/>
+				<textElement>
+					<font size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="350280f3-f59f-4b81-9fc7-cc4170780856" x="229" y="420" width="8" height="14"/>
+				<textElement>
+					<font size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="aad90d30-896e-44db-b39a-0ec1b90f3cba" x="59" y="455" width="415" height="14"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" size="10" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Sebagai <b> WAJIB PAJAK " + $F{jenis_pajak}.toUpperCase() + "</b>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4e38ec65-d356-4532-8ab2-7edb1ad8f1f7" x="0" y="77" width="492" height="14"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["KEPALA DINAS PENGELOLAAN KEUANGAN DAERAH KOTA TANGERANG"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b04b8b70-7fb1-40b5-bc06-172d35a2866d" x="237" y="378" width="256" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{npwpd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4b05c57a-17d7-41e7-89e1-46b56157485b" x="237" y="404" width="255" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wpnama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="531faa44-32b5-4933-bbdd-e5bfa12b7559" x="237" y="420" width="255" height="35"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wpalamat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b74e24f1-db88-4517-8657-04630bbde4f2" x="59" y="91" width="433" height="41"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Isian Formulir Surat Pendaftaran Objek Pajak Daerah (SPOPD) yang disampaikan kepada Dinas Pengelolaan Keuangan Daerah dengan Nomor Formulir : " + $F{no_kukuh} + " Tanggal " + $F{kukuh_tgl}+ " " +$F{kukuh_bulan}+ " " +$F{kukuh_tahun}+"."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="38f12388-d7d2-41da-8918-9c71c5874300" x="-1" y="132" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Menimbang]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="16281897-4572-4d9b-bd98-ed1b2504eaa1" x="53" y="132" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="c4d3186d-84d7-4999-bada-1f9c9e287a98" x="68" y="146" width="424" height="26"/>
+				<textElement verticalAlignment="Top" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["bahwa berdasarkan pertimbangan sebagaimana dimaksud pada huruf a, perlu menetapkan pengukuhan yang bersangkutan sebagai Wajib Pajak Daerah."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3b70e2bf-cb75-42c0-a9bb-90b65630734f" x="59" y="146" width="9" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[b.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="3dbc9ab4-afe1-4f95-8c15-043d1d0e759e" x="68" y="238" width="424" height="14"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Undang-undang Nomor 23 Tahun 2014 tentang Pemerintahan Daerah;"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bfa4bfc2-290d-4f4c-a22c-aed922b3fdc6" x="59" y="238" width="9" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[4.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2f22f960-468d-4c61-bab2-9f60827de658" x="59" y="252" width="9" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[5.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="12d2f59e-4aef-4d4c-a854-0a63cd8d2b2f" x="68" y="252" width="424" height="28"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Peraturan Daerah Kota Tangerang Nomor 08 Tahun 2014 tentang Perubahan atas Peraturan Daerah Nomor 07 Tahun 2010 tentang Pajak Daerah;"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1d01b848-bae6-4a8a-a028-85379ade99f2" x="59" y="294" width="433" height="26"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["KEPUTUSAN KEPALA DINAS PENGELOLAAN KEUANGAN DAERAH KOTA TANGERANG TENTANG PENGUKUHAN SEBAGAI WAJIB PAJAK"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="004ca22c-6cb4-4b36-85c2-eed598d60cf0" x="0" y="511" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[KETIGA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4970a6c1-f6f7-43f7-aee6-76af52c1392a" x="53" y="633" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5b09b73c-d128-4614-b024-ca055106ae18" x="59" y="511" width="434" height="24"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Wajib Pajak sebagaimana dimaksud pada diktum KESATU yang melakukan usaha <b> wajib menyelenggarakan pembukuan atau pencatatan. </b>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a76712a0-62e2-409a-85aa-1121013d8323" x="59" y="537" width="434" height="40"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Wajib Pajak sebagaimana dimaksud pada diktum KESATU <b> wajib menyampaikan Laporan Omzet/SPTPD (Surat Pemberitahuan Pajak Daerah) </b> paling lambat 20 (dua puluh) hari kalender setelah berakhirnya masa pajak."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3f622c86-9c01-4e6a-9386-84ae9afc2499" x="53" y="537" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e0b2ed18-2c79-46f0-b0c8-9a1adb99fc3d" x="0" y="537" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[KEEMPAT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="27517f56-a6f5-4b52-a409-f7bdcca01a1f" x="53" y="511" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="045ddd92-b43b-4918-83bf-40daf5718a62" x="59" y="580" width="433" height="51"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Wajib Pajak sebagaimana dimaksud pada diktum KESATU <b> wajib menghitung pajak yang terhutang secara benar sesuai ketentuan yang berlaku dan membayar pajak yang terhutang tersebut </b> ke Kas Daerah dengan batas waktu pembayaran paling lama 1 (satu) bulan setelah akhir masa pajak dengan menggunakan formulir SPTPD."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f6745ddf-52bf-4db3-8208-a065c86b92ef" x="0" y="580" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[KELIMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8e56518a-32f8-4094-9681-be256518a820" x="53" y="580" width="6" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="95b2409e-d686-4489-b8cd-66edb46173a8" x="59" y="633" width="434" height="14"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Surat Keputusan ini mulai berlaku sejak tanggal ditetapkan."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="33ca6118-8040-4943-82af-6ee39d03edb1" x="0" y="633" width="54" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[KEENAM]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="2cd5d260-00f0-4a10-9081-c231957929ae" x="335" y="668" width="11" height="14"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[":"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cecc2ab3-edab-47c5-beaa-3b950a6e2194" x="335" y="654" width="11" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[":"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="497e6e7a-abef-45a3-9085-def12b0db5c7" x="346" y="668" width="146" height="14"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kukuh_tgl}+ " " +$F{kukuh_bulan}+ " " +$F{kukuh_tahun}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eba890bd-43c2-485b-8efb-9c17ac3a0238" x="346" y="654" width="146" height="14"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TANGERANG"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4522fd8c-53d4-4a9e-8254-558dfa0d17be" x="0" y="775" width="493" height="51"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Keputusan ini disampaikan kepada yang bersangkuran dan ditembuskan Kepada : <br> 1. Yth, Walikota Tangerang (sebagai laporan); <br> 2. Yth, Wakil Walikota Tangerang (sebagai laporan);<br> 3. Yth, Sekretaris Daerah (sebagai laporan);"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7d466030-be00-423f-9071-75a45111b426" x="226" y="742" width="266" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pembina Utama Muda"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="40eb3291-c4c2-48bf-a5a8-57e6644ff19c" x="229" y="685" width="262" height="1"/>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

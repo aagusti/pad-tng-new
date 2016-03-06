@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dat_srt_teguran" language="groovy" pageWidth="612" pageHeight="1008" columnWidth="516" leftMargin="48" rightMargin="48" topMargin="20" bottomMargin="12" uuid="a156c92c-7326-4bf6-85f7-c26e125f17a2">
+	<property name="ireport.zoom" value="1.0245201830476072"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="daerah" class="java.lang.String"/>
+	<parameter name="dinas" class="java.lang.String"/>
+	<parameter name="kondisi" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tglcetak" class="java.lang.String"/>
+	<parameter name="ttd" class="java.lang.String"/>
+	<parameter name="masabulan" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+	</parameter>
+	<parameter name="masatahun" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2014]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tahun" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2014]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select get_npwpd(c.id, true) as npwpd, get_nopd(cu.id, true) nopd, upper(c.nama) customernm, '"'||upper(c.nama)||'"' customernm2, c.alamat,
+kel.nama kelurahannm, kec.nama kecamatannm, initcap(u.nama) as usahanm, c.id as c_id, cu.id as cu_id, cu.usaha_id,
+
+format_tgl(date('$P!{tglcetak}'),false,false) as tglcetak,
+$P!{masabulan} as masa_bulan, $P!{masatahun} as tahun,
+
+pm.pemdatype, pm.pemdanm, pm.kepalanm, pm.pemdaalmat, pm.pemdatelp, pm.ibukota, pm.kdhjabatan, pm.pendapatan_id,pm.pemdanmskt
+
+from pad.pad_customer c
+inner join pad.pad_customer_usaha cu on cu.customer_id = c.id
+inner join pad.pad_usaha u on u.id = cu.usaha_id
+inner join pad.pad_kecamatan kec on kec.id = cu.kecamatan_id
+inner join pad.pad_kelurahan kel on kel.id = cu.kelurahan_id
+left join (select p.type as pemdatype, p.pemda_nama pemdanm, p.kepala_nama kepalanm, p.alamat as pemdaalmat,
+  p.telp as pemdatelp, p.ibukota, p.jabatan as kdhjabatan, p.pendapatan_id, p.pemda_nama_singkat pemdanmskt, p.enabled
+  from pad.pad_pemda p
+  order by p.tmt desc limit 1) pm on pm.enabled=1
+
+where c.rp='P'
+and cu.customer_status_id=1
+and cu.usaha_id not in (4,6)
+and (
+  select count(*)
+  from pad.pad_spt s1
+  where s1.customer_usaha_id = cu.id
+  and extract(month from s1.masadari)= $P!{masabulan}
+  and extract(year from s1.masadari)= $P!{masatahun}
+  and s1.tahun=$P!{tahun}
+) < 1
+AND extract(month from cu.created)<extract(month from date('$P!{tglcetak}'))
+AND extract(year from cu.created)=extract(year from date('$P!{tglcetak}'))
+--and cu.usaha_id =
+$P!{kondisi}
+order by cu.usaha_id, c.npwpd]]>
+	</queryString>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="nopd" class="java.lang.String"/>
+	<field name="customernm" class="java.lang.String"/>
+	<field name="customernm2" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="kelurahannm" class="java.lang.String"/>
+	<field name="kecamatannm" class="java.lang.String"/>
+	<field name="usahanm" class="java.lang.String"/>
+	<field name="c_id" class="java.lang.Long"/>
+	<field name="cu_id" class="java.lang.Long"/>
+	<field name="usaha_id" class="java.lang.Integer"/>
+	<field name="tglcetak" class="java.lang.String"/>
+	<field name="masa_bulan" class="java.lang.Integer"/>
+	<field name="tahun" class="java.lang.Integer"/>
+	<field name="pemdatype" class="java.lang.String"/>
+	<field name="pemdanm" class="java.lang.String"/>
+	<field name="kepalanm" class="java.lang.String"/>
+	<field name="pemdaalmat" class="java.lang.String"/>
+	<field name="pemdatelp" class="java.lang.String"/>
+	<field name="ibukota" class="java.lang.String"/>
+	<field name="kdhjabatan" class="java.lang.String"/>
+	<field name="pendapatan_id" class="java.lang.Integer"/>
+	<field name="pemdanmskt" class="java.lang.String"/>
+	<variable name="nmbulan_cetak" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[($P{tglcetak} != null ) ? (Integer.valueOf($P{tglcetak}.substring(5,7))==1 ? "Januari" : Integer.valueOf($P{tglcetak}.substring(5,7))==2 ? "Februari" : Integer.valueOf($P{tglcetak}.substring(5,7))==3 ? "Maret" : Integer.valueOf($P{tglcetak}.substring(5,7))==4 ? "April" : Integer.valueOf($P{tglcetak}.substring(5,7))==5 ? "Mei" : Integer.valueOf($P{tglcetak}.substring(5,7))==6 ? "Juni" : Integer.valueOf($P{tglcetak}.substring(5,7))==7 ? "Juli" : Integer.valueOf($P{tglcetak}.substring(5,7))==8 ? "Agustus" : Integer.valueOf($P{tglcetak}.substring(5,7))==9 ? "September" : Integer.valueOf($P{tglcetak}.substring(5,7))==10 ? "Oktober" : Integer.valueOf($P{tglcetak}.substring(5,7))==11 ? "November" : Integer.valueOf($P{tglcetak}.substring(5,7))==12 ? "Desember" : "Nothing") : ""]]></variableExpression>
+	</variable>
+	<variable name="bulan_now" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[new SimpleDateFormat("MM").format(new Date())]]></variableExpression>
+	</variable>
+	<variable name="tahun" class="java.lang.String">
+		<variableExpression><![CDATA[$P{tglcetak}.substring(0,4)]]></variableExpression>
+	</variable>
+	<variable name="masa_bulan" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[$F{masa_bulan}==1 ? "Januari" : $F{masa_bulan}==2 ? "Februari" : $F{masa_bulan}==3 ? "Maret" : $F{masa_bulan}==4 ? "April" : $F{masa_bulan}==5 ? "Mei" : $F{masa_bulan}==6 ? "Juni" : $F{masa_bulan}==7 ? "Juli" : $F{masa_bulan}==8 ? "Agustus" : $F{masa_bulan}==9 ? "September" : $F{masa_bulan}==10 ? "Oktober" : $F{masa_bulan}==11 ? "November" : $F{masa_bulan}==12 ? "Desember" : ""]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="106" splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="538" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7a0a21da-7388-4576-a539-814d80cf575d" x="-1" y="0" width="69" height="64"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Nomor
+Sifat
+Lampiran
+Perihal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7a0a21da-7388-4576-a539-814d80cf575d" x="68" y="0" width="230" height="64"/>
+				<textElement markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[: 973/                        -DPKD
+: Segera
+: -
+: <b>Teguran Penyampaian SPTPD</b>]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="66c01c90-6ae1-4671-9718-312f10b094f9" x="1" y="175" width="518" height="36"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="SansSerif" size="10"/>
+					<paragraph firstLineIndent="30"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Bersama ini disampaikan kepada Bapak/Ibu bahwa berdasarkan data pada pembukuan kami, Bapak/Ibu belum meyampaikan  SPTPD untuk <b>Masa Pajak   Bulan,  "+$V{masa_bulan}+" "+$V{tahun}+"</b>."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bff941bc-a2ec-4175-86b1-637ed2c00d65" x="2" y="211" width="517" height="98"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Untuk mencegah tindakan penagihan Pajak dengan Surat Paksa berdasarkan Undang-undang Nomor 28 Tahun 2009 tentang Pajak Daerah dan Retribusi Daerah dan Peraturan Daerah Nomor 8 Tahun 2014 tentang Perubahan Atas Peraturan Daerah Nomor 7 Tahung 2010 tentang Pajak Daerah, maka diminta kepada Saudara agar melunasi jumlah tunggakan tersebut dalam waktu 7 (tujuh) hari setelah diterimanya Surat Teguran ini.
+
+Apabila Saudara telah melunasi Tunggakan tersebut diatas, diminta agar Saudara segera melaporkan kepada kami (Seksi Penagihan pada Bidang Pendapatan Lain DPKD Kota Tangerang).]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="415aca05-4fe1-4faa-9c50-b23b490b1534" x="298" y="15" width="219" height="94"/>
+				<textElement markup="html">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Kepada Yth,<br>"+
+"Pengelola "+$F{usahanm}+"<br>"+
+"<b>"+$F{customernm}+"</b><br>"+
+"di<br>"+
+$F{alamat}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="74082b17-c4a9-4784-a2ec-263991bdf9b6" x="298" y="0" width="219" height="15"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Kota Tangerang, "+$F{tglcetak}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="119e3bf0-883e-4315-be8f-3eb5f42a9f6f" x="1" y="125" width="517" height="17"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SURAT TEGURAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="31365027-cc1f-42cb-bbe6-942b546a7177" x="1" y="142" width="517" height="17"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMOR : 973/                  -DPKD/2015]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f30bea57-a9e1-4f9b-941f-0686505e3609" x="298" y="319" width="216" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Kota Tangerang, "+$F{tglcetak}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9fff441a-8d89-4762-b9f9-2627b6fa6e42" x="298" y="334" width="216" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Kepala Dinas Pengelolaan Keuangan Daerah,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1d847be2-9925-4417-ac79-c9311e8f0551" x="298" y="410" width="216" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Dr. H. AGUS SUGIONO, SE, MM, Ak, CA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="be2f9084-c39b-4ce9-aab0-feec31ac5746" x="296" y="425" width="216" height="18"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[NIP. 19611214 198903 1 003]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9261ac44-4be1-4000-889a-92856a424f5a" x="1" y="456" width="514" height="77"/>
+				<textElement markup="none">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Tembusan :
+1. Yth. Walikkota Tangerang (sebagai laporan).
+2. Yth. Wakil Walikota Tangerang (sebagai laporan).
+3. Yth. Sekretaris Daerah Kota Tangerang (sebagai laporan).
+4. Yth. Inspektur Kota Tangerang (sebagai laporan).
+]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="140" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="cd88567e-a627-4acd-873d-bc34b6833aeb" x="-1" y="39" width="57" height="15"/>
+				<textElement markup="none"/>
+				<text><![CDATA[NAMA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="02cd3a0b-d44a-498f-bc6e-b8d4558a46eb" x="58" y="39" width="238" height="15"/>
+				<textElement markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[": "+$F{customernm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2f463995-acc3-4412-9400-3c9a775ba301" x="-1" y="54" width="57" height="15"/>
+				<textElement markup="none"/>
+				<text><![CDATA[ALAMAT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="aef5fa61-1e35-4d98-aba0-4b7cfb62bb9d" x="0" y="15" width="516" height="17"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TANDA TERIMA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="eb866eea-3a89-43fb-be69-5dd4076c72d1" x="58" y="54" width="238" height="15"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[": "+$F{alamat}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="4fb908af-22f7-40af-94ca-2bde6d731f4f" x="1" y="0" width="514" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement uuid="f432058b-161e-4a3c-87cf-afb67214b80a" x="325" y="39" width="191" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Kota Tangerang, "+$F{tglcetak}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="da85cde6-7264-4c96-81e8-37ec917aeee6" x="325" y="54" width="191" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Yang Menerima]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7dd07be6-1c7a-4fa1-8774-c870cf4419e4" x="325" y="111" width="191" height="15"/>
+				<textElement textAlignment="Center" markup="none"/>
+				<text><![CDATA[( ... ... ... ... ... ... ... ... ... ... )]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="7390df6f-9d5e-42d8-8af3-7cb8015ea6bb" x="58" y="69" width="238" height="15"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA["  "+ $F{kelurahannm}+" - "+$F{kecamatannm}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="e8931bb9-b9f8-496e-974a-518394245145" x="0" y="1" width="514" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

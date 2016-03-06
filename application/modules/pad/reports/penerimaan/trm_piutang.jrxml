@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="trm_piutang" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40" uuid="c3331eba-9472-48e4-a816-74e44b2463ac">
+	<property name="ireport.zoom" value="1.241842646118311"/>
+	<property name="ireport.x" value="235"/>
+	<property name="ireport.y" value="0"/>
+	<style name="DataStyle">
+		<box topPadding="1" bottomPadding="2"/>
+	</style>
+	<parameter name="daerah" class="java.lang.String">
+		<defaultValueExpression><![CDATA[A]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dinas" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tglcetak" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2014-01-01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="usaha_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tglawal" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tglakhir" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select rekeningkd, rekeningnm, npwpd, usahanm, nama, alamat, notes, format_tgl(date('$P!{tglcetak}'),false,false) as tglcetak,
+sum(omset) as omset, sum(pajak_terhutang) as pajak_terhutang,
+sum(setor) as setor, sum(setor_denda) as setor_denda,
+sum(piutang) as piutang, sum(piutang_denda) as piutang_denda
+from (
+    select distinct r.kode rekeningkd, r.nama rekeningnm, u.nama usahanm, get_npwpd(c.id, true) as npwpd, c.nama, c.alamat, cu.notes,
+    coalesce(round(s.dasar),0) as omset,
+    round(s.pajak_terhutang) as pajak_terhutang,
+    round(coalesce(ss.jml_bayar,0)-coalesce(ss.bunga,0)) as setor,
+    round(coalesce(ss.bunga,0)) as setor_denda,
+    case when ss.id is null then coalesce(round(s.pajak_terhutang),0) else 0 end piutang,
+    0 as piutang_denda
+
+    from pad_customer c
+    inner join pad_customer_usaha cu on cu.customer_id=c.id
+    inner join pad_spt s on s.customer_usaha_id=cu.id
+    inner join pad_jenis_pajak p on p.id = s.pajak_id
+    inner join pad_rekening r on r.id = p.rekening_id
+    inner join pad_usaha u on u.id=cu.usaha_id
+		inner join pad_invoice inv on inv.source_nama = 'pad_spt' and inv.source_id = s.id
+		left join pad_sspd ss on ss.invoice_id = inv.id and ss.is_valid=1
+    where cu.usaha_id=$P!{usaha_id}
+    and date(s.masadari) between '$P!{tglawal}' and '$P!{tglakhir}'
+   ) as data
+group by 1,2,3,4,5,6,7
+order by 1,3]]>
+	</queryString>
+	<field name="rekeningkd" class="java.lang.String"/>
+	<field name="rekeningnm" class="java.lang.String"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="usahanm" class="java.lang.String"/>
+	<field name="nama" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="notes" class="java.lang.String"/>
+	<field name="tglcetak" class="java.lang.String"/>
+	<field name="omset" class="java.lang.Double"/>
+	<field name="pajak_terhutang" class="java.lang.Double"/>
+	<field name="setor" class="java.lang.Double"/>
+	<field name="setor_denda" class="java.lang.Double"/>
+	<field name="piutang" class="java.lang.Double"/>
+	<field name="piutang_denda" class="java.lang.Long"/>
+	<variable name="omset" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{omset}]]></variableExpression>
+	</variable>
+	<variable name="pajak_terhutang" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{pajak_terhutang}]]></variableExpression>
+	</variable>
+	<variable name="setor" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{setor}]]></variableExpression>
+	</variable>
+	<variable name="setor_denda" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{setor_denda}]]></variableExpression>
+	</variable>
+	<variable name="piutang" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{piutang}]]></variableExpression>
+	</variable>
+	<variable name="piutang_denda" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{piutang_denda}]]></variableExpression>
+	</variable>
+	<variable name="omset_group" class="java.lang.Double" resetType="Group" resetGroup="rekening" calculation="Sum">
+		<variableExpression><![CDATA[$F{omset}]]></variableExpression>
+	</variable>
+	<variable name="pajak_terhutang_group" class="java.lang.Double" resetType="Group" resetGroup="rekening" calculation="Sum">
+		<variableExpression><![CDATA[$F{pajak_terhutang}]]></variableExpression>
+	</variable>
+	<variable name="setor_group" class="java.lang.Double" resetType="Group" resetGroup="rekening" calculation="Sum">
+		<variableExpression><![CDATA[$F{setor}]]></variableExpression>
+	</variable>
+	<variable name="setor_denda_group" class="java.lang.Double" resetType="Group" resetGroup="rekening" calculation="Sum">
+		<variableExpression><![CDATA[$F{setor_denda}]]></variableExpression>
+	</variable>
+	<variable name="piutang_group" class="java.lang.Double" resetType="Group" resetGroup="rekening" calculation="Sum">
+		<variableExpression><![CDATA[$F{piutang}]]></variableExpression>
+	</variable>
+	<variable name="piutang_denda_group" class="java.lang.Double" resetType="Group" resetGroup="rekening" calculation="Sum">
+		<variableExpression><![CDATA[$F{piutang_denda}]]></variableExpression>
+	</variable>
+	<variable name="tglawal" class="java.lang.String">
+		<initialValueExpression><![CDATA[$P{tglawal}.substring( 8, 10 )+"-"+$P{tglawal}.substring( 5, 8 )+$P{tglawal}.substring( 0, 4 )]]></initialValueExpression>
+	</variable>
+	<variable name="tglakhir" class="java.lang.String">
+		<initialValueExpression><![CDATA[$P{tglakhir}.substring( 8, 10 )+"-"+$P{tglakhir}.substring( 5, 8 )+$P{tglakhir}.substring( 0, 4 )]]></initialValueExpression>
+	</variable>
+	<group name="rekening">
+		<groupExpression><![CDATA[$F{rekeningkd}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField>
+					<reportElement uuid="49317c6d-f506-456b-b4c8-8d8de05e98d8" x="32" y="0" width="432" height="14"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{rekeningnm}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="rekening" pattern="#,##0;(#,##0)">
+					<reportElement uuid="82073a67-175b-44c0-b56b-a06f5e885ddf" x="764" y="0" width="100" height="14"/>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{piutang_group}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="rekening" pattern="#,##0;-#,##0">
+					<reportElement uuid="c09c9f69-3dd8-4b24-9f56-64c744e96784" x="864" y="0" width="104" height="14"/>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{piutang_denda_group}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="rekening" pattern="#,##0;(#,##0)">
+					<reportElement uuid="d47474bc-97e0-4223-869b-cce2ebbd2cf9" x="664" y="0" width="100" height="14"/>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{setor_denda_group}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="rekening" pattern="#,##0;(#,##0)">
+					<reportElement uuid="2c82e95a-32fb-4119-8556-2b0ad3b0b15a" x="564" y="0" width="100" height="14"/>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{setor_group}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="rekening" pattern="#,##0;(#,##0)">
+					<reportElement uuid="0e38b723-6541-4117-b3db-4497b70cb81e" x="464" y="0" width="100" height="14"/>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{pajak_terhutang_group}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="0c3e39a2-b3fb-486e-8965-5ab7aa32fda0" x="0" y="0" width="32" height="14"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="71" splitType="Stretch">
+			<textField>
+				<reportElement uuid="5249be9b-b9fd-4160-8caf-b233cdf05629" x="0" y="0" width="968" height="71"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dinas}+"\n"+
+$P{daerah}+"\n"+
+"LAPORAN REALISASI DAN PIUTANG PAJAK\n"+
+"PERIODE MASA PAJAK "+$V{tglawal}+" S/D "+$V{tglakhir}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="31">
+			<staticText>
+				<reportElement uuid="204af6b2-b4ea-4343-9289-2a16e73bc6da" stretchType="RelativeToBandHeight" x="0" y="0" width="32" height="31"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="29a3a830-48c9-4a77-95ac-d01ca414f29f" stretchType="RelativeToBandHeight" x="32" y="0" width="432" height="31"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NPWPD / NAMA WP / ALAMAT]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="3d9ed03a-b9a3-4d03-8d41-229ad2468af9" x="464" y="0" width="100" height="31"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SPTPD"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a54be872-a100-4e25-8b24-cf1fc8efaacf" stretchType="RelativeToBandHeight" x="564" y="0" width="100" height="31"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SSPD POKOK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f8921630-e9a5-4744-a54c-372926d3e2d2" stretchType="RelativeToBandHeight" x="664" y="0" width="100" height="31"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SSPD DENDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2857f63a-d6df-4879-8c5f-1da0fbe1ad46" stretchType="RelativeToBandHeight" x="764" y="0" width="100" height="31"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PIUTANG POKOK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d84bfb23-0bb1-4025-beaf-d660905a155a" stretchType="RelativeToBandHeight" x="864" y="0" width="104" height="31"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PIUTANG DENDA]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="28">
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="e24275f0-2217-49a2-b746-1ca9482733be" x="564" y="0" width="100" height="28"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{setor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8829d9f7-7d49-4ccf-9c5b-039785726530" x="0" y="0" width="32" height="28"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="c348a670-56a8-47a9-8b79-6bda5e1d6306" x="664" y="0" width="100" height="28"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{setor_denda}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="b10d623b-fb97-450f-8548-33a221fef5ab" x="464" y="0" width="100" height="28"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pajak_terhutang}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="33f4e377-dd47-49d3-a82e-f405a8eaab66" x="32" y="0" width="432" height="28"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{npwpd}+" / "+$F{nama}+"\n"+$F{alamat}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="cf944ba4-675e-4aec-85f9-f9f3176075da" x="764" y="0" width="100" height="28"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{piutang}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement uuid="2b0a453c-d215-4096-9bce-25cd19299945" x="864" y="0" width="104" height="28"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{piutang_denda}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band height="150">
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="172fd76b-72ec-4071-b01b-923d743c0968" x="564" y="0" width="100" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{setor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="d9151550-659f-4631-a816-e4d75b7a59d9" x="464" y="0" width="100" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{pajak_terhutang}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="68f16835-c125-463d-9aff-ff3daf489c7a" x="664" y="0" width="100" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{setor_denda}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)">
+				<reportElement uuid="9a9577e5-7338-41e2-b456-b8e6ef6640d0" x="764" y="0" width="100" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{piutang}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b8e0cd01-aea1-459d-803a-d02b4ea26e0a" x="0" y="0" width="464" height="16"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUMLAH TOTAL]]></text>
+			</staticText>
+			<textField pattern="#,##0;-#,##0">
+				<reportElement uuid="be8f2fa5-827d-44d6-acc1-f6a1c92e08ab" x="864" y="0" width="104" height="16"/>
+				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="4">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{piutang_denda}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="4bb8cc45-7236-4f64-a0ad-fb9979ce5d4e" x="666" y="41" width="216" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Kepala Dinas Pengelolaan Keuangan Daerah,]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="d469c9f1-33db-4a72-a71a-3fd0456a14f3" x="666" y="26" width="216" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Kota Tangerang, "+$F{tglcetak}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="817c9a20-e787-495b-9d1e-5c14a5439ae2" x="664" y="132" width="216" height="18"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[NIP. 19611214 198903 1 003]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e0c76470-b97c-42a9-a103-d077892e4d83" x="666" y="117" width="216" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Dr. H. AGUS SUGIONO, SE, MM, Ak, CA]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

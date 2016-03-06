@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="wpkartu_backside" language="groovy" pageWidth="243" pageHeight="152" columnWidth="243" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="66b35b95-ec47-4804-adc7-846cb3698f5a">
+	<property name="ireport.zoom" value="1.815000000000003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="id" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="parametercode" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1234"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="daerah" class="java.lang.String"/>
+	<parameter name="dinas" class="java.lang.String"/>
+	<parameter name="img" class="java.lang.String">
+		<defaultValueExpression><![CDATA["kartuwp.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ttd" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT a.id, get_npwpd(a.id, true) as npwpd, a.nama as customernm, a.alamat,
+	b.nama as kecamatannm, c.nama as kelurahannm, a.telphone, a.wpnama, a.wpalamat, a.kukuhno,
+b.kode as kecamatankd, c.kode as kelurahankd, a.formno, a.kabupaten,  a.pb, j.nip, j.nama as pejabatnm, j.jabatan, j.pangkat , a.kukuhprinted, u.nama as usahanm,
+format_tgl(a.kukuhtgl, false, false) kukuhtgl,
+format_tgl(a.reg_date, false, false) reg_date
+
+      FROM pad_customer a
+      INNER JOIN pad_customer_usaha cu on cu.customer_id=a.id
+      INNER JOIN pad_usaha u on u.id=cu.usaha_id
+      INNER JOIN pad_kelurahan c ON a.kelurahan_id=c.id
+      INNER JOIN pad_kecamatan b ON c.kecamatan_id=b.id
+      LEFT JOIN pad_pegawai j ON a.kukuh_jabat_id=j.id
+WHERE (a.id='$P!{id}')]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="npwpd" class="java.lang.String"/>
+	<field name="customernm" class="java.lang.String"/>
+	<field name="alamat" class="java.lang.String"/>
+	<field name="kecamatannm" class="java.lang.String"/>
+	<field name="kelurahannm" class="java.lang.String"/>
+	<field name="telphone" class="java.lang.String"/>
+	<field name="wpnama" class="java.lang.String"/>
+	<field name="wpalamat" class="java.lang.String"/>
+	<field name="kukuhno" class="java.lang.String"/>
+	<field name="kecamatankd" class="java.lang.String"/>
+	<field name="kelurahankd" class="java.lang.String"/>
+	<field name="formno" class="java.lang.Integer"/>
+	<field name="kabupaten" class="java.lang.String"/>
+	<field name="pb" class="java.lang.Integer"/>
+	<field name="nip" class="java.lang.String"/>
+	<field name="pejabatnm" class="java.lang.String"/>
+	<field name="jabatan" class="java.lang.String"/>
+	<field name="pangkat" class="java.lang.String"/>
+	<field name="kukuhprinted" class="java.lang.Integer"/>
+	<field name="usahanm" class="java.lang.String"/>
+	<field name="kukuhtgl" class="java.lang.String"/>
+	<field name="reg_date" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="151">
+			<staticText>
+				<reportElement uuid="6ebaff67-e0a7-43b0-9b3a-7f6f6c8adf4c" x="12" y="19" width="219" height="19"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERHATIAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2c8e8564-f969-477c-bd05-9faaef99059b" stretchType="RelativeToTallestObject" x="26" y="43" width="205" height="31"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Kartu ini harap disimpan baik-baik dan apabila hilang, agar segera melapor ke Dinas Pendapatan Daerah Kota Tangerang]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="acc99664-1517-4496-a795-5f14bdc8019a" x="12" y="43" width="16" height="14"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[1.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5a754df5-0ad1-4c01-8117-2627509ea9a3" stretchType="RelativeToTallestObject" x="26" y="77" width="205" height="21"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Kartu ini hendaknya dibawa apabia Saudara akan melakukan transaksi Perpajakan Daerah]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eb7ef741-b2c8-4c50-8317-0829b17e451e" x="12" y="77" width="16" height="14"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[2.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d28fdc78-d8eb-4045-b218-c22fbcb79fec" x="12" y="101" width="16" height="14"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[3.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="abe3e5a4-d0c3-4b3b-8415-93ce6b7838f7" stretchType="RelativeToTallestObject" x="26" y="101" width="205" height="34"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Dalam hal Wajib Pajak pindah domisili supaya melaporkan diri ke Dinas Pendapatan Daerah Kota Tangerang]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>
