@@ -36,10 +36,10 @@ define('DB_DBUG', $db_debug);
 define('DB_TYPE', 'postgre');  //mysql postgre
 define('DB_HOST', 'localhost');
 define('DB_PORT', '5432');
-//define('DB_USER', 'simpad');
-define('DB_USER', 'aagusti');
-//define('DB_PASS', 'S1mp4d');
-define('DB_PASS', 'a');
+define('DB_USER', 'simpad');
+//define('DB_USER', 'aagusti');
+define('DB_PASS', 'S1mp4d');
+//define('DB_PASS', 'a');
 //define('DB_NAME', 'pad');
 define('DB_NAME', 'simpad');
 //define('DB_NAME', 'esptpd');
@@ -51,10 +51,10 @@ define('ESPTPD_DB_PORT', '5432');
 define('ESPTPD_DB_USER', 'simpad');
 define('ESPTPD_DB_PASS', 'S1mp4d');
 //define('ESPTPD_DB_NAME', 'pad');
-define('ESPTPD_DB_NAME', 'simpad_devel');
+#define('ESPTPD_DB_NAME', 'simpad_devel');
 //define('ESPTPD_DB_NAME', 'esptpd');
 //RPC
-define('RPC_SERVER', 'http://localhost/~aagusti/padl-tng/api');
+define('RPC_SERVER', 'http://localhost/new/api');
 define('RPC_USER', 'admin');
 define('RPC_PASS', 'admin');
 define('RPC_AUTH', ''); //basic
