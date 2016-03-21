@@ -213,16 +213,16 @@ $(document).ready(function() {
       if (rows_selected.length==0){
         alert('Tidak ada baris yang dipilih');
       }else{
-        alert(rows_selected);
-        
         $.ajax({
           type: "GET",
           url: '<?=base_url()?>pad/jop/posting/'+$('#posted').val(),
           data: {id : rows_selected.toString()},
           success: function(html){
-              if (html==1) {
-                alert('Data Berhasil di proses');
-                oTable.columns(6).search('='+$('#posted').val()).draw();
+              msg = jQuery.parseJSON(html);
+              alert(msg.message);
+              if (msg.status==1) {
+                oTable.draw(); 
+                //oTable.columns(6).search('='+$('#posted').val()).draw();
               }
           }
         });
