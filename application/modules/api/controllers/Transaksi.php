@@ -137,7 +137,7 @@ class Transaksi extends REST_Controller {
                   INNER JOIN public.pad_invoice b
                     on a.invoice_id=b.id
                 WHERE TO_CHAR(a.sspdtgl,'YYYYMMDD') BETWEEN '$awal' AND '$akhir'
-                GROUP BY usaha_id, jenis_usaha
+                GROUP BY b.usaha_id, b.jenis_usaha
                 ORDER BY 1,2
                 ";  
         $group = $this->get('group');
