@@ -48,107 +48,133 @@ class Jop extends CI_Controller {
     }
   
     function posting() {
-      /*[{"nama":"Detra",
-          "npwpd":"01",
-          "alamat":"Jl. a",
-          "userName":"dpkdkotang",
-          "password":"pass",
-          "objekPajaks":[
-             { "nop":"01.01",
-               "namaObjekPajak":"Mobil",
-               "alamatObjekPajak":"Jl. a",
-               "jenisPajak":1},
-             { "nop":"01.02",
-               "namaObjekPajak":"Bangunan",
-               "alamatObjekPajak":"Jl. a",
-               "jenisPajak":1}]},
-        ]
+      /*
       http://ws1.sp3ktra.com:8080/EgovService/webresources/WajibPajakRestService/insertWajibPajaks
       http://ws1.sp3ktra.com:8080/EgovService/webresources/WajibPajakRestService/replaceAllWajibPajaks
       http://ws1.sp3ktra.com:8080/EgovService/webresources/WajibPajakRestService/deleteAllWajibPajak/userName
       http://ws1.sp3ktra.com:8080/EgovService/webresources/WajibPajakRestService/deleteWajibPajak/npwpd/userName
       */
       $state = $this->uri->segment(4);
-      $this->rest_client->initialize(array( 'server'=>SPEKTRA_SERVER
-                                        //'http_user'=>RPC_USER,
-                                        //'http_pass'=>RPC_PASS,
-                                        //'http_auth'=> RPC_AUTH
-                                      ));
-      if ($state==0){
-          $sql = "SELECT c.id, pad.get_npwpd(c.id, true) as npwpd, c.nama, c.alamat,
+      #$server = 'http://192.168.56.4/~aagusti/padl-tng/api/transaksi';
+      $server = SPEKTRA_SERVER;
+      $this->rest_client->initialize(array( 'server'=>$server));
+      $this->rest_client->http_header('Content-Type','application/json'); 
+      $req_id = $this->input->get_post('id');
+      $amt ='Other Error';
+      if ($state==0)
+      {   $sql = "SELECT c.id, pad.get_npwpd(c.id, true) as npwpd, c.nama, c.alamat,
                          cu.opnm, cu.opalamat, cu.usaha_id, pad.get_nopd(cu.id, true) as nopd
                   FROM pad.pad_customer c
                        INNER JOIN pad.pad_customer_usaha cu 
                                 on c.id = cu.customer_id
-                  WHERE c.id IN (".$this->input->get_post('id').")
+                  WHERE c.id IN ($req_id)
                   ORDER BY 2,8  ";
           
           $query = $this->db->query($sql);
           $args = array();
           $arr = array();
+
           if ($query->num_rows() > 0)
-          {
-             $mkey = '';
-             $objekPajaks = array();
-             foreach ($query->result() as $row)
-             {
-                if ($mkey!=$row->npwpd){
-                    if (count($arr)>0){
-                        $arr["objekPajaks"]=$objekPajaks;
+          { $mkey = '';
+            $objekPajaks = array();
+            foreach ($query->result() as $row)
+            { if ($mkey!=$row->npwpd)
+              { if (count($arr)>0)
+                  {  $arr["objekPajaks"]=$objekPajaks;
                         array_push($args,$arr);
                         $arr = array();
-                    }
-                    $arr = array("nama"=>$row->nama,
+                  }
+                  $arr = array("nama"=>$row->nama,
                               "npwpd"=>$row->npwpd,
                               "alamat"=>$row->alamat,
                               "userName"=>SPEKTRA_USER,
                               "password"=>SPEKTRA_PASS);
                     $objekPajaks=array();
-                }
-                $objekPajak = array("nop"=>$row->nopd,
+              }
+              $objekPajak = array("nop"=>$row->nopd,
                                     "namaObjekPajak"=>$row->opnm,
                                     "alamatObjekPajak"=>$row->opalamat,
                                     "jenisPajak"=>(int)$row->usaha_id);
-                array_push($objekPajaks, $objekPajak);
-             }
+              array_push($objekPajaks, $objekPajak);
+            }
              
              $arr["objekPajaks"]=$objekPajaks;
              array_push($args,$arr);
+             $amt = $this->rest_client->put(
+                          'insertWajibPajaks',json_encode($args)); #realisasi
+          }
+          if (substr($amt,0,8)=='Berhasil')
+          {
+            $sql = "UPDATE pad.pad_customer
+                             SET posted = 1
+                      WHERE id IN ($req_id)";
+            $query = $this->db->query($sql);         
+            $result = array("status"=>1,
+                             "message"=>$amt);     
+          }
+          elseif (substr($amt,0,5)=='Gagal')
+          { $result = array("status"=>0,
+                             "message"=>$amt);          
+          }
+          else
+          { $result = array("status"=>2,
+                            "message"=>$amt);             
           } 
-          echo "<br>Array to be encoded:<br>";
-          var_dump($args);
-          echo "<br><br>Array encoded to json: <br>";
-          echo json_encode($args)."<br>";
-          $amt = $this->rest_client->get(
-                        'insertWajibPajaks',$args);
-          echo "<br>Result From Server:<br>".SPEKTRA_SERVER.'/insertWajibPajaks<br>';
-          var_dump($amt);              
-      }elseif ($state==1) {
-          $sql = "SELECT c.id, pad.get_npwpd(c.id, true) as npwpd, c.nama, c.alamat
-                  FROM pad.pad_customer
+      }
+      elseif ($state==1) 
+      {
+          $sql = "SELECT id, pad.get_npwpd(c.id, true) as npwpd
+                  FROM pad.pad_customer c
                   WHERE c.id IN (".$this->input->get_post('id').")
                   ORDER BY 2  ";
           
           $query = $this->db->query($sql);
           $args = array();
           $arr = array();
+          $c = 0;
+          $n = 0;
           if ($query->num_rows() > 0)
           {
+             $mkey = '';
+             $wajibPajaks = array();
              foreach ($query->result() as $row)
              {
-                $arr = array("nama"=>$row->nama,
+                $id = $row->id;
+                $arr = array(//"nama"=>$row->nama,
                           "npwpd"=>$row->npwpd,
+                          //"alamat"=>$row->alamat,
                           "userName"=>SPEKTRA_USER,
                           "password"=>SPEKTRA_PASS);
-                array_push($args,$arr);
+                          
+                $json_data = json_encode($arr);
+                $amt = $this->rest_client->put(
+                              "deleteWajibPajak/$row->npwpd/SPEKTRA_USER",$json_data); 
+                //echo $json_data;
+                //var_dump($amt);
+                //(substr($amt,0,5)=='Gagal') #
+                if (substr($amt,0,8)=='Berhasil')
+                {   $sql = "UPDATE pad.pad_customer
+                                 SET posted = 0
+                          WHERE id=$id ";
+                    $query = $this->db->query($sql);         
+                    $result = array("status"=>1,
+                                 "message"=>$amt);
+                    $n = $n+1;
+                }
+                $c = $c+1;
              }
-          } 
-          $amt = $this->rest_client->get(
-                        'deleteWajibPajak',$args);
-          var_dump($amt);
-      }else{
-          $amt = $this->rest_client->get('ambilContohWajibPajakJson');
-          var_dump($amt);
+             $result = array("status"=>1,
+                             "message"=>"Data $n dari $c record(s) Unposted");     
+          }
+          else
+          {   $result = array("status"=>0,
+                             "message"=>'Tidak ada data yang dibatalkan');          
+          }
       }
+      else
+      {  $amt = $this->rest_client->get('ambilContohWajibPajakJson');
+         //var_dump($amt);
+      }
+      echo json_encode($result);
     }
 }
