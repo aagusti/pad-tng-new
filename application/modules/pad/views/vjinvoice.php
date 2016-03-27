@@ -22,13 +22,14 @@
             <th>NOPD</th>
             <th>Wajib Pajak/Objek Pajak</th>
             <th>Rekening</th>
-            <th>Nilai</th>
+            <th>Pokok</th>
+            <th>Rekening</th>
+            <th>Denda</th>
           </tr>
         </thead>
         <tbody>
         </tbody>
       </table>
-
     </div>
   </div>
 </div>

@@ -5,7 +5,7 @@ if (!defined('BASEPATH'))
 class Jinvoice extends CI_Controller
 {
     private $module = 'jurnal';
-    private $controller = 'jsspd';
+    private $controller = 'jinvoice';
 
     function __construct()
     {
@@ -17,7 +17,6 @@ class Jinvoice extends CI_Controller
 
         $this->load->model(array(
             'apps_model'
-            //, 'sptpd_model', 'sspd_model', 'invoice_model', 'penerimaan_model', 'tp_model'
         ));
 
         $this->load->helper(active_module());
@@ -39,51 +38,10 @@ class Jinvoice extends CI_Controller
         $data['controller'] = $this->controller;
         $data['apps']       = $this->apps_model->get_active_only();
 
-        // $options = array(
-            // '1' => 'BLM PROSES',
-            // '2' => 'SDH PROSES',
-        // );
-        
-        // $js = 'id="proses_id" style="width:150px;"';
-        // $select = form_dropdown('proses_id', $options, 1, $js);
-        // $select = preg_replace("/[\r\n]+/", "", $select);
-        // $data['select_proses_id'] = $select;
-
         $options = array(
             '0' => 'BLM Posting',
             '1' => 'Posted',
         );
-        
-        // $js = 'id="validasi_id" style="width:105px;"';
-        // $select = form_dropdown('validasi_id', $options, 1, $js);
-        // $select = preg_replace("/[\r\n]+/", "", $select);
-        // $data['select_validasi_id'] = $select;
-
-        // $select_data = $this->tp_model->get_select();
-        // $options     = array();
-        // if($select_data) {
-        // foreach ($select_data as $row) {
-            // $options[$row->id] = $row->nama;
-        // }}
-        // $js = 'id="tp_id" class="input"';
-        // $select = form_dropdown('tp_id', $options, 1, $js);
-        // $select = preg_replace("/[\r\n]+/", "", $select);;
-        // $data['select_tp'] = $select;
-        
-
-        // $select_data = $this->load->model('pegawai_model')->get_select();
-        // $options     = array();
-        // if($select_data) {
-        // foreach ($select_data as $row) {
-            // $options[$row->id] = $row->nama;
-        // }}
-        // $options[999] = 'TIDAK ADA';
-        // $js                       = 'id="petugas_id" class="input-large" ';
-        // $data['select_petugas'] = form_dropdown('petugas_id', $options, 999, $js);
-
-        // $js                       = 'id="pejabat_id" class="input-large" ';
-        // $data['select_pejabat'] = form_dropdown('pejabat_id', $options, 999, $js);
-
         $this->load->view(active_module().'/vjinvoice', $data);
     }
 
@@ -99,66 +57,24 @@ class Jinvoice extends CI_Controller
 
 
         $this->load->library('Datatables');
-                        //--get_npwpd(c.id, true) as npwpd,
-                        //--get_sptno(sp.id::int) as sptno 
-            $this->datatables->select("s.id, pad.get_sspdno(s.id) as sspdno, ss.sspdtgl, 
-                case when k.id is null then pad.get_sptno(sp.id::int) 
-                else pad.get_kohirno(sp.id::int) end as nomor, st.typenm, 
-                pad.get_nopd(cu.id, true) as nopd, c.nama as customernm, p.nama as pajaknm,                                                                                                                                                     
-                pad.get_bulan(extract(month from sp.masadari)::int, true)||extract(year from sp.masadari) as masa,                                                                                                                                                  
-                sp.jatuhtempotgl, sp.dasar, sp.pajak_terhutang, cu.usaha_id, sp.type_id, case when sp.cara_bayar = 2 then 'TLR' when sp.cara_bayar = 1 then 'TRF' END as value,                                                                                                                                                     
-                s.bunga, ss.sisa,  ss.jenis_bayar, s.nomor_tagihan as bayarno", false);
-            $this->datatables->from('pad.pad_invoice as s');
-            $this->datatables->join('pad.pad_spt sp', "sp.id=s.source_id and s.source_nama = 'pad_spt'", 'left');
-            $this->datatables->join('pad.pad_kohir k', 'k.spt_id=sp.id', 'left');
-            $this->datatables->join('pad.pad_customer_usaha cu', 'sp.customer_usaha_id=cu.id', 'left');
-            $this->datatables->join('pad.pad_customer c', 'cu.customer_id=c.id', 'left');
-            $this->datatables->join('pad.pad_usaha u', 'cu.usaha_id=u.id', 'left');
-            $this->datatables->join('pad.pad_spt_type st', 'st.id=sp.type_id', 'left');
-            $this->datatables->join('pad.pad_jenis_pajak p','sp.pajak_id=p.id', 'left');
-            $this->datatables->join('pad.pad_sspd ss', 'ss.invoice_id=s.id and ss.is_valid=1', 'left');
+        //pad.get_nopd(cu.id, true) as nopd
+        $this->datatables->select("s.id, s.nomor_tagihan, s.created as tanggal, 
+            s.npwpd, s.nama_op || '/ '||s.nama_wp as customernm, 
+            s.rekening_pokok,
+            s.pokok,
+            s.rekening_denda,
+            s.denda 
+            ", false);
+        $this->datatables->from('pad.pad_invoice as s');
+        //$this->datatables->join('pad.pad_customer_usaha cu', 'sp.customer_usaha_id=cu.id', 'left');
+        //$this->datatables->join('pad.pad_customer c', 'cu.customer_id=c.id', 'left');
+        //$this->datatables->join('pad.pad_usaha u', 'cu.usaha_id=u.id', 'left');
 
-            if ($this->input->get('iSortCol_0') == 1) {
-                $sort = $this->input->get('sSortDir_0');
-                $this->datatables->order_by('s.sptno', $sort);
-            }
-            $this->datatables->date_column('9');
-
-        // $this->datatables->where('s.tahun', pad_tahun_anggaran());
-        
-        if ($proses_id == 2) {
-            $this->datatables->where('ss.id is not NULL');
-            $this->datatables->where('s.status_bayar > 0');
-        } else {
-            $this->datatables->where('ss.id is NULL');
-            //menampilkan skpd yg sudah diproses saja
-            $this->datatables->where("(sp.so='S' or (sp.so='O' and k.id is not null))", null, false);
-            //atau
-            //$self_id = pad_dok_self_id();
-            //$this->datatables->where("(s.type_id={$self_id} or (s.type_id<>{$self_id} and k.id is not null))", null, false);
-            $this->datatables->where('s.status_bayar = 0');
+        if ($this->input->get('iSortCol_0') == 1) {
+            $sort = $this->input->get('sSortDir_0');
+            $this->datatables->order_by('s.sptno', $sort);
         }
-        
-        /*
-        if ($validasi_id == 2) {
-            $this->datatables->where('ss.is_validated',1);
-            // $this->datatables->where('tl.id is not NULL');
-        } else {
-            $this->datatables->where('ss.is_validated is NULL or ss.is_validated = 0');
-            // $this->datatables->where('ss.is_validated',0);
-            // $this->datatables->where('tl.id is NULL');
-        }
-        */
-        
-        if($this->input->get('sSearch') == '')
-            if ($proses_id == 2) 
-               // $this->datatables->filter('date(ss.sspdtgl)', $terimatgl);
-              $this->datatables->where("ss.sspdtgl BETWEEN '$terimatgl' AND '$terimatgl2'");
-            else 
-               // $this->datatables->filter("(sp.terimatgl='{$terimatgl}' or k.kohirtgl='{$terimatgl}')", null, false);
-             $this->datatables->where("sp.terimatgl BETWEEN '$terimatgl' AND '$terimatgl2' OR k.kohirtgl='$terimatgl' ");
-                
-        $this->datatables->rupiah_column('10,11,15,16');
+        $this->datatables->rupiah_column('6,8');
         $this->datatables->date_column('2');
 
         echo $this->datatables->generate();
