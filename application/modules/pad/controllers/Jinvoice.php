@@ -109,8 +109,7 @@ class Jinvoice extends CI_Controller
             s.nama_pokok as nama_pokok,
             s.pokok as pokok,
             s.rekening_denda as rekening_denda,
-            s.nama_denda as nama_denda,
-            s.denda as denda
+            s.nama_denda as nama_denda
             FROM public.pad_invoice s
             WHERE s.id IN ($req_id)
                   AND s.tanggal_invoice is not null
@@ -134,7 +133,7 @@ class Jinvoice extends CI_Controller
            { 
            
               $arr = array("nomorSkp"=>$row->nomor,
-              "tanggalSkp"=>date_format(date_create($row->tanggal), 'Y-m-d'),
+              "tanggalSkp"=>date_format(date_create($row->tanggal), 'd-m-Y'),
               "tahun"=>date_format(date_create($row->tanggal), 'Y'),
               "selfAssessment"=> ($row->type_id==1 ? True : False),
               "casInAdvance"=>False,
@@ -146,7 +145,7 @@ class Jinvoice extends CI_Controller
               "nop"=>$row->nopd,
               "objekPajak"=>$row->nama_op,
               "alamatObjekPajak"=>$row->alamat_op,
-              "jatuhTempo"=>date_format(date_create($row->jatuh_tempo), 'Y-m-d'),
+              "jatuhTempo"=>date_format(date_create($row->jatuh_tempo), 'd-m-Y'),
               "nilaiPajak"=>(int) $row->pokok,
               "nilaiDenda"=>(int) $row->denda,
               "nilaiKenaikan"=>0, //$row->npwpd,
@@ -202,13 +201,13 @@ class Jinvoice extends CI_Controller
              {
                 $id = $row->id;
                 $arr = array(//"nama"=>$row->nama,
-                          "nomorSkp"=>$row->npwpd,
+                          "nomorSkp"=>$row->nomor,
                           "userName"=>SPEKTRA_USER,
                           "password"=>SPEKTRA_PASS);
                           
                 $json_data = json_encode($arr);
                 $amt = $this->rest_client->put(
-                              "SkpRestService/deleteSkp/$row->npwpd/".SPEKTRA_USER,$json_data); 
+                              "SkpRestService/deleteSkp/$row->nomor/".SPEKTRA_USER,$json_data); 
                 //echo $json_data;
                 //var_dump($amt);
                 //(substr($amt,0,5)=='Gagal') #

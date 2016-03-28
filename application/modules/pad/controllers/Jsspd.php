@@ -2,7 +2,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Jinvoice extends CI_Controller
+class Jsspd extends CI_Controller
 {
     private $module = 'jurnal';
     private $controller = 'jsspd';
@@ -42,7 +42,7 @@ class Jinvoice extends CI_Controller
             '0' => 'BLM Posting',
             '1' => 'Posted',
         );
-        $this->load->view(active_module().'/vjinvoice', $data);
+        $this->load->view(active_module().'/vjsspd', $data);
     }
 
     function grid()
@@ -58,15 +58,19 @@ class Jinvoice extends CI_Controller
 
         $this->load->library('Datatables');
         //pad.get_nopd(cu.id, true) as nopd
-        $this->datatables->select("s.id, s.nomor_tagihan, s.created as tanggal, 
-            s.npwpd nopd, s.nama_op || '/ '||s.nama_wp as customernm, 
+        $this->datatables->select("ss.id, pad.get_sspdno(s.id)  nomor, ss.sspdtgl as tanggal, 
+            s.nopd nopd, s.nama_op || '/ '|| s.nama_wp as customernm, 
             s.rekening_pokok as rekening_pokok,
-            s.pokok as pokok,
+            ss.jml_bayar-(ss.denda+ss.bunga) as pokok,
             s.rekening_denda as rekening_denda,
-            s.denda as denda,
-            s.posted as posted
+            ss.denda+ss.bunga as denda,
+            ss.posted as posted
             ", false);
-        $this->datatables->from('pad.pad_invoice as s');
+        $this->datatables->from('public.pad_invoice as s');
+        $this->datatables->join('pad.pad_sspd as ss','ss.invoice_id=s.id');
+        // $this->datatables->join('pad.pad_customer_usaha as cu on spt.customer_usaha_id=cu.id');
+        // $this->datatables->where("spt.source_nama='pad_spt'");
+        
         $this->datatables->rupiah_column('6,8');
         $this->datatables->date_column('2');
 
@@ -87,99 +91,133 @@ class Jinvoice extends CI_Controller
       $this->rest_client->http_header('Content-Type','application/json'); 
       $req_id = $this->input->get_post('id');
       $amt ='Other Error';
-      if ($state==0)
-      {   $sql = "SELECT c.id, pad.get_npwpd(c.id, true) as npwpd, c.nama, c.alamat,
-                         cu.opnm, cu.opalamat, cu.usaha_id, pad.get_nopd(cu.id, true) as nopd
-                  FROM pad.pad_customer c
-                       INNER JOIN pad.pad_customer_usaha cu 
-                                on c.id = cu.customer_id
-                  WHERE c.id IN ($req_id)
-                  ORDER BY 2,8  ";
-          
-          $query = $this->db->query($sql);
-          $args = array();
-          $arr = array();
+      $sql = "SELECT s.id, s.nomor_tagihan nomor, s.tanggal_invoice,
+            pad.get_sspdno(s.id) sspdno, ss.sspdtgl as tanggal, 
+            s.type_id as jenis ,
+            0 as is_cia ,
+            s.nama_wp,
+            s.npwpd npwpd, 
+            s.alamat_wp,
+            s.nopd,
+            s.nama_op,
+            s.alamat_op,
+            s.jatuh_tempo,
+            s.pokok,
+            s.usaha_id,
+            s.type_id,
+            ss.denda+ss.bunga as denda,
+            s.rekening_pokok as rekening_pokok,
+            s.nama_pokok as nama_pokok,
+            ss.jml_bayar-(ss.denda+ss.bunga) as pokok,
+            s.rekening_denda as rekening_denda,
+            s.nama_denda as nama_denda
+            FROM public.pad_invoice s
+                 inner join pad.pad_sspd ss on s.id=ss.invoice_id
+            WHERE ss.id IN ($req_id)
+                  AND s.tanggal_invoice is not null
+                  AND s.type_id is not null
+                  AND s.nopd is not null
+                  AND s.usaha_id is not null
+                  AND (s.pokok>0 or s.denda+s.bunga>0)
+            ORDER BY 2,3  
+            ";
+            
+      $query = $this->db->query($sql);
+      if ($query->num_rows() > 0)
+      {         
+        if ($state==0)
+        {  $args = array();
+           $arr = array();
 
-          if ($query->num_rows() > 0)
-          { $mkey = '';
-            $objekPajaks = array();
-            foreach ($query->result() as $row)
-            { if ($mkey!=$row->npwpd)
-              { if (count($arr)>0)
-                  {  $arr["objekPajaks"]=$objekPajaks;
-                        array_push($args,$arr);
-                        $arr = array();
-                  }
-                  $arr = array("nama"=>$row->nama,
-                              "npwpd"=>$row->npwpd,
-                              "alamat"=>$row->alamat,
-                              "userName"=>SPEKTRA_USER,
-                              "password"=>SPEKTRA_PASS);
-                    $objekPajaks=array();
+           $mkey = '';
+           //$skp = array();
+           foreach ($query->result() as $row)
+           { 
+           
+              $arr = array("nomorSkp"=>$row->nomor,
+              "nomorNotaPenerimaan"=>$row->sspdno,
+              "tanggalNotaPenerimaan"=>date_format(date_create($row->tanggal), 'd-m-Y'),
+              "tahun"=>date_format(date_create($row->tanggal), 'Y'),
+              "selfAssessment"=> ($row->type_id==1 ? True : False),
+              "casInAdvance"=>False,
+              "jenisPajak"=>(int)$row->usaha_id,
+              "jenisSkp"=>(int)$row->type_id,
+              "tahunPajak"=>date_format(date_create($row->tanggal_invoice), 'Y'),
+              "bulanPajak"=>date_format(date_create($row->tanggal_invoice), 'm'),
+              "namaWajibPajak"=>$row->nama_wp,
+              "npwpd"=>$row->npwpd,
+              "alamatWajibPajak"=>$row->alamat_wp,
+              "nop"=>$row->nopd,
+              "objekPajak"=>$row->nama_op,
+              "alamatObjekPajak"=>$row->alamat_op,
+              "jatuhTempo"=>date_format(date_create($row->jatuh_tempo), 'd-m-Y'),
+              "nilaiPajak"=>(int) $row->pokok,
+              "nilaiDenda"=>(int) $row->denda,
+              "nilaiKenaikan"=>0, //$row->npwpd,
+              "nilaiBunga"=>0, //$row->npwpd,
+              "userName"=>SPEKTRA_USER,
+              "password"=>SPEKTRA_PASS);
+              $arrDets=array();
+              if ((int) $row->pokok>0)
+              {
+                  $arrDet = array("kodeRekening"=>$row->rekening_pokok,
+                                  "namaRekening"=>$row->nama_pokok,
+                                  "Nilai"=>(int) $row->pokok);
+                  array_push($arrDets,$arrDet);    
               }
-              $objekPajak = array("nop"=>$row->nopd,
-                                    "namaObjekPajak"=>$row->opnm,
-                                    "alamatObjekPajak"=>$row->opalamat,
-                                    "jenisPajak"=>(int)$row->usaha_id);
-              array_push($objekPajaks, $objekPajak);
+              
+              if ((int) $row->denda>0)
+              {
+                  $arrDet = array("kodeRekening"=>$row->rekening_denda,
+                                    "namaRekening"=>$row->nama_denda,
+                                    "Nilai"=>(int) $row->denda);
+                  array_push($arrDets,$arrDet);    
+              }
+              $arr["Rincians"]=$arrDets;
+              array_push($args, $arr);
             }
              
-             $arr["objekPajaks"]=$objekPajaks;
-             array_push($args,$arr);
+             //die (json_encode($args));
+             
              $amt = $this->rest_client->put(
-                          'insertWajibPajaks',json_encode($args)); #realisasi
-          }
-          if (substr($amt,0,8)=='Berhasil')
-          {
-            $sql = "UPDATE pad.pad_customer
-                             SET posted = 1
-                      WHERE id IN ($req_id)";
-            $query = $this->db->query($sql);         
-            $result = array("status"=>1,
-                             "message"=>$amt);     
-          }
-          elseif (substr($amt,0,5)=='Gagal')
-          { $result = array("status"=>0,
-                             "message"=>$amt);          
-          }
-          else
-          { $result = array("status"=>2,
-                            "message"=>$amt);             
-          } 
-      }
-      elseif ($state==1) 
-      {
-          $sql = "SELECT id, pad.get_npwpd(c.id, true) as npwpd
-                  FROM pad.pad_customer c
-                  WHERE c.id IN (".$this->input->get_post('id').")
-                  ORDER BY 2  ";
-          
-          $query = $this->db->query($sql);
-          $args = array();
-          $arr = array();
-          $c = 0;
-          $n = 0;
-          if ($query->num_rows() > 0)
-          {
-             $mkey = '';
-             $wajibPajaks = array();
+                          'PenerimaanPajakRestService/insertPenerimaanPajaks',json_encode($args)); #realisasi
+                          #http://ws1.sp3ktra.com:8080/EgovService/webresources/
+            if (substr($amt,0,8)=='Berhasil')
+            {
+              $sql = "UPDATE pad.pad_invoice
+                               SET posted = 1
+                        WHERE id IN ($req_id)";
+              $query = $this->db->query($sql);         
+              $result = array("status"=>1,
+                               "message"=>$amt);     
+            }
+            elseif (substr($amt,0,5)=='Gagal')
+            { $result = array("status"=>0,
+                               "message"=>$amt);          
+            }
+            else
+            { $result = array("status"=>2,
+                              "message"=>$amt);             
+            } 
+        }
+        elseif ($state==1) 
+        {
+
              foreach ($query->result() as $row)
              {
                 $id = $row->id;
                 $arr = array(//"nama"=>$row->nama,
-                          "npwpd"=>$row->npwpd,
-                          //"alamat"=>$row->alamat,
+                          "nomorSkp"=>$row->sspdno,
                           "userName"=>SPEKTRA_USER,
                           "password"=>SPEKTRA_PASS);
                           
                 $json_data = json_encode($arr);
-                $amt = $this->rest_client->put(
-                              "deleteWajibPajak/$row->npwpd/SPEKTRA_USER",$json_data); 
+                $amt = $this->rest_client->put("PenerimaanPajakRestService/deletePenerimaanPajak/$row->sspdno/".SPEKTRA_USER,$json_data); 
                 //echo $json_data;
                 //var_dump($amt);
                 //(substr($amt,0,5)=='Gagal') #
                 if (substr($amt,0,8)=='Berhasil')
-                {   $sql = "UPDATE pad.pad_customer
+                {   $sql = "UPDATE pad.pad_sspd
                                  SET posted = 0
                           WHERE id=$id ";
                     $query = $this->db->query($sql);         
@@ -198,8 +236,9 @@ class Jinvoice extends CI_Controller
           }
       }
       else
-      {  $amt = $this->rest_client->get('ambilContohWajibPajakJson');
-         //var_dump($amt);
+      {  
+         $result = array("status"=>0,
+                             "message"=>'Data tidak ditemukan');
       }
       echo json_encode($result);
     }
