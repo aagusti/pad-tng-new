@@ -66,7 +66,7 @@ class Jinvoice extends CI_Controller
             s.denda as denda,
             s.posted as posted
             ", false);
-        $this->datatables->from('pad.pad_invoice as s');
+        $this->datatables->from('public.pad_invoice as s');
         // $this->datatables->join('pad.pad_spt as spt on s.source_id=spt.id');
         // $this->datatables->join('pad.pad_customer_usaha as cu on spt.customer_usaha_id=cu.id');
         // $this->datatables->where("spt.source_nama='pad_spt'");
