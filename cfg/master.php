@@ -71,7 +71,7 @@ define('RPC_SSL_CAINFO', '');
 //'ssl_verify_peer' => TRUE,
 //'ssl_cainfo'      => '/certs/cert.pem'
 
-define('SPEKTRA_SERVER','http://ws1.sp3ktra.com:8080/EgovService/webresources/WajibPajakRestService');
+define('SPEKTRA_SERVER','http://ws1.sp3ktra.com:8080/EgovService/webresources'); //WajibPajakRestService
 define('SPEKTRA_USER', 'integrasi_simpatda');
 define('SPEKTRA_PASS', '-81113-64-109-47-128-7478-1092-9273-122-72-117-30');
 

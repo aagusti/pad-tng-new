@@ -57,6 +57,10 @@ $(document).ready(function() {
   var rows_selected = [];
   var oTable = $('#table1').DataTable({
         paginationType: "full_numbers",
+        processing: true,
+        serverSide: true,
+        ajaxSource: "<?=active_module_url();?>jop/grid",
+      
         dom: '<"toolbar">flrtip',
         order: [[ 1, "asc" ]],     
         columns: [
@@ -81,9 +85,9 @@ $(document).ready(function() {
         visible: false,
         className: 'select-checkbox',
         targets:   6 }],
-      processing: true,
-      serverSide: true,
-      ajaxSource: "<?=active_module_url();?>jop/grid",
+        
+
+      
       rowCallback: function(row, data, dataIndex){
          var rowId = data.id;
          //console.log('id:'.rowId);

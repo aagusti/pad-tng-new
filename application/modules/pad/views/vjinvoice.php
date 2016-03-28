@@ -16,7 +16,7 @@
       <table class="table" id="table1">
         <thead>
           <tr>
-            <th>index</th>
+            <th><input type="checkbox"id="select_all" name="select_all"></th>
             <th>No</th>
             <th>Tanggal</th>
             <th>NOPD</th>
@@ -25,6 +25,7 @@
             <th>Pokok</th>
             <th>Rekening</th>
             <th>Denda</th>
+            <th>Posted</th>
           </tr>
         </thead>
         <tbody>
@@ -36,93 +37,208 @@
 <? $this->load->view('_foot'); ?>
 <script>
 $(document).ready(function() {  
-  oTable = $('#table1').dataTable({
-    "paginationType": "full_numbers",
-    "dom": '<"toolbar">frtip',      
-    "processing": true,
-    "serverSide": true,    
-    "ajaxSource": "<? echo active_module_url($controller); ?>grid/",
-    "columnDefs": [
-            { "aTargets": [0], "bSearchable": false, "bVisible": false}
-            ]
-  }
-  );
-});
-  /*
-    "iDisplayLength": 13,
-    "bJQueryUI": true,
-    "bAutoWidth": false,
-
-    "aaSorting": [[ 0, "desc" ]],
-      { "aTargets": [1], "bSearchable": true,  "bVisible": true,  "sWidth": "70px", "sClass": "" },
-      { "aTargets": [2], "bSearchable": true,  "bVisible": true,  "sWidth": "85px", "sClass": "" },
-      { "aTargets": [3], "bSearchable": true,  "bVisible": true,  "sWidth": "75px", "sClass": "" },
-      { "aTargets": [4], "bSearchable": true,  "bVisible": true,  "sWidth": "58px", "sClass": "" },
-      { "aTargets": [5], "bSearchable": true,  "bVisible": true,  "sWidth": "80px", "sClass": "" },
-      { "aTargets": [6], "bSearchable": true,  "bVisible": true,  "sWidth": "", "sClass": "" },
-      
-      { "aTargets": [8], "bSearchable": true,  "bVisible": true,  "sWidth": "65px", "sClass": "center" },
-      { "aTargets": [9], "bSearchable": true,  "bVisible": true,  "sWidth": "86px", "sClass": "right" },
-      { "aTargets": [10], "bSearchable": true,  "bVisible": true,  "sWidth": "97px", "sClass": "right" },
-      { "aTargets": [11], "bSearchable": true,  "bVisible": true,  "sWidth": "97px", "sClass": "right" },
-      { "aTargets": [12], "bSearchable": false, "bVisible": false, "sWidth": "", "sClass": "" },
-      { "aTargets": [13], "bSearchable": false, "bVisible": false, "sWidth": "", "sClass": "" },
-      { "aTargets": [14], "bSearchable": false, "bVisible": true, "sWidth": "", "sClass": "center" },
-      { "aTargets": [15], "bSearchable": false, "bVisible": false, "sWidth": "", "sClass": "" },
-      { "aTargets": [16], "bSearchable": false, "bVisible": true, "sWidth": "", "sClass": "right" },
-      { "aTargets": [17], "bSearchable": false, "bVisible": true, "sWidth": "", "sClass": "center" }
-
-
-
-    ],
-    "fnRowCallback": function (nRow, aData, iDisplayIndex) {
-      $(nRow).on("click", function (event) {
-        if ($(this).hasClass('row_selected')) {
-          mID = '';
-          $(this).removeClass('row_selected');
-        } else {
-          var data = oTable.fnGetData( this );
-          mID = data[0];
-          nobayar = data[1];
-          uID = data[12];
-          tID = data[13];
-
-          nopd  = data[5];
-          wp_sspd = data[6];
-          jp_sspd = data[7];
-          masa_sspd   = data[8];
-          jatuh_tempo = data[9];
-          pajak_sspd = data[11];
-          no_bayar_sspd = data[18];
-          cara_bayar = data[14];
-
-          
-          oTable.$('tr.row_selected').removeClass('row_selected');
-          $(this).addClass('row_selected');
-        }
-      })
-    },
-    "fnDrawCallback": function( oSettings ) {
-      mID = '';
-    },
-    "oLanguage": {
-      "sProcessing":   "<i class='fa fa-refresh fa-spin' style='font-size: 70px;'></i>",
-      "sLengthMenu":   "Tampilkan _MENU_ entri",
-      "sZeroRecords":  "Tidak ada data",
-      "sInfo":         "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-      "sInfoEmpty":    "Menampilkan 0 sampai 0 dari 0 entri",
-      "sInfoFiltered": "(disaring dari _MAX_ entri keseluruhan)",
-      "sInfoPostFix":  "",
-      "sSearch":       "Cari : ",
-      "sUrl":          "",
-      "oPaginate": {
-        "sFirst":    "&laquo;",
-        "sPrevious": "&lsaquo;",
-        "sNext":     "&rsaquo;",
-        "sLast":     "&raquo;",
+  var oTable;  
+  var rows_selected = [];
+  
+  oTable = $('#table1').DataTable({
+    paginationType: "full_numbers",
+    dom: '<"toolbar">flrtip',      
+    processing: true,
+    serverSide: true,    
+    ajaxSource: "<? echo active_module_url($controller); ?>grid/",
+     
+    order: [[ 1, "asc" ]],     
+        columns: [
+            { data: "id",
+                render: function ( data, type, row ) {
+                        return '<input type="checkbox" class="editor-active" value="'+data.id+'">';
+                    }},
+            { data: "nomor_tagihan" },
+            { data: "tanggal" },
+            { data: "nopd" },
+            { data: "customernm" },
+            { data: "rekening_pokok" },
+            { data: "pokok" },
+            { data: "rekening_denda" },
+            { data: "denda" },
+            { data: "posted" }
+            ],
+      columnDefs: [ {
+        orderable: false,
+        visible: true,
+        className: 'select-checkbox',
+        targets:   0
+        }],
+        
+    rowCallback: function(row, data, dataIndex){
+         var rowId = data.id;
+         //console.log('id:'.rowId);
+         if($.inArray(rowId, rows_selected) !== -1){
+            $(row).find('input[type="checkbox"]').prop('checked', true);
+            $(row).addClass('selected');
+         }
       }
-    },
+    }
+  );
+    var tb_array = [
+      '<div>',
+      '    <button id="posting">Proses</button>',
+      '    Filter: ',
+      '    <select id="posted" name="posted" class="">',
+      '                    <option value="0">Unposted</option>',
+      '                    <option value="1">Posted</option>',
+      '                    </select>',
+      '    Range : ',
+      '    <input  type="date" id="start_date" name="start_date"> s.d. ',
+      '    <input  type="date" id="end_date" name="end_date">',
+      '    </div>',
+      '</div>',
+    ]
+    var tb = tb_array.join(' ');
+    $("div.toolbar").html(tb);
+    //$("div.toolbar").html('<button id="posting">Proses</button>');
+   
+   // Handle click on checkbox
+   $('#table1 tbody').on('click', 'input[type="checkbox"]', function(e){
+      var $row = $(this).closest('tr');
 
+      // Get row data
+      var data = oTable.row($row).data();
 
-  });*/ 
+      // Get row ID
+      var rowId = data.id;
+      //alert(rowId);
+      // Determine whether row ID is in the list of selected row IDs 
+      var index = $.inArray(rowId, rows_selected);
+      //console.log('id:'.rowId);
+      // If checkbox is checked and row ID is not in list of selected row IDs
+      if(this.checked && index === -1){
+         rows_selected.push(rowId);
+
+      // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+      } else if (!this.checked && index !== -1){
+         rows_selected.splice(index, 1);
+      }
+
+      if(this.checked){
+         $row.addClass('selected');
+      } else {
+         $row.removeClass('selected');
+      }
+
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(oTable);
+
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+
+   // Handle click on table cells with checkboxes
+   $('#table1').on('click', 'tbody td, thead th:first-child', function(e){
+      $(this).parent().find('input[type="checkbox"]').trigger('click');
+   });
+
+   // Handle click on "Select all" control
+   $('thead input[name="select_all"]', oTable.table().container()).on('click', function(e){
+      if(this.checked){
+         $('#table1 tbody input[type="checkbox"]:not(:checked)').trigger('click');
+      } else {
+         $('#table1 tbody input[type="checkbox"]:checked').trigger('click');
+      }
+
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+
+   // Handle table draw event
+   oTable.on('draw', function(){
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(oTable);
+   });
+    
+   // Handle form submission event 
+   $('#frm-example').on('submit', function(e){
+      var form = this;
+
+      // Iterate over all selected checkboxes
+      $.each(rows_selected, function(index, rowId){
+         // Create a hidden element 
+         $(form).append(
+             $('<input>')
+                .attr('type', 'hidden')
+                .attr('name', 'id[]')
+                .val(rowId)
+         );
+      });
+
+      // FOR DEMONSTRATION ONLY     
+      
+      // Output form data to a console     
+      $('#example-console').text($(form).serialize());
+      console.log("Form submission", $(form).serialize());
+       
+      // Remove added elements
+      $('input[name="id\[\]"]', form).remove();
+       
+      // Prevent actual form submission
+      e.preventDefault();
+   });
+   $('#posted').change( function() { 
+      oTable.columns(9).search('='+$(this).val()).draw();
+   });
+   $('#posting').click( function() { 
+      if (rows_selected.length==0){
+        alert('Tidak ada baris yang dipilih');
+      }else{
+        $.ajax({
+          type: "GET",
+          url: '<?=base_url()?>pad/jinvoice/posting/'+$('#posted').val(),
+          data: {id : rows_selected.toString()},
+          success: function(html){
+              msg = jQuery.parseJSON(html);
+              alert(msg.message);
+              if (msg.status==1) {
+                oTable.draw(); 
+                //oTable.columns(6).search('='+$('#posted').val()).draw();
+              }
+          }
+        });
+      }
+   });
+   
+   oTable.columns(9).search('='+$('#posted').val()).draw();
+   
+});
+
+//
+// Updates "Select all" control in a data table
+//
+function updateDataTableSelectAllCtrl(table){
+   var $table             = table.table().node();
+   var $chkbox_all        = $('tbody input[type="checkbox"]', $table);
+   var $chkbox_checked    = $('tbody input[type="checkbox"]:checked', $table);
+   var chkbox_select_all  = $('thead input[name="select_all"]', $table).get(0);
+
+   // If none of the checkboxes are checked
+   if($chkbox_checked.length === 0){
+      chkbox_select_all.checked = false;
+      if('indeterminate' in chkbox_select_all){
+         chkbox_select_all.indeterminate = false;
+      }
+
+   // If all of the checkboxes are checked
+   } else if ($chkbox_checked.length === $chkbox_all.length){
+      chkbox_select_all.checked = true;
+      if('indeterminate' in chkbox_select_all){
+         chkbox_select_all.indeterminate = false;
+      }
+
+   // If some of the checkboxes are checked
+   } else {
+      chkbox_select_all.checked = true;
+      if('indeterminate' in chkbox_select_all){
+         chkbox_select_all.indeterminate = true;
+      }
+   }
+}
 </script>
