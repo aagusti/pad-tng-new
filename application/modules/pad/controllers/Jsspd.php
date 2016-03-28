@@ -184,7 +184,7 @@ class Jsspd extends CI_Controller
                           #http://ws1.sp3ktra.com:8080/EgovService/webresources/
             if (substr($amt,0,8)=='Berhasil')
             {
-              $sql = "UPDATE pad.pad_invoice
+              $sql = "UPDATE public.pad_invoice
                                SET posted = 1
                         WHERE id IN ($req_id)";
               $query = $this->db->query($sql);         
