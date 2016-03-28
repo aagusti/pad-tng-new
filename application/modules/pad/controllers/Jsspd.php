@@ -91,7 +91,7 @@ class Jsspd extends CI_Controller
       $this->rest_client->http_header('Content-Type','application/json'); 
       $req_id = $this->input->get_post('id');
       $amt ='Other Error';
-      $sql = "SELECT s.id, s.nomor_tagihan nomor, s.tanggal_invoice,
+      $sql = "SELECT ss.id, s.nomor_tagihan nomor, s.tanggal_invoice,
             pad.get_sspdno(s.id) sspdno, ss.sspdtgl as tanggal, 
             s.type_id as jenis ,
             0 as is_cia ,
@@ -184,7 +184,7 @@ class Jsspd extends CI_Controller
                           #http://ws1.sp3ktra.com:8080/EgovService/webresources/
             if (substr($amt,0,8)=='Berhasil')
             {
-              $sql = "UPDATE public.pad_invoice
+              $sql = "UPDATE public.pad_sspd
                                SET posted = 1
                         WHERE id IN ($req_id)";
               $query = $this->db->query($sql);         

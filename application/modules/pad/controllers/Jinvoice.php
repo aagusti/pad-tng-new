@@ -178,7 +178,7 @@ class Jinvoice extends CI_Controller
           
             if (substr($amt,0,8)=='Berhasil')
             {
-              $sql = "UPDATE pad.pad_invoice
+              $sql = "UPDATE public.pad_invoice
                                SET posted = 1
                         WHERE id IN ($req_id)";
               $query = $this->db->query($sql);         
@@ -212,7 +212,7 @@ class Jinvoice extends CI_Controller
                 //var_dump($amt);
                 //(substr($amt,0,5)=='Gagal') #
                 if (substr($amt,0,8)=='Berhasil')
-                {   $sql = "UPDATE pad.pad_invoice
+                {   $sql = "UPDATE public.pad_invoice
                                  SET posted = 0
                           WHERE id=$id ";
                     $query = $this->db->query($sql);         
