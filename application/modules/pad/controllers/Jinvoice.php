@@ -111,7 +111,7 @@ class Jinvoice extends CI_Controller
             s.rekening_denda as rekening_denda,
             s.nama_denda as nama_denda,
             s.denda as denda
-            FROM pad.pad_invoice s
+            FROM public.pad_invoice s
             WHERE s.id IN ($req_id)
                   AND s.tanggal_invoice is not null
                   AND s.type_id is not null
