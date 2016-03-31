@@ -17,15 +17,7 @@
     
   <div class="container-fluid">
     <?=msg_block();?>
-    <div>
-        Filter: 
-        <select id="posted" name="posted" class="">
-                        <option value="0">Unposted</option>
-                        <option value="1">Posted</option>
-                        </select>
-        </div>
-    </div>
-    </div>
+  </div>
     
     <table class="table table-striped table-bordered" cellspacing="0" width="100%" id="table1">
       <thead>
@@ -65,6 +57,10 @@ $(document).ready(function() {
   var rows_selected = [];
   var oTable = $('#table1').DataTable({
         paginationType: "full_numbers",
+        processing: true,
+        serverSide: true,
+        ajaxSource: "<?=active_module_url();?>jop/grid",
+      
         dom: '<"toolbar">flrtip',
         order: [[ 1, "asc" ]],     
         columns: [
@@ -89,9 +85,9 @@ $(document).ready(function() {
         visible: false,
         className: 'select-checkbox',
         targets:   6 }],
-      processing: true,
-      serverSide: true,
-      ajaxSource: "<?=active_module_url();?>jop/grid",
+        
+
+      
       rowCallback: function(row, data, dataIndex){
          var rowId = data.id;
          //console.log('id:'.rowId);
@@ -119,7 +115,21 @@ $(document).ready(function() {
       },      
     });
     
-    $("div.toolbar").html('<button id="posting">Proses</button>');
+    
+    var tb_array = [
+      '<div>',
+      '    <button id="posting">Proses</button>',
+      '    Filter: ',
+      '    <select id="posted" name="posted" class="">',
+      '                    <option value="0">Unposted</option>',
+      '                    <option value="1">Posted</option>',
+      '                    </select>',
+      '    </div>',
+      '</div>',
+    ]
+    var tb = tb_array.join(' ');
+    $("div.toolbar").html(tb);
+    //$("div.toolbar").html('<button id="posting">Proses</button>');
    
    // Handle click on checkbox
    $('#table1 tbody').on('click', 'input[type="checkbox"]', function(e){

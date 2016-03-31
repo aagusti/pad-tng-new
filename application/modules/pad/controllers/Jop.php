@@ -11,7 +11,7 @@ class Jop extends CI_Controller {
             exit;
         }
         
-        $module = 'pendaftaran';
+        $module = 'jurnal';
         $this->load->library('module_auth', array(
             'module' => $module
         ));
@@ -20,7 +20,7 @@ class Jop extends CI_Controller {
             'apps_model', 'subjek_pajak_model' 
         ));
     
-    $this->load->helper(active_module('pad_helper'));
+        $this->load->helper(active_module('pad_helper'));
     }
     
     public function index() {
@@ -101,7 +101,7 @@ class Jop extends CI_Controller {
              $arr["objekPajaks"]=$objekPajaks;
              array_push($args,$arr);
              $amt = $this->rest_client->put(
-                          'insertWajibPajaks',json_encode($args)); #realisasi
+                          'WajibPajakRestService/insertWajibPajaks',json_encode($args)); #realisasi /
           }
           if (substr($amt,0,8)=='Berhasil')
           {
@@ -148,7 +148,7 @@ class Jop extends CI_Controller {
                           
                 $json_data = json_encode($arr);
                 $amt = $this->rest_client->put(
-                              "deleteWajibPajak/$row->npwpd/SPEKTRA_USER",$json_data); 
+                              "WajibPajakRestService/deleteWajibPajak/$row->npwpd/".SPEKTRA_USER,$json_data); 
                 //echo $json_data;
                 //var_dump($amt);
                 //(substr($amt,0,5)=='Gagal') #
