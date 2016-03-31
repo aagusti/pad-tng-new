@@ -36,9 +36,9 @@ define('DB_DBUG', $db_debug);
 define('DB_TYPE', 'postgre');  //mysql postgre
 define('DB_HOST', 'localhost');
 define('DB_PORT', '5432');
-define('DB_USER', 'aagusti');
+define('DB_USER', 'simpad');
 //define('DB_USER', 'aagusti');
-define('DB_PASS', 'a');
+define('DB_PASS', 'S1mp4d');
 //define('DB_PASS', 'a');
 //define('DB_NAME', 'pad');
 define('DB_NAME', 'simpad');
@@ -48,8 +48,8 @@ define('DB_NAME', 'simpad');
 define('ESPTPD_DB_TYPE', 'postgre');  //mysql postgre
 define('ESPTPD_DB_HOST', 'localhost');
 define('ESPTPD_DB_PORT', '5432');
-define('ESPTPD_DB_USER', 'aagusti');
-define('ESPTPD_DB_PASS', 'a');
+define('ESPTPD_DB_USER', 'simpad');
+define('ESPTPD_DB_PASS', 'S1mp4d');
 //define('ESPTPD_DB_NAME', 'pad');
 #define('ESPTPD_DB_NAME', 'simpad_devel');
 //define('ESPTPD_DB_NAME', 'esptpd');
