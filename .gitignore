@@ -34,3 +34,4 @@ cfg/master.php
 */cache/*
 !*/cache/index.html
 !*/cache/.htaccess
+.htaccess
