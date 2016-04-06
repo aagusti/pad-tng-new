@@ -90,6 +90,7 @@ class Jop extends CI_Controller {
                               "userName"=>SPEKTRA_USER,
                               "password"=>SPEKTRA_PASS);
                     $objekPajaks=array();
+                 $mkey=$row->npwpd;
               }
               $objekPajak = array("nop"=>$row->nopd,
                                     "namaObjekPajak"=>$row->opnm,
@@ -100,6 +101,7 @@ class Jop extends CI_Controller {
              
              $arr["objekPajaks"]=$objekPajaks;
              array_push($args,$arr);
+             //var_dump($args);
              $amt = $this->rest_client->put(
                           'WajibPajakRestService/insertWajibPajaks',json_encode($args)); #realisasi /
           }
@@ -110,15 +112,19 @@ class Jop extends CI_Controller {
                       WHERE id IN ($req_id)";
             $query = $this->db->query($sql);         
             $result = array("status"=>1,
-                             "message"=>$amt);     
+                             "message"=>$amt,
+                            "data"=>json_encode($args));     
           }
           elseif (substr($amt,0,5)=='Gagal')
           { $result = array("status"=>0,
-                             "message"=>$amt);          
+                             "message"=>$amt,
+                             "data"=>json_encode($args));          
           }
           else
-          { $result = array("status"=>2,
-                            "message"=>$amt);             
+          { if ($amt=="") $amt="Tidak ada Response";
+              $result = array("status"=>2,
+                            "message"=>$amt,
+                            "data"=>json_encode($args));             
           } 
       }
       elseif ($state==1) 

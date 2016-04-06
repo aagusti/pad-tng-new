@@ -172,9 +172,9 @@ class Jinvoice extends CI_Controller
               array_push($args, $arr);
             }
              
-             //die (json_encode($args));
-             $amt = $this->rest_client->put(
-                          'SkpRestService/insertSkp',json_encode($args)); #realisasi
+             die (json_encode($args));
+             //$amt = $this->rest_client->put(
+             //             'SkpRestService/insertSkp',json_encode($args)); #realisasi
           
             if (substr($amt,0,8)=='Berhasil')
             {
