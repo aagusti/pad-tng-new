@@ -189,15 +189,19 @@ class Jsspd extends CI_Controller
                         WHERE id IN ($req_id)";
               $query = $this->db->query($sql);         
               $result = array("status"=>1,
-                               "message"=>$amt);     
+                               "message"=>$amt,
+                              "data"=>json_encode($args));     
             }
             elseif (substr($amt,0,5)=='Gagal')
             { $result = array("status"=>0,
-                               "message"=>$amt);          
+                               "message"=>$amt,
+                              "data"=>json_encode($args));          
             }
             else
-            { $result = array("status"=>2,
-                              "message"=>$amt);             
+            { if ($amt=="") $amt="No Response";
+              $result = array("status"=>2,
+                              "message"=>$amt,
+                              "data"=>json_encode($args));             
             } 
         }
         elseif ($state==1) 

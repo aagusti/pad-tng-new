@@ -172,9 +172,8 @@ class Jinvoice extends CI_Controller
               array_push($args, $arr);
             }
              
-             die (json_encode($args));
-             //$amt = $this->rest_client->put(
-             //             'SkpRestService/insertSkp',json_encode($args)); #realisasi
+             $amt = $this->rest_client->put(
+                          'SkpRestService/insertSkp',json_encode($args)); #realisasi
           
             if (substr($amt,0,8)=='Berhasil')
             {
@@ -183,15 +182,20 @@ class Jinvoice extends CI_Controller
                         WHERE id IN ($req_id)";
               $query = $this->db->query($sql);         
               $result = array("status"=>1,
-                               "message"=>$amt);     
+                               "message"=>$amt,
+                               "data"=>json_encode($args));
+             );     
             }
             elseif (substr($amt,0,5)=='Gagal')
             { $result = array("status"=>0,
-                               "message"=>$amt);          
+                               "message"=>$amt,
+                               "data"=>json_encode($args));          
             }
             else
-            { $result = array("status"=>2,
-                              "message"=>$amt);             
+            { if ($amt=="") $amt="No Response";
+              $result = array("status"=>2,
+                              "message"=>$amt,
+                              "data"=>json_encode($args));             
             } 
         }
         elseif ($state==1) 
