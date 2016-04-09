@@ -198,6 +198,7 @@ $(document).ready(function() {
               msg = jQuery.parseJSON(html);
               alert(msg.message);
               if (msg.status==1) {
+                rows_selected = [];
                 oTable.draw(); 
                 //oTable.columns(6).search('='+$('#posted').val()).draw();
               }

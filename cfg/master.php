@@ -54,7 +54,7 @@ define('ESPTPD_DB_PASS', 'a');
 #define('ESPTPD_DB_NAME', 'simpad_devel');
 //define('ESPTPD_DB_NAME', 'esptpd');
 //RPC
-define('RPC_SERVER', 'http://localhost/new/api2');
+define('RPC_SERVER', 'http://e-sptpd.tangerangkota.go.id/new/api');
 define('RPC_USER', 'admin');
 define('RPC_PASS', 'admin');
 define('RPC_AUTH', ''); //basic

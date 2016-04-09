@@ -158,13 +158,12 @@ class Jop extends CI_Controller {
                 //echo $json_data;
                 //var_dump($amt);
                 //(substr($amt,0,5)=='Gagal') #
-                if (substr($amt,0,8)=='Berhasil')
-                {   $sql = "UPDATE pad.pad_customer
+                $sql = "UPDATE pad.pad_customer
                                  SET posted = 0
                           WHERE id=$id ";
-                    $query = $this->db->query($sql);         
-                    $result = array("status"=>1,
-                                 "message"=>$amt);
+                $query = $this->db->query($sql);         
+                if (substr($amt,0,8)=='Berhasil')
+                {   
                     $n = $n+1;
                 }
                 $c = $c+1;

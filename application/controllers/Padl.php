@@ -49,6 +49,7 @@ class Padl extends CI_Controller
       $data['awal'] = $year;
       
       $val = $this->get_dashboard($today,$today,3);
+      
       $data['today_amt'] = number_format(
                           (double)$val[0]->pokok, 0, ',', '.');
       $data['today_trans'] = number_format(
