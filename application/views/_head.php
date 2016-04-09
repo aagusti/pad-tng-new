@@ -22,6 +22,7 @@
   <link rel="shortcut icon" href="<?=base_url()?>assets/img/favicon.ico">
   
   <script src="<?=base_url()?>assets/jquery/jquery-1.12.1.min.js" type="text/javascript"></script>
+  <script src="https://code.jquery.com/ui/1.12.0-rc.1/jquery-ui.min.js" type="text/javascript"></script>
   <script src="<?=base_url()?>assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
   <script src="<?=base_url()?>assets/datatables/media/js/jquery.dataTables.min.js"></script>
   <script src="<?=base_url()?>assets/datatables/media/js/dataTables.bootstrap.min.js"></script>
