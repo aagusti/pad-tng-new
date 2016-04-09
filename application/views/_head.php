@@ -15,7 +15,7 @@
   <script src="<?=base_url()?>assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
   <script src="<?=base_url()?>assets/datatables/media/js/jquery.dataTables.min.js"></script>
   <script src="<?=base_url()?>assets/datatables/media/js/dataTables.bootstrap.min.js"></script>
-  
+
   <style>
     * {
     font-size: 12px;
@@ -32,7 +32,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Pajak Daerah Non PBB BPHTB</a>
+      <a class="navbar-brand" href="#" id="menu-toggle">Pajak Daerah Non PBB BPHTB</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <?if(is_login()=='') :?>
