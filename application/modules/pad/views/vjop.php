@@ -6,19 +6,19 @@
     <? $this->load->view(active_module().'/_navbar'); ?>
   </div>
   <div id="page-content-wrapper">
- <div class="content">  
-   <div class="container-fluid">  
-    
+ <div class="content">
+   <div class="container-fluid">
+
     <ul class="nav nav-tabs">
       <li class="active">
         <a href="#"><strong>Daftar - Wajib/Objek Pajak</strong></a>
       </li>
     </ul>
-    
+
   <div class="container-fluid">
     <?=msg_block();?>
   </div>
-    
+
     <table class="table table-striped table-bordered" cellspacing="0" width="100%" id="table1">
       <thead>
         <tr>
@@ -51,7 +51,7 @@ $.fn.dataTableExt.afnFiltering.push(
   }
 );
 
-$(document).ready(function() {  
+$(document).ready(function() {
   var oTable;
 
   var rows_selected = [];
@@ -60,9 +60,9 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajaxSource: "<?=active_module_url();?>jop/grid",
-      
+
         dom: '<"toolbar">flrtip',
-        order: [[ 1, "asc" ]],     
+        order: [[ 1, "asc" ]],
         columns: [
             { data: "id",
                 render: function ( data, type, row ) {
@@ -85,9 +85,9 @@ $(document).ready(function() {
         visible: false,
         className: 'select-checkbox',
         targets:   6 }],
-        
 
-      
+
+
       rowCallback: function(row, data, dataIndex){
          var rowId = data.id;
          //console.log('id:'.rowId);
@@ -96,31 +96,26 @@ $(document).ready(function() {
             $(row).addClass('selected');
          }
       },
+
+      fnServerData: function ( sSource, aoData, fnCallback ) {
+            aoData.push({ "name": "pos",  "value" : $('#posted').val() });
+            $.getJSON( sSource, aoData, function (json) {
+                fnCallback(json);
+            });
+      },
+
       language: {
-        processing:   "<i class='fa fa-refresh fa-spin' style='font-size: 70px;'></i>",
-        lengthMenu:   "Tampilkan _MENU_ entri",
-        zeroRecords:  "Tidak ada data",
-        info:         "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-        infoEmpty:    "Menampilkan 0 sampai 0 dari 0 entri",
-        infoFiltered: "(disaring dari _MAX_ entri keseluruhan)",
-        infoPostFix:  "",
-        search:       "Cari : ",
-        url:          "",
-        paginate: {
-          first:    "&laquo;",
-          previous: "&lsaquo;",
-          next:     "&rsaquo;",
-          last:     "&raquo;",
-        }
-      },      
+        lengthMenu: "&nbsp;Show: _MENU_",
+      },
     });
-    
-    
+
+
     var tb_array = [
-      '<div>',
-      '    <button id="posting">Proses</button>',
-      '    Filter: ',
-      '    <select id="posted" name="posted" class="">',
+      '<div class="pull-left form-inline">',
+      '    <button id="posting" class="btn btn-primary btn-sm">Proses</button>',
+      '    <div class="form-group">',
+      '    <label>Filter:</label>',
+      '    <select id="posted" name="posted" class="form-control input-sm"  style="width:100px;">',
       '                    <option value="0">Unposted</option>',
       '                    <option value="1">Posted</option>',
       '                    </select>',
@@ -128,9 +123,10 @@ $(document).ready(function() {
       '</div>',
     ]
     var tb = tb_array.join(' ');
-    $("div.toolbar").html(tb);
-    //$("div.toolbar").html('<button id="posting">Proses</button>');
-   
+    $("div.dataTables_length").prepend(tb);
+    $("div.dataTables_filter").addClass("pull-right");
+    $("div.dataTables_length").append($("div.dataTables_filter"));
+
    // Handle click on checkbox
    $('#table1 tbody').on('click', 'input[type="checkbox"]', function(e){
       var $row = $(this).closest('tr');
@@ -141,7 +137,7 @@ $(document).ready(function() {
       // Get row ID
       var rowId = data.id;
       //alert(rowId);
-      // Determine whether row ID is in the list of selected row IDs 
+      // Determine whether row ID is in the list of selected row IDs
       var index = $.inArray(rowId, rows_selected);
       //console.log('id:'.rowId);
       // If checkbox is checked and row ID is not in list of selected row IDs
@@ -188,14 +184,14 @@ $(document).ready(function() {
       // Update state of "Select all" control
       updateDataTableSelectAllCtrl(oTable);
    });
-    
-   // Handle form submission event 
+
+   // Handle form submission event
    $('#frm-example').on('submit', function(e){
       var form = this;
 
       // Iterate over all selected checkboxes
       $.each(rows_selected, function(index, rowId){
-         // Create a hidden element 
+         // Create a hidden element
          $(form).append(
              $('<input>')
                 .attr('type', 'hidden')
@@ -204,22 +200,23 @@ $(document).ready(function() {
          );
       });
 
-      // FOR DEMONSTRATION ONLY     
-      
-      // Output form data to a console     
+      // FOR DEMONSTRATION ONLY
+
+      // Output form data to a console
       $('#example-console').text($(form).serialize());
       console.log("Form submission", $(form).serialize());
-       
+
       // Remove added elements
       $('input[name="id\[\]"]', form).remove();
-       
+
       // Prevent actual form submission
       e.preventDefault();
    });
-   $('#posted').change( function() { 
-      oTable.columns(6).search('='+$(this).val()).draw();
+   $('#posted').change( function() {
+      // oTable.columns(6).search('='+$(this).val()).draw();
+      oTable.ajax.reload();
    });
-   $('#posting').click( function() { 
+   $('#posting').click( function() {
       if (rows_selected.length==0){
         alert('Tidak ada baris yang dipilih');
       }else{
@@ -232,16 +229,16 @@ $(document).ready(function() {
               alert(msg.message);
               if (msg.status==1) {
                 rows_selected = [];
-                oTable.draw(); 
+                oTable.draw();
                 //oTable.columns(6).search('='+$('#posted').val()).draw();
               }
           }
         });
       }
    });
-   
+
    oTable.columns(6).search('='+$('#posted').val()).draw();
-   
+
 });
 
 //
