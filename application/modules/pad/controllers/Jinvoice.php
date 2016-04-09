@@ -184,7 +184,7 @@ class Jinvoice extends CI_Controller
               $result = array("status"=>1,
                                "message"=>$amt,
                                "data"=>json_encode($args));
-             );     
+                  
             }
             elseif (substr($amt,0,5)=='Gagal')
             { $result = array("status"=>0,
