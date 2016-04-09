@@ -15,6 +15,12 @@
   <script src="<?=base_url()?>assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
   <script src="<?=base_url()?>assets/datatables/media/js/jquery.dataTables.min.js"></script>
   <script src="<?=base_url()?>assets/datatables/media/js/dataTables.bootstrap.min.js"></script>
+  
+  <style>
+    * {
+    font-size: 12px;
+    }
+  </style>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -94,17 +100,15 @@ function logout() {
 }
 
 $(document).ready(function() {
+  $('#app_id').change( function() {
+      window.location = '<?=base_url();?>change_module/'+$('#app_id').val();
+  });
 
-    $('#app_id').change( function() {
-        window.location = '<?=base_url();?>change_module/'+$('#app_id').val();
-    });
+  $('#msg_helper').delay(5000).fadeOut('slow');
 
-    $('#msg_helper').delay(5000).fadeOut('slow');
-
-    $('#modalform').on('hidden', function() {
-        $(this).removeData('modal');
-    });
-
+  $('#modalform').on('hidden', function() {
+      $(this).removeData('modal');
+  });
 });
 </script>
 
