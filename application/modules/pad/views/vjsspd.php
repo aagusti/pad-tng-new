@@ -98,6 +98,13 @@ $(document).ready(function() {
     $("div.toolbar").html(tb);
     //$("div.toolbar").html('<button id="posting">Proses</button>');
    
+    $("#start_date, #end_date").datepicker({
+        dateFormat:'yy-mm-dd',
+        changeMonth:true,
+        changeYear:true
+    });
+
+    
    // Handle click on checkbox
    $('#table1 tbody').on('click', 'input[type="checkbox"]', function(e){
       var $row = $(this).closest('tr');
