@@ -21,8 +21,8 @@ define('EXT' , '.php');
 //define('SELECT_MODULE'  , TRUE);
 
 // -- Environment
-define('MY_ENV', 'development'); //development testing production
-#define('MY_ENV', 'production'); //development testing production
+//define('MY_ENV', 'development'); //development testing production
+define('MY_ENV', 'production'); //development testing production
 
 // -- System & Application
 //define('MY_SYS', 'sys213');
@@ -36,9 +36,9 @@ define('DB_DBUG', $db_debug);
 define('DB_TYPE', 'postgre');  //mysql postgre
 define('DB_HOST', 'localhost');
 define('DB_PORT', '5432');
-define('DB_USER', 'aagusti');
+define('DB_USER', 'simpad');
 //define('DB_USER', 'aagusti');
-define('DB_PASS', 'a');
+define('DB_PASS', 'S1mp4d');
 //define('DB_PASS', 'a');
 //define('DB_NAME', 'pad');
 define('DB_NAME', 'simpad');
@@ -48,13 +48,13 @@ define('DB_NAME', 'simpad');
 define('ESPTPD_DB_TYPE', 'postgre');  //mysql postgre
 define('ESPTPD_DB_HOST', 'localhost');
 define('ESPTPD_DB_PORT', '5432');
-define('ESPTPD_DB_USER', 'aagusti');
-define('ESPTPD_DB_PASS', 'a');
+define('ESPTPD_DB_USER', 'simpad');
+define('ESPTPD_DB_PASS', 'S1mp4d');
 //define('ESPTPD_DB_NAME', 'pad');
 #define('ESPTPD_DB_NAME', 'simpad_devel');
 //define('ESPTPD_DB_NAME', 'esptpd');
 //RPC
-define('RPC_SERVER', 'http://e-sptpd.tangerangkota.go.id/new/api');
+define('RPC_SERVER', 'http://localhost/new/api');
 define('RPC_USER', 'admin');
 define('RPC_PASS', 'admin');
 define('RPC_AUTH', ''); //basic
