@@ -46,7 +46,7 @@
 <script>
 $.fn.dataTableExt.afnFiltering.push(
   function( oSettings, aData, iDataIndex ) {
-    var iPosted = document.getElementById('posted').value;
+    // var iPosted = document.getElementById('posted').value;
     return true;
   }
 );
@@ -237,7 +237,7 @@ $(document).ready(function() {
       }
    });
 
-   oTable.columns(6).search('='+$('#posted').val()).draw();
+   // oTable.columns(6).search('='+$('#posted').val()).draw();
 
 });
 
