@@ -240,7 +240,7 @@ $(document).ready(function() {
       }
    });
 
-   oTable.columns(9).search('='+$('#posted').val()).draw();
+   // oTable.columns(9).search('='+$('#posted').val()).draw();
 
 });
 
