@@ -98,6 +98,7 @@ $(document).ready(function() {
       },
 
       fnServerData: function ( sSource, aoData, fnCallback ) {
+            rows_selected.length = 0;
             aoData.push({ "name": "pos",  "value" : $('#posted').val() });
             $.getJSON( sSource, aoData, function (json) {
                 fnCallback(json);

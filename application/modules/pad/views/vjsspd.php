@@ -80,6 +80,7 @@ $(document).ready(function() {
       },
 
       fnServerData: function ( sSource, aoData, fnCallback ) {
+            rows_selected.length = 0;
             aoData.push({ "name": "pos",  "value" : $('#posted').val() });
             aoData.push({ "name": "rekkd",  "value" : $('#rekkd').val() });
             aoData.push({ "name": "tgl1", "value" : $('#start_date').val() });
