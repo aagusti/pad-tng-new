@@ -5,7 +5,7 @@
     <? $this->load->view(active_module().'/_navbar'); ?>
   </div>
   <div id="page-content-wrapper">
-    <div class="content">  
+    <div class="content">
     <!-- content -->
       <ul class="nav nav-tabs">
         <li class="active">
@@ -36,18 +36,18 @@
 </div>
 <? $this->load->view('_foot'); ?>
 <script>
-$(document).ready(function() {  
-  var oTable;  
+$(document).ready(function() {
+  var oTable;
   var rows_selected = [];
-  
+
   oTable = $('#table1').DataTable({
     paginationType: "full_numbers",
-    dom: '<"toolbar">flrtip',      
+    dom: '<"toolbar">flrtip',
     processing: true,
-    serverSide: true,    
+    serverSide: true,
     ajaxSource: "<? echo active_module_url($controller); ?>grid/",
-     
-    order: [[ 1, "asc" ]],     
+
+    order: [[ 1, "asc" ]],
         columns: [
             { data: "id",
                 render: function ( data, type, row ) {
@@ -69,42 +69,64 @@ $(document).ready(function() {
         className: 'select-checkbox',
         targets:   0
         }],
-        
-    rowCallback: function(row, data, dataIndex){
+
+      rowCallback: function(row, data, dataIndex){
          var rowId = data.id;
          //console.log('id:'.rowId);
          if($.inArray(rowId, rows_selected) !== -1){
             $(row).find('input[type="checkbox"]').prop('checked', true);
             $(row).addClass('selected');
          }
-      }
+      },
+
+      fnServerData: function ( sSource, aoData, fnCallback ) {
+            aoData.push({ "name": "pos",  "value" : $('#posted').val() });
+            aoData.push({ "name": "rekkd",  "value" : $('#rekkd').val() });
+            aoData.push({ "name": "tgl1", "value" : $('#start_date').val() });
+            aoData.push({ "name": "tgl2", "value" : $('#end_date').val() });
+
+            $.getJSON( sSource, aoData, function (json) {
+                fnCallback(json);
+            });
+      },
+
+      language: {
+        lengthMenu: "&nbsp;Show: _MENU_",
+      },
     }
   );
+
     var tb_array = [
-      '<div>',
-      '    <button id="posting">Proses</button>',
-      '    Filter: ',
-      '    <select id="posted" name="posted" class="">',
+      '<div class="pull-left form-inline">',
+      '    <button id="posting" class="btn btn-primary btn-sm">Proses</button>',
+      '    <div class="form-group">',
+      '    <label>Filter:</label>',
+      '    <select id="posted" name="posted" class="form-control input-sm"  style="width:100px;">',
       '                    <option value="0">Unposted</option>',
       '                    <option value="1">Posted</option>',
       '                    </select>',
-      '    Range : ',
-      '    <input  type="date" id="start_date" name="start_date"> s.d. ',
-      '    <input  type="date" id="end_date" name="end_date">',
+      '    </div>',
+      '    <div class="form-group">',
+      '    <label>Rekening:</label><?=$select_rekkd;?>',
+      '    <div class="form-group">',
+      '    <label>Range:</label>',
+      '    <input type="date" class="form-control input-sm" style="width:90px;" value="<?=date('Y-m-01');?>" id="start_date" name="start_date"> s.d. ',
+      '    <input type="date" class="form-control input-sm" style="width:90px;" value="<?=date('Y-m-d');?>" id="end_date" name="end_date">',
       '    </div>',
       '</div>',
-    ]
+    ];
     var tb = tb_array.join(' ');
-    $("div.toolbar").html(tb);
-    //$("div.toolbar").html('<button id="posting">Proses</button>');
-    
+    // $("div.toolbar").html(tb);
+    $("div.dataTables_length").prepend(tb);
+    $("div.dataTables_filter").addClass("pull-right");
+    $("div.dataTables_length").append($("div.dataTables_filter"));
+
     $("#start_date, #end_date").datepicker({
         dateFormat:'yy-mm-dd',
         changeMonth:true,
         changeYear:true
     });
 
-    
    // Handle click on checkbox
    $('#table1 tbody').on('click', 'input[type="checkbox"]', function(e){
       var $row = $(this).closest('tr');
@@ -115,7 +137,7 @@ $(document).ready(function() {
       // Get row ID
       var rowId = data.id;
       //alert(rowId);
-      // Determine whether row ID is in the list of selected row IDs 
+      // Determine whether row ID is in the list of selected row IDs
       var index = $.inArray(rowId, rows_selected);
       //console.log('id:'.rowId);
       // If checkbox is checked and row ID is not in list of selected row IDs
@@ -162,14 +184,14 @@ $(document).ready(function() {
       // Update state of "Select all" control
       updateDataTableSelectAllCtrl(oTable);
    });
-    
-   // Handle form submission event 
+
+   // Handle form submission event
    $('#frm-example').on('submit', function(e){
       var form = this;
 
       // Iterate over all selected checkboxes
       $.each(rows_selected, function(index, rowId){
-         // Create a hidden element 
+         // Create a hidden element
          $(form).append(
              $('<input>')
                 .attr('type', 'hidden')
@@ -178,22 +200,25 @@ $(document).ready(function() {
          );
       });
 
-      // FOR DEMONSTRATION ONLY     
-      
-      // Output form data to a console     
+      // FOR DEMONSTRATION ONLY
+
+      // Output form data to a console
       $('#example-console').text($(form).serialize());
       console.log("Form submission", $(form).serialize());
-       
+
       // Remove added elements
       $('input[name="id\[\]"]', form).remove();
-       
+
       // Prevent actual form submission
       e.preventDefault();
    });
-   $('#posted').change( function() { 
-      oTable.columns(9).search('='+$(this).val()).draw();
+   // $('#posted').change( function() {
+      // oTable.columns(9).search('='+$(this).val()).draw();
+   // });
+   $('#posted, #start_date, #end_date, #rekkd').change( function() {
+      oTable.ajax.reload();
    });
-   $('#posting').click( function() { 
+   $('#posting').click( function() {
       if (rows_selected.length==0){
         alert('Tidak ada baris yang dipilih');
       }else{
@@ -205,18 +230,18 @@ $(document).ready(function() {
               msg = jQuery.parseJSON(html);
               alert(msg.message);
               if (msg.status==1) {
-                
+
                 rows_selected = [];
-                oTable.draw(); 
+                oTable.draw();
                 //oTable.columns(6).search('='+$('#posted').val()).draw();
               }
           }
         });
       }
    });
-   
-   oTable.columns(9).search('='+$('#posted').val()).draw();
-   
+
+   // oTable.columns(9).search('='+$('#posted').val()).draw();
+
 });
 
 //

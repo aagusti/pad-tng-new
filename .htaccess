@@ -1,7 +1,7 @@
 RewriteEngine on
 
 #jika tidak pake alias, remark baris dibawah ini
-RewriteBase /~aagusti/padl-tng/
+RewriteBase /new/
 #RewriteBase /new/
 
 RewriteCond $1 !^(index\.php|images|robots\.txt)
