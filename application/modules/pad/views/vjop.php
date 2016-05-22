@@ -65,7 +65,7 @@ $(document).ready(function() {
         order: [[ 1, "asc" ]],     
         columns: [
             { data: "id",
-                render: function ( data, type, row ) {
+              render: function ( data, type, row ) {
                         return '<input type="checkbox" class="editor-active" value="'+data.id+'">';
                     }},
             { data: "npwpd" },
