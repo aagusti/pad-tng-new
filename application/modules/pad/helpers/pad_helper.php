@@ -364,7 +364,7 @@ if ( ! function_exists('pad_bunga'))
     }
 }
 
-if ( ! function_exists('pad_bunga'))
+if ( ! function_exists('map_jns_pajak'))
 {
     function map_jns_pajak($kode){
         if ($kode==6) $kode=7; //Parkir
@@ -373,7 +373,7 @@ if ( ! function_exists('pad_bunga'))
     }
 }
 
-if ( ! function_exists('pad_bunga'))
+if ( ! function_exists('map_jns_skp'))
 {
     function map_jns_skp($kode){
       $kode=(int)$kode;
