@@ -19,7 +19,7 @@ class Jsspd extends CI_Controller
             'apps_model','rekening_model'
         ));
 
-        $this->load->helper(active_module());
+        $this->load->helper(array(active_module(),'pad_helper');
     }
 
     function load_auth() {
