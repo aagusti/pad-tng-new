@@ -58,12 +58,6 @@ class Jinvoice extends CI_Controller
         $this->load->view(active_module().'/vjinvoice', $data);
     }
 
-    private function get_rekening_dotted($kode)
-    {
-        $str = substr($kode,0,1).'.'.substr($kode,1,1).'.'.substr($kode,2,1).'.'.substr($kode,3,2).'.'.substr($kode,5,2);
-        return $str;
-    }
-    
     public function grid()
     {
         $rekkd = $this->input->get('rekkd');
@@ -155,8 +149,8 @@ class Jinvoice extends CI_Controller
               "tahun"=>date_format(date_create($row->tanggal), 'Y'),
               "selfAssessment"=> ($row->type_id==1 ? True : False),
               "casInAdvance"=>False,
-              "jenisPajak"=>(int)$row->usaha_id,
-              "jenisSkp"=>(int)$row->type_id,
+              "jenisPajak"=>map_jns_pajak($row->usaha_id),
+              "jenisSkp"=> map_jns_skp($row->type_id),
               "namaWajibPajak"=>$row->nama_wp,
               "npwpd"=>$row->npwpd,
               "alamatWajibPajak"=>$row->alamat_wp,
@@ -173,7 +167,7 @@ class Jinvoice extends CI_Controller
               $arrDets=array();
               if ((int) $row->pokok>0)
               {
-                  $arrDet = array("kodeRekening"=>$this->get_rekening_dotted($row->rekening_pokok),
+                  $arrDet = array("kodeRekening"=>get_rekening_dotted($row->rekening_pokok),
                                   "namaRekening"=>$row->nama_pokok,
                                   "nilai"=>(int) $row->pokok);
                   array_push($arrDets,$arrDet);
@@ -181,7 +175,7 @@ class Jinvoice extends CI_Controller
 
               if ((int) $row->denda>0)
               {
-                  $arrDet = array("kodeRekening"=>$this->get_rekening_dotted($row->rekening_denda),
+                  $arrDet = array("kodeRekening"=>get_rekening_dotted($row->rekening_denda),
                                     "namaRekening"=>$row->nama_denda,
                                     "nilai"=>(int) $row->denda);
                   array_push($arrDets,$arrDet);

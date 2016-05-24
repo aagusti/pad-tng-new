@@ -25,11 +25,6 @@ class Jsspd extends CI_Controller
     function load_auth() {
         $this->load->library('module_auth', array('module' => $this->module));
     }
-    private function get_rekening_dotted($kode)
-    {
-        $str = substr($kode,0,1).'.'.substr($kode,1,1).'.'.substr($kode,2,1).'.'.substr($kode,3,2).'.'.substr($kode,5,2);
-        return $str;
-    }
 
     public function index()
     {
@@ -157,8 +152,8 @@ class Jsspd extends CI_Controller
               "tahun"=>date_format(date_create($row->tanggal), 'Y'),
               "selfAssessment"=> ($row->type_id==1 ? True : False),
               "casInAdvance"=>False,
-              "jenisPajak"=>(int)$row->usaha_id,
-              "jenisSkp"=>(int)$row->type_id,
+              "jenisPajak"=>map_jns_pajak($row->usaha_id),
+              "jenisSkp"=> map_jns_skp($row->type_id),
               "tahunPajak"=>date_format(date_create($row->tanggal_invoice), 'Y'),
               "bulanPajak"=>date_format(date_create($row->tanggal_invoice), 'm'),
               "namaWajibPajak"=>$row->nama_wp,
@@ -177,7 +172,7 @@ class Jsspd extends CI_Controller
               $arrDets=array();
               if ((int) $row->pokok>0)
               {
-                  $arrDet = array("kodeRekening"=>$this->get_rekening_dotted($row->rekening_pokok),
+                  $arrDet = array("kodeRekening"=>get_rekening_dotted($row->rekening_pokok),
                                   "namaRekening"=>$row->nama_pokok,
                                   "nilai"=>(int) $row->pokok);
                   array_push($arrDets,$arrDet);
@@ -185,7 +180,7 @@ class Jsspd extends CI_Controller
 
               if ((int) $row->denda>0)
               {
-                  $arrDet = array("kodeRekening"=>$this->get_rekening_dotted($row->rekening_denda),
+                  $arrDet = array("kodeRekening"=>get_rekening_dotted($row->rekening_denda),
                                     "namaRekening"=>$row->nama_denda,
                                     "nilai"=>(int) $row->denda);
                   array_push($arrDets,$arrDet);

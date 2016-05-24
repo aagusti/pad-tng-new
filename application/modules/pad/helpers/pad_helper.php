@@ -363,3 +363,38 @@ if ( ! function_exists('pad_bunga'))
 		return  $ret;
     }
 }
+
+if ( ! function_exists('pad_bunga'))
+{
+    function map_jns_pajak($kode){
+        if ($kode==6) $kode=7; //Parkir
+        elseif ($kode==7) $kode=8; //Air Bawah Tanah
+        return $kode;
+    }
+}
+
+if ( ! function_exists('pad_bunga'))
+{
+    function map_jns_skp($kode){
+      $kode=(int)$kode;
+      if ($kode==1) $kode=2; //SELF->SPTPD     
+      elseif ($kode==2 || $kode==3) $kode=3; //SKPD     SKPD
+      elseif ($kode==5 || $kode==6) $kode=4; //SKPDKB
+      elseif ($kode==7) $kode=9; //SKPDKBT
+      elseif ($kode==8) $kode=10; //SKPDLB
+      return $kode;
+      /*  3 | SKPD J   |     |       0 |             |            |            |
+          4 | SKPD N   |     |       0 |             |            |            |
+          6 | SKPDKB J |     |       0 |             |            |            |
+      */
+    }
+}
+
+if ( ! function_exists('pad_bunga'))
+{
+    function get_rekening_dotted($kode)
+    {
+        $str = substr($kode,0,1).'.'.substr($kode,1,1).'.'.substr($kode,2,1).'.'.substr($kode,3,2).'.'.substr($kode,5,2);
+        return $str;
+    }
+}    
