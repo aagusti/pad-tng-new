@@ -58,7 +58,13 @@ class Jinvoice extends CI_Controller
         $this->load->view(active_module().'/vjinvoice', $data);
     }
 
-    function grid()
+    private function get_rekening_dotted($kode)
+    {
+        $str = strcopy($kode,0,1).'.'.strcopy($kode,1,1).'.'.strcopy($kode,2,2).'.'.strcopy($kode,4,2)'.'.strcopy($kode,6,2);
+        return $str;
+    }
+    
+    public function grid()
     {
         $rekkd = $this->input->get('rekkd');
         $posted = $this->input->get('pos');
@@ -89,7 +95,7 @@ class Jinvoice extends CI_Controller
         echo $this->datatables->generate();
     }
 
-    function posting() {
+    public function posting() {
       /*
       http://ws1.sp3ktra.com:8080/EgovService/webresources/WajibPajakRestService/insertWajibPajaks
       http://ws1.sp3ktra.com:8080/EgovService/webresources/WajibPajakRestService/replaceAllWajibPajaks
@@ -167,20 +173,20 @@ class Jinvoice extends CI_Controller
               $arrDets=array();
               if ((int) $row->pokok>0)
               {
-                  $arrDet = array("kodeRekening"=>$row->rekening_pokok,
+                  $arrDet = array("kodeRekening"=>get_rekening_dotted($row->rekening_pokok),
                                   "namaRekening"=>$row->nama_pokok,
-                                  "Nilai"=>(int) $row->pokok);
+                                  "nilai"=>(int) $row->pokok);
                   array_push($arrDets,$arrDet);
               }
 
               if ((int) $row->denda>0)
               {
-                  $arrDet = array("kodeRekening"=>$row->rekening_denda,
+                  $arrDet = array("kodeRekening"=>get_rekening_dotted($row->rekening_denda),
                                     "namaRekening"=>$row->nama_denda,
-                                    "Nilai"=>(int) $row->denda);
+                                    "nilai"=>(int) $row->denda);
                   array_push($arrDets,$arrDet);
               }
-              $arr["Rincians"]=$arrDets;
+              $arr["rincians"]=$arrDets;
               array_push($args, $arr);
             }
 
