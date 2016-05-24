@@ -212,7 +212,6 @@ class Jinvoice extends CI_Controller
         }
         elseif ($state==1)
         {
-
              foreach ($query->result() as $row)
              {
                 $id = $row->id;
@@ -224,7 +223,7 @@ class Jinvoice extends CI_Controller
                 $json_data = json_encode($arr);
                 $amt = $this->rest_client->put(
                               "SkpRestService/deleteSkp/$row->nomor/".SPEKTRA_USER,$json_data);
-                //echo $json_data;
+		//echo $json_data;
                 //var_dump($amt);
                 //(substr($amt,0,5)=='Gagal') #
                 //if (substr($amt,0,8)=='Berhasil')
