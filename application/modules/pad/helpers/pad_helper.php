@@ -390,7 +390,7 @@ if ( ! function_exists('map_jns_skp'))
     }
 }
 
-if ( ! function_exists('pad_bunga'))
+if ( ! function_exists('get_rekening_dotted'))
 {
     function get_rekening_dotted($kode)
     {
