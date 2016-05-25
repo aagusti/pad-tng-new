@@ -72,9 +72,9 @@ class Jinvoice extends CI_Controller
         $this->datatables->select("s.id, s.nomor_tagihan, s.tanggal_invoice::date as tanggal,
             s.nopd nopd, s.nama_op || '/ '|| s.nama_wp as customernm,
             s.rekening_pokok as rekening_pokok,
-            s.pokok as pokok,
+            s.total-s.denda-s.bunga as pokok,
             s.rekening_denda as rekening_denda,
-            s.denda as denda,
+            s.denda+s.bunga as denda,
             s.posted as posted
             ", false);
         $this->datatables->from('public.pad_invoice as s');
@@ -116,7 +116,8 @@ class Jinvoice extends CI_Controller
             s.pokok,
             s.usaha_id,
             s.type_id,
-            s.denda+s.bunga as denda,
+            s.denda as denda,
+            s.bunga as bunga,
             s.rekening_pokok as rekening_pokok,
             s.nama_pokok as nama_pokok,
             s.total,
@@ -158,10 +159,10 @@ class Jinvoice extends CI_Controller
               "objekPajak"=>$row->nama_op,
               "alamatObjekPajak"=>$row->alamat_op,
               "jatuhTempo"=>date_format(date_create($row->jatuh_tempo), 'd-m-Y'),
-              "nilaiPajak"=>(int) ($row->total - $row->denda),
+              "nilaiPajak"=>(int) ($row->total - $row->denda - $row->bunga),
               "nilaiDenda"=>(int) $row->denda,
               "nilaiKenaikan"=>0, //$row->npwpd,
-              "nilaiBunga"=>0, //$row->npwpd,
+              "nilaiBunga"=>$row->bunga,
               "userName"=>SPEKTRA_USER,
               "password"=>SPEKTRA_PASS);
               $arrDets=array();
