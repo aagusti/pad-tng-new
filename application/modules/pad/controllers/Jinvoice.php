@@ -60,7 +60,7 @@ class Jinvoice extends CI_Controller
 
     private function get_rekening_dotted($kode)
     {
-        $str = strcopy($kode,0,1).'.'.strcopy($kode,1,1).'.'.strcopy($kode,2,2).'.'.strcopy($kode,4,2)'.'.strcopy($kode,6,2);
+        $str = substr($kode,0,1).'.'.substr($kode,1,1).'.'.substr($kode,2,1).'.'.substr($kode,3,2).'.'.substr($kode,5,2);
         return $str;
     }
     
@@ -173,7 +173,7 @@ class Jinvoice extends CI_Controller
               $arrDets=array();
               if ((int) $row->pokok>0)
               {
-                  $arrDet = array("kodeRekening"=>get_rekening_dotted($row->rekening_pokok),
+                  $arrDet = array("kodeRekening"=>$this->get_rekening_dotted($row->rekening_pokok),
                                   "namaRekening"=>$row->nama_pokok,
                                   "nilai"=>(int) $row->pokok);
                   array_push($arrDets,$arrDet);
@@ -181,7 +181,7 @@ class Jinvoice extends CI_Controller
 
               if ((int) $row->denda>0)
               {
-                  $arrDet = array("kodeRekening"=>get_rekening_dotted($row->rekening_denda),
+                  $arrDet = array("kodeRekening"=>$this->get_rekening_dotted($row->rekening_denda),
                                     "namaRekening"=>$row->nama_denda,
                                     "nilai"=>(int) $row->denda);
                   array_push($arrDets,$arrDet);
