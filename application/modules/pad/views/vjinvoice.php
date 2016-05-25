@@ -65,7 +65,7 @@ $(document).ready(function() {
     order: [[ 1, "asc" ]],
         columns: [
             { data: "id",
-                render: function ( data, type, row ) {
+              render: function ( data, type, row ) {
                         return '<input type="checkbox" class="editor-active" value="'+data.id+'">';
                     }},
             { data: "nomor_tagihan" },
@@ -74,7 +74,7 @@ $(document).ready(function() {
             { data: "customernm" },
             { data: "rekening_pokok" },
             { data: "pokok",
-                render: function ( data, type, row ) {
+              render: function ( data, type, row ) {
                         return addCommas(data.pokok);
                 }},
             { data: "rekening_denda" },
@@ -82,8 +82,8 @@ $(document).ready(function() {
                 render: function ( data, type, row ) {
                         return addCommas(data.denda);
                 }},
-            { data: "bunga"
-                render: function ( data, type, row ) {
+            { data: "bunga",
+              render: function ( data, type, row ) {
                         return addCommas(data.bunga);
                 }},
             { data: "posted" }
