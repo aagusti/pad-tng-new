@@ -61,7 +61,6 @@ $(document).ready(function() {
     processing: true,
     serverSide: true,
     ajaxSource: "<? echo active_module_url($controller); ?>grid/",
-
     order: [[ 1, "asc" ]],
     columns: [
             { data: "id",
@@ -89,22 +88,21 @@ $(document).ready(function() {
             }},
             { data: "posted" }
             ],
-      columnDefs: [ {
-        orderable: false,
-        visible: true,
-        className: 'select-checkbox',
-        targets:   0},
-        {  className: 'text-right',
-           targets:   [6,8,9]
+      columnDefs: [ 
+        { orderable: false,
+          visible: true,
+          className: 'select-checkbox',
+          targets:   0},
+        { className: 'text-right',
+          targets:   [6,8,9]
         },
         {
-            searchable:false,
-            targets: 6
+          searchable:false,
+          targets: 6
         }],
 
       rowCallback: function(row, data, dataIndex){
          var rowId = data.id;
-         //console.log('id:'.rowId);
          if($.inArray(rowId, rows_selected) !== -1){
             $(row).find('input[type="checkbox"]').prop('checked', true);
             $(row).addClass('selected');
@@ -117,7 +115,6 @@ $(document).ready(function() {
             aoData.push({ "name": "rekkd",  "value" : $('#rekkd').val() });
             aoData.push({ "name": "tgl1", "value" : $('#start_date').val() });
             aoData.push({ "name": "tgl2", "value" : $('#end_date').val() });
-
             $.getJSON( sSource, aoData, function (json) {
                 fnCallback(json);
             });

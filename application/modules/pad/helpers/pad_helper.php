@@ -382,6 +382,7 @@ if ( ! function_exists('map_jns_skp'))
       elseif ($kode==5 || $kode==6) $kode=4; //SKPDKB
       elseif ($kode==7) $kode=9; //SKPDKBT
       elseif ($kode==8) $kode=10; //SKPDLB
+      elseif ($kode==9) $kode=1; //SKPDLB
       return $kode;
       /*  3 | SKPD J   |     |       0 |             |            |            |
           4 | SKPD N   |     |       0 |             |            |            |
