@@ -74,7 +74,8 @@ class Jinvoice extends CI_Controller
             s.rekening_pokok as rekening_pokok,
             s.total-s.denda-s.bunga as pokok,
             s.rekening_denda as rekening_denda,
-            s.denda+s.bunga as denda,
+            s.denda as denda,
+            s.bunga as bunga,
             s.posted as posted
             ", false);
         $this->datatables->from('public.pad_invoice as s');

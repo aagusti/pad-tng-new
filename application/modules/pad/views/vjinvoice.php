@@ -25,6 +25,7 @@
             <th>Pokok</th>
             <th>Rekening</th>
             <th>Denda</th>
+            <th>Bunga</th>
             <th>Posted</th>
           </tr>
         </thead>
@@ -61,6 +62,7 @@ $(document).ready(function() {
             { data: "pokok" },
             { data: "rekening_denda" },
             { data: "denda" },
+            { data: "bunga" },
             { data: "posted" }
             ],
       columnDefs: [ {
