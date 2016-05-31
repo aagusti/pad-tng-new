@@ -19,7 +19,7 @@ class Jsspd extends CI_Controller
             'apps_model','rekening_model'
         ));
 
-        $this->load->helper(array(active_module(),'pad_helper');
+        $this->load->helper(array(active_module(),'pad_helper'));
     }
 
     function load_auth() {
@@ -189,7 +189,6 @@ class Jsspd extends CI_Controller
               array_push($args, $arr);
             }
 
-             //die (json_encode($args));
 
              $amt = $this->rest_client->put(
                           'PenerimaanPajakRestService/insertPenerimaanPajaks',json_encode($args)); #realisasi

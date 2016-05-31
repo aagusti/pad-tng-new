@@ -119,7 +119,7 @@ class Jinvoice extends CI_Controller
             s.denda+s.bunga as denda,
             s.rekening_pokok as rekening_pokok,
             s.nama_pokok as nama_pokok,
-            s.pokok as pokok,
+            s.total,
             s.rekening_denda as rekening_denda,
             s.nama_denda as nama_denda
             FROM public.pad_invoice s
@@ -149,8 +149,8 @@ class Jinvoice extends CI_Controller
               "tahun"=>date_format(date_create($row->tanggal), 'Y'),
               "selfAssessment"=> ($row->type_id==1 ? True : False),
               "casInAdvance"=>False,
-              "jenisPajak"=>map_jns_pajak($row->usaha_id),
-              "jenisSkp"=> map_jns_skp($row->type_id),
+              "jenisPajak"=>(int)map_jns_pajak($row->usaha_id),
+              "jenisSkp"=> (int)map_jns_skp($row->type_id),
               "namaWajibPajak"=>$row->nama_wp,
               "npwpd"=>$row->npwpd,
               "alamatWajibPajak"=>$row->alamat_wp,
@@ -158,7 +158,7 @@ class Jinvoice extends CI_Controller
               "objekPajak"=>$row->nama_op,
               "alamatObjekPajak"=>$row->alamat_op,
               "jatuhTempo"=>date_format(date_create($row->jatuh_tempo), 'd-m-Y'),
-              "nilaiPajak"=>(int) $row->pokok,
+              "nilaiPajak"=>(int) ($row->total - $row->denda),
               "nilaiDenda"=>(int) $row->denda,
               "nilaiKenaikan"=>0, //$row->npwpd,
               "nilaiBunga"=>0, //$row->npwpd,
@@ -169,7 +169,7 @@ class Jinvoice extends CI_Controller
               {
                   $arrDet = array("kodeRekening"=>get_rekening_dotted($row->rekening_pokok),
                                   "namaRekening"=>$row->nama_pokok,
-                                  "nilai"=>(int) $row->pokok);
+                                  "nilai"=>(int) ($row->total - $row->denda));
                   array_push($arrDets,$arrDet);
               }
 
