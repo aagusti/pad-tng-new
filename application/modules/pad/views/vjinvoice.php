@@ -63,11 +63,11 @@ $(document).ready(function() {
     ajaxSource: "<? echo active_module_url($controller); ?>grid/",
 
     order: [[ 1, "asc" ]],
-        columns: [
+    columns: [
             { data: "id",
               render: function ( data, type, row ) {
-                        return '<input type="checkbox" class="editor-active" value="'+data.id+'">';
-                    }},
+                        return '<input type="checkbox" class="editor-active" value="'+data+'">';
+            }},
             { data: "nomor_tagihan" },
             { data: "tanggal" },
             { data: "nopd" },
@@ -75,24 +75,31 @@ $(document).ready(function() {
             { data: "rekening_pokok" },
             { data: "pokok",
               render: function ( data, type, row ) {
-                        return addCommas(data.pokok);
-                }},
+                        return addCommas(data);
+                      }
+              },
             { data: "rekening_denda" },
             { data: "denda",
-                render: function ( data, type, row ) {
-                        return addCommas(data.denda);
-                }},
+              render: function ( data, type, row ) {
+                        return addCommas(data);
+            }},
             { data: "bunga",
               render: function ( data, type, row ) {
-                        return addCommas(data.bunga);
-                }},
+                        return addCommas(data);
+            }},
             { data: "posted" }
             ],
       columnDefs: [ {
         orderable: false,
         visible: true,
         className: 'select-checkbox',
-        targets:   0
+        targets:   0},
+        {  className: 'text-right',
+           targets:   [6,8,9]
+        },
+        {
+            searchable:false,
+            targets: 6
         }],
 
       rowCallback: function(row, data, dataIndex){
